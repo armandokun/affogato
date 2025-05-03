@@ -54,8 +54,8 @@ const HeroSection = () => {
             variants={descriptionVariants}
           >
             <p className="text-base md:text-lg text-center text-muted-foreground font-medium text-balance leading-relaxed tracking-tight">
-              Skip extra subscriptions. Use your own API keys <br />
-              for every major LLM in a single, unified chat.
+              Skip extra subscriptions. Use your own API keys for every major
+              LLM in a single, unified chat with Affogato.
             </p>
           </motion.div>
           <motion.div
