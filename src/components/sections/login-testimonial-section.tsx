@@ -6,7 +6,7 @@ const LoginTestimonialSection = () => (
   <div className="hidden lg:flex flex-1 lg:w-1/2 lg:basis-1/2 items-center justify-center relative rounded-2xl m-6 overflow-hidden bg-black">
     <div className="absolute inset-0">
       <Image
-        src="/login.jpeg"
+        src="/login.png"
         alt="Login"
         fill
         style={{
