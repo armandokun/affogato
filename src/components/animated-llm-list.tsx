@@ -23,6 +23,7 @@ const AnimatedLlmItem = ({
           alt={llmName}
           width={48}
           height={48}
+          priority
           className={cn(llmName === "chatgpt" && "invert")}
         />
       </div>
