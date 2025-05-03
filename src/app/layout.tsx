@@ -5,7 +5,6 @@ import Script from "next/script";
 import { siteConfig } from "@/lib/site";
 import AnimatedGradientBackground from "@/components/animated-gradient-background";
 import Navbar from "@/components/sections/navbar";
-import { ThemeProvider } from "@/components/theme-provider";
 
 import "./globals.css";
 
@@ -48,17 +47,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-background min-h-screen`}
       >
-        <ThemeProvider attribute="class" defaultTheme="dark">
-          <div className="absolute inset-0">
-            <AnimatedGradientBackground />
+        <div className="absolute inset-0">
+          <AnimatedGradientBackground />
+        </div>
+        <div className="max-w-7xl mx-auto min-h-screen flex flex-col">
+          <Navbar />
+          <div className="flex-1 flex flex-col items-center justify-center">
+            {children}
           </div>
-          <div className="max-w-7xl mx-auto min-h-screen flex flex-col">
-            <Navbar />
-            <div className="flex-1 flex flex-col items-center justify-center">
-              {children}
-            </div>
-          </div>
-        </ThemeProvider>
+        </div>
       </body>
     </html>
   );
