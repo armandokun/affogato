@@ -14,8 +14,8 @@ export function HeroSection() {
               <span className="block">one subscription price</span>
             </h1>
             <p className="text-base md:text-lg text-center text-muted-foreground font-medium text-balance leading-relaxed tracking-tight">
-              Bring your own API keys and use Affogato as your unified chat
-              provider to skip multiple subscriptions.
+              Skip extra subscriptions. Use your own API keys <br />
+              for every major LLM in a single, unified chat.
             </p>
           </div>
           <div className="flex items-center gap-2.5 flex-wrap justify-center">
