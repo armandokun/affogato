@@ -59,7 +59,7 @@ export function Navbar() {
   useEffect(() => {
     const handleScroll = () => {
       const sections = siteConfig.nav.links.map((item) =>
-        item.href.substring(1),
+        item.href.substring(1)
       );
 
       for (const section of sections) {
@@ -94,7 +94,7 @@ export function Navbar() {
     <header
       className={cn(
         "sticky z-50 mx-4 flex justify-center transition-all duration-300 md:mx-0",
-        hasScrolled ? "top-6" : "top-4 mx-0",
+        hasScrolled ? "top-6" : "top-4 mx-0"
       )}
     >
       <motion.div
@@ -107,7 +107,7 @@ export function Navbar() {
             "mx-auto max-w-7xl rounded-2xl transition-all duration-300  xl:px-0",
             hasScrolled
               ? "px-2 border border-border backdrop-blur-lg bg-background/75"
-              : "shadow-none px-7",
+              : "shadow-none px-7"
           )}
         >
           <div className="flex h-[56px] items-center justify-between p-4">
@@ -121,13 +121,12 @@ export function Navbar() {
             <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
               <div className="flex items-center space-x-6">
                 <Link
-                  className="bg-secondary h-8 hidden md:flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-primary-foreground dark:text-secondary-foreground w-fit px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12]"
                   href="#"
+                  className="h-10 flex items-center justify-center w-32 px-5 text-sm font-normal tracking-wide text-primary rounded-full transition-all ease-out active:scale-95 bg-white dark:bg-background border border-[#E5E7EB] dark:border-[#27272A] hover:bg-white/80 dark:hover:bg-background/80"
                 >
-                  Try for free
+                  Log in
                 </Link>
               </div>
-              <ThemeToggle />
               <button
                 className="md:hidden border border-border size-8 rounded-md cursor-pointer flex items-center justify-center"
                 onClick={toggleDrawer}
@@ -197,7 +196,7 @@ export function Navbar() {
                           onClick={(e) => {
                             e.preventDefault();
                             const element = document.getElementById(
-                              item.href.substring(1),
+                              item.href.substring(1)
                             );
                             element?.scrollIntoView({ behavior: "smooth" });
                             setIsDrawerOpen(false);

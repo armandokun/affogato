@@ -58,6 +58,7 @@
   --exitToLeft: exitToLeft 250ms ease;
   --exitToRight: exitToRight 250ms ease;
   --animate-elliptical-orbit: elliptical-orbit 20s linear infinite;
+  --animate-fade-to-radial: fadeToRadial 20s linear infinite;
   @keyframes orbit {
     0% {
       transform: rotate(calc(var(--angle) * 1deg))
@@ -215,7 +216,16 @@
     to {
       transform: rotate(calc(var(--angle, 0)deg + 360deg)) translate(var(--h-radius, 160px), 0) rotate(calc((var(--angle, 0)deg + 360deg) * -1));
     }
-  }  
+  }
+
+  @keyframes fadeToRadial {
+    0% {
+      background: var(--background);
+    }
+    100% {
+      background: radial-gradient(125% 125% at 50% 10%, #0a1020 0%, #3887ff 40%, #ff93b7 75%, #ff9a2b 100%);
+    }
+  }
 }
 
 :root {

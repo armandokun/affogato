@@ -18,7 +18,7 @@ export const Highlight = ({
     <span
       className={cn(
         "p-1 py-0.5 font-medium dark:font-semibold text-secondary",
-        className,
+        className
       )}
     >
       {children}
@@ -49,9 +49,9 @@ export const siteConfig = {
   nav: {
     links: [
       { id: 1, name: "Home", href: "#hero" },
-      { id: 2, name: "How it Works", href: "#bento" },
-      { id: 3, name: "Features", href: "#features" },
-      { id: 4, name: "Pricing", href: "#pricing" },
+      // { id: 2, name: "How it Works", href: "#bento" },
+      // { id: 3, name: "Features", href: "#features" },
+      // { id: 4, name: "Pricing", href: "#pricing" },
     ],
   },
   hero: {
@@ -70,12 +70,12 @@ export const siteConfig = {
       </svg>
     ),
     badge: "Introducing custom automations",
-    title: "Meet your AI Agent Streamline your workflow",
+    title: "LLM models, all in one place",
     description:
-      "AI assistant designed to streamline your digital workflows and handle mundane tasks, so you can focus on what truly matters",
+      "Affogato orchestrates all your LLM models and their features in one place, so you pay once and use them all.",
     cta: {
       primary: {
-        text: "Try for Free",
+        text: "Get Started",
         href: "#",
       },
       secondary: {
@@ -288,19 +288,19 @@ export const siteConfig = {
   featureSection: {
     title: "Simple. Seamless. Smart.",
     description:
-      "Discover how SkyAgent transforms your commands into action in four easy steps",
+      "Discover how Affogato transforms your commands into action in four easy steps",
     items: [
       {
         id: 1,
         title: "Ask Your AI Agent Directly",
         content:
-          "Speak or type your command—let SkyAgent capture your intent. Your request instantly sets the process in motion.",
+          "Speak or type your command—let Affogato capture your intent. Your request instantly sets the process in motion.",
         image:
           "https://images.unsplash.com/photo-1720371300677-ba4838fa0678?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       },
       {
         id: 2,
-        title: "Let SkyAgent Process It",
+        title: "Let Affogato Process It",
         content:
           "We prioritize the needs and preferences of our users in our design process.",
         image:
@@ -691,7 +691,7 @@ export const siteConfig = {
   },
   quoteSection: {
     quote:
-      "SkyAgent has transformed our daily operations. Tasks that once consumed hours now complete in moments, freeing our team to focus on creativity and strategic growth.",
+      "Affogato has transformed our daily operations. Tasks that once consumed hours now complete in moments, freeing our team to focus on creativity and strategic growth.",
     author: {
       name: "Alex Johnson",
       role: "CTO, Innovatech",
@@ -966,7 +966,7 @@ export const siteConfig = {
   faqSection: {
     title: "Frequently Asked Questions",
     description:
-      "Answers to common questions about SkyAgent and its features. If you have any other questions, please don't hesitate to contact us.",
+      "Answers to common questions about Affogato and its features. If you have any other questions, please don't hesitate to contact us.",
     faQitems: [
       {
         id: 1,
@@ -976,9 +976,9 @@ export const siteConfig = {
       },
       {
         id: 2,
-        question: "How does SkyAgent work?",
+        question: "How does Affogato work?",
         answer:
-          "SkyAgent works by analyzing your requirements, leveraging advanced AI algorithms to understand context, and executing tasks based on your instructions. It can integrate with your workflow, learn from feedback, and continuously improve its performance.",
+          "Affogato works by analyzing your requirements, leveraging advanced AI algorithms to understand context, and executing tasks based on your instructions. It can integrate with your workflow, learn from feedback, and continuously improve its performance.",
       },
       {
         id: 3,
@@ -990,7 +990,7 @@ export const siteConfig = {
         id: 4,
         question: "Can I integrate my existing tools?",
         answer:
-          "Yes, SkyAgent is designed to be highly compatible with popular tools and platforms. We offer APIs and pre-built integrations for seamless connection with your existing workflow tools and systems.",
+          "Yes, Affogato is designed to be highly compatible with popular tools and platforms. We offer APIs and pre-built integrations for seamless connection with your existing workflow tools and systems.",
       },
       {
         id: 5,
@@ -1000,9 +1000,9 @@ export const siteConfig = {
       },
       {
         id: 6,
-        question: "How does SkyAgent save me time?",
+        question: "How does Affogato save me time?",
         answer:
-          "SkyAgent automates repetitive tasks, streamlines workflows, and provides quick solutions to common challenges. This automation and efficiency can save hours of manual work, allowing you to focus on more strategic activities.",
+          "Affogato automates repetitive tasks, streamlines workflows, and provides quick solutions to common challenges. This automation and efficiency can save hours of manual work, allowing you to focus on more strategic activities.",
       },
     ],
   },
