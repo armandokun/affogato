@@ -1,18 +1,19 @@
 "use client";
 
-import { Icons } from "@/components/icons";
-import { NavMenu } from "@/components/nav-menu";
-import { cn } from "@/lib/utils";
-import { motion, useScroll } from "motion/react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
+import Link from "next/link";
+import { motion, useScroll } from "motion/react";
+
+import { cn } from "@/lib/utils";
+import { Icons } from "@/components/icons";
 
 const INITIAL_WIDTH = "70rem";
 const MAX_WIDTH = "800px";
 
-export function Navbar() {
-  const { scrollY } = useScroll();
+const Navbar = () => {
   const [hasScrolled, setHasScrolled] = useState(false);
+
+  const { scrollY } = useScroll();
 
   useEffect(() => {
     const unsubscribe = scrollY.on("change", (latest) => {
@@ -42,12 +43,10 @@ export function Navbar() {
           )}
         >
           <div className="flex h-[56px] items-center justify-between p-4">
-            <Link href="/" className="flex items-center gap-3">
-              <Icons.logo className="size-7 md:size-10" />
-              <p className="text-lg font-semibold text-primary">SkyAgent</p>
+            <Link href="/" className="flex items-center gap-2">
+              <Icons.logo className="size-7 md:size-8" />
+              <p className="text-lg font-semibold text-primary">Affogato</p>
             </Link>
-
-            <NavMenu />
 
             <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
               <div className="flex items-center space-x-6">
@@ -64,4 +63,6 @@ export function Navbar() {
       </motion.div>
     </header>
   );
-}
+};
+
+export default Navbar;

@@ -10,14 +10,8 @@ const AnimatedLlmItem = ({
   llmName,
 }: {
   variant: unknown;
-  llmName: "chatgpt" | "claude" | "meta";
+  llmName: "chatgpt" | "claude" | "meta" | "gemini";
 }) => {
-  const llmIconMap = {
-    chatgpt: "/chatgpt.png",
-    claude: "/claude.png",
-    meta: "/meta.png",
-  };
-
   return (
     <motion.div
       variants={variant as undefined}
@@ -25,7 +19,7 @@ const AnimatedLlmItem = ({
     >
       <div className="size-20 rounded-xl items-center justify-center flex p-4 bg-black">
         <Image
-          src={llmIconMap[llmName]}
+          src={`/llm-icons/${llmName}.png`}
           alt={llmName}
           width={48}
           height={48}
@@ -55,8 +49,7 @@ const AnimatedLlmList = () => {
       y: 0,
       scale: 1,
       rotate: 0,
-      boxShadow:
-        "rgba(39,245,76,0.15) 10px 20px 70px -20px, rgba(36,42,66,0.04) 0px 10px 24px -8px, rgba(36,42,66,0.06) 0px 1px 4px -1px",
+      boxShadow: "0 8px 32px 0 rgba(255,255,255,0.25)",
       transition: {
         delay: 0.05,
         duration: 0.1,
@@ -76,8 +69,7 @@ const AnimatedLlmList = () => {
     },
     whileHover: {
       scale: 1,
-      boxShadow:
-        "rgba(39,127,245,0.15) 0px 20px 70px -10px, rgba(36,42,66,0.04) 0px 10px 24px -8px, rgba(36,42,66,0.06) 0px 1px 4px -1px",
+      boxShadow: "0 8px 32px 0 rgba(255,179,0,0.25)",
       transition: {
         delay: 0.05,
         duration: 0.1,
@@ -103,8 +95,7 @@ const AnimatedLlmList = () => {
       y: 0,
       scale: 1,
       rotate: 0,
-      boxShadow:
-        "rgba(245,40,145,0.15) 0px 20px 70px -10px, rgba(36,42,66,0.04) 0px 10px 24px -8px, rgba(36,42,66,0.06) 0px 1px 4px -1px",
+      boxShadow: "0 8px 32px 0 rgba(66,133,244,0.25)",
       transition: {
         delay: 0.05,
         duration: 0.1,
@@ -128,13 +119,13 @@ const AnimatedLlmList = () => {
         variants={containerVariants}
         initial="initial"
         whileHover="whileHover"
-        className="flex h-full w-full cursor-pointer flex-col items-start justify-between"
+        className="flex h-full w-full flex-col items-start justify-between"
       >
         <div className="flex h-full w-full items-center justify-center rounded-t-xl bg-transparent p-4">
           <motion.div className="flex items-center justify-between gap-x-4">
             <AnimatedLlmItem variant={variant1} llmName="chatgpt" />
             <AnimatedLlmItem variant={variant2} llmName="claude" />
-            <AnimatedLlmItem variant={variant3} llmName="meta" />
+            <AnimatedLlmItem variant={variant3} llmName="gemini" />
           </motion.div>
         </div>
       </motion.div>
