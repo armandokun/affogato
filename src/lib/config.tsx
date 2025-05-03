@@ -70,9 +70,9 @@ export const siteConfig = {
       </svg>
     ),
     badge: "Introducing custom automations",
-    title: "LLM models, all in one place",
+    title: "Your LLM models, for one price.",
     description:
-      "Affogato orchestrates all your LLM models and their features in one place, so you pay once and use them all.",
+      "Bring your own API keys and use Affogato as your unified chat provider to save money and skip multiple subscriptions.",
     cta: {
       primary: {
         text: "Get Started",

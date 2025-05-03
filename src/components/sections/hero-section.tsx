@@ -3,6 +3,7 @@ import Link from "next/link";
 import { siteConfig } from "@/lib/config";
 
 import AnimatedGradientBackground from "../animated-gradient-background";
+import AnimatedLlmList from "../animated-llm-list";
 
 export function HeroSection() {
   const { hero } = siteConfig;
@@ -16,6 +17,7 @@ export function HeroSection() {
         <div className="relative flex flex-col items-center w-full px-6">
           <div className="relative z-10 max-w-3xl mx-auto h-full w-full flex flex-col gap-10 items-center justify-center">
             <div className="flex flex-col items-center justify-center gap-5">
+              <AnimatedLlmList />
               <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium tracking-tighter text-balance text-center text-primary">
                 {hero.title}
               </h1>

@@ -27,6 +27,64 @@ export const Icons = {
       </defs>
     </svg>
   ),
+  chatGpt: ({ className }: { className?: string }) => (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      className={cn("size-4", className)}
+    >
+      <g>
+        <circle cx="16" cy="16" r="16" fill="#10A37F" />
+        <path
+          d="M16 8.5c-4.14 0-7.5 3.36-7.5 7.5s3.36 7.5 7.5 7.5 7.5-3.36 7.5-7.5-3.36-7.5-7.5-7.5zm0 13.5a6 6 0 1 1 0-12 6 6 0 0 1 0 12z"
+          fill="#fff"
+        />
+        <path
+          d="M16 11.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9zm0 7.5a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"
+          fill="#fff"
+        />
+      </g>
+    </svg>
+  ),
+  meta: ({ className }: { className?: string }) => (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      className={cn("size-4", className)}
+    >
+      <g>
+        <circle cx="16" cy="16" r="16" fill="#F5C26B" />
+        <path
+          d="M10 22c0-4 2-8 6-8s6 4 6 8"
+          stroke="#fff"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <ellipse cx="16" cy="18" rx="2" ry="1" fill="#fff" />
+        <circle cx="14" cy="15" r="1" fill="#fff" />
+        <circle cx="18" cy="15" r="1" fill="#fff" />
+      </g>
+    </svg>
+  ),
+  claude: ({ className }: { className?: string }) => (
+    <svg
+      width="32"
+      height="32"
+      viewBox="0 0 32 32"
+      fill="none"
+      className={cn("size-4", className)}
+    >
+      <g>
+        <circle cx="16" cy="16" r="16" fill="#FFB300" />
+        <rect x="10" y="10" width="12" height="12" rx="6" fill="#fff" />
+        <rect x="14" y="14" width="4" height="4" rx="2" fill="#FFB300" />
+      </g>
+    </svg>
+  ),
   soc2: ({ className }: { className?: string }) => (
     <svg
       width="46"
