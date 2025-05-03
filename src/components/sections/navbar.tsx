@@ -51,7 +51,7 @@ const Navbar = () => {
             <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
               <div className="flex items-center space-x-6">
                 <Link
-                  href="#"
+                  href="/login"
                   className="h-10 flex items-center justify-center w-24 px-5 text-sm font-normal tracking-wide text-primary rounded-full transition-all ease-out active:scale-95 bg-white dark:bg-background border border-[#E5E7EB] dark:border-[#27272A] hover:bg-white/80 dark:hover:bg-background/80"
                 >
                   Log in
