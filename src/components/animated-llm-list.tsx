@@ -121,7 +121,7 @@ const AnimatedLlmList = () => {
         whileHover="whileHover"
         className="flex h-full w-full flex-col items-start justify-between"
       >
-        <div className="flex h-full w-full items-center justify-center rounded-t-xl bg-transparent p-4">
+        <div className="flex h-full w-full items-center justify-center rounded-t-xl bg-transparent pb-4">
           <motion.div className="flex items-center justify-between gap-x-4">
             <AnimatedLlmItem variant={variant1} llmName="chatgpt" />
             <AnimatedLlmItem variant={variant2} llmName="claude" />

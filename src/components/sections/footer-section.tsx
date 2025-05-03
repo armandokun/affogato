@@ -15,11 +15,8 @@ export function FooterSection() {
         <div className="flex flex-col items-start justify-start gap-y-5 max-w-xs mx-0">
           <Link href="/" className="flex items-center gap-2">
             <Icons.logo className="size-8" />
-            <p className="text-xl font-semibold text-primary">SkyAgent</p>
+            <p className="text-xl font-semibold text-primary">Affogato</p>
           </Link>
-          <p className="tracking-tight text-muted-foreground font-medium">
-            {siteConfig.hero.description}
-          </p>
           <div className="flex items-center gap-2 dark:hidden">
             <Icons.soc2 className="size-12" />
             <Icons.hipaa className="size-12" />
@@ -58,7 +55,7 @@ export function FooterSection() {
         <div className="absolute inset-0 bg-gradient-to-t from-transparent to-background z-10 from-40%" />
         <div className="absolute inset-0 mx-6">
           <FlickeringGrid
-            text={tablet ? "SkyAgent" : "Streamline your workflow"}
+            text={tablet ? "Affogato" : "Your LLMs in one place"}
             fontSize={tablet ? 70 : 90}
             className="h-full w-full"
             squareSize={2}

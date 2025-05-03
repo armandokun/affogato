@@ -1,7 +1,7 @@
 export const siteConfig = {
-  name: "SkyAgent",
-  url: "https://agent-magicui.vercel.app",
-  description: "Your template for building AI-powered agents with Magic UI.",
+  name: "Affogato",
+  url: "https://affogato.chat",
+  description: "Your LLMs in one place.",
   links: {
     twitter: "https://x.com/dillionverma",
     github: "https://github.com/dillionverma",
