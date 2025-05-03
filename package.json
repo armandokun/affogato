@@ -18,6 +18,7 @@
     "clsx": "^2.1.1",
     "cobe": "^0.6.3",
     "color-bits": "^1.1.0",
+    "framer-motion": "^12.9.4",
     "lucide-react": "^0.479.0",
     "marked": "^15.0.7",
     "motion": "^12.5.0",
