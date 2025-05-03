@@ -7,9 +7,27 @@ import React, { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
+import {
+  loginWithPassword,
+  signInWithOAuth,
+  signupWithPassword,
+} from "@/app/login/actions";
 
 const LoginPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (formData: FormData) => {
+    setLoading(true);
+
+    if (isSignUp) {
+      await signupWithPassword(formData);
+    } else {
+      await loginWithPassword(formData);
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div className="flex flex-col justify-center mx-auto px-6 py-12 gap-8 max-w-md h-full">
@@ -23,10 +41,20 @@ const LoginPage = () => {
         </h1>
       </div>
       <div className="flex flex-col gap-3 w-full mt-2">
-        <Button variant="outline" className="w-full flex gap-2 justify-center">
+        <Button
+          variant="outline"
+          className="w-full flex gap-2 justify-center"
+          onClick={() => signInWithOAuth("google")}
+          disabled={loading}
+        >
           <Icons.google /> Continue with Google
         </Button>
-        <Button variant="outline" className="w-full flex gap-2 justify-center">
+        <Button
+          variant="outline"
+          className="w-full flex gap-2 justify-center"
+          onClick={() => signInWithOAuth("github")}
+          disabled={loading}
+        >
           <GitHubLogoIcon className="size-5" /> Continue with GitHub
         </Button>
       </div>
@@ -78,17 +106,28 @@ const LoginPage = () => {
             placeholder="••••••••"
           />
         </div>
-        <Button type="submit" className="w-full mt-2">
-          {isSignUp ? "Sign up" : "Sign in"}
+        <Button
+          type="submit"
+          className="w-full mt-2"
+          disabled={loading}
+          formAction={handleSubmit}
+        >
+          {loading
+            ? isSignUp
+              ? "Signing up..."
+              : "Signing in..."
+            : isSignUp
+            ? "Sign up"
+            : "Sign in"}
         </Button>
       </form>
-      <div className="flex justify-center text-xs text-muted-foreground w-full">
+      <div className="flex justify-center text-sm text-muted-foreground w-full">
         {isSignUp ? (
           <>
             Already have an account?{" "}
             <Button
               variant="link"
-              className="text-primary underline ml-1 p-0 h-auto text-xs"
+              className="text-primary underline ml-1 p-0 h-auto text-sm"
               type="button"
               onClick={() => setIsSignUp(false)}
             >
@@ -100,7 +139,7 @@ const LoginPage = () => {
             Don&apos;t have an account?{" "}
             <Button
               variant="link"
-              className="text-primary underline ml-1 p-0 h-auto text-xs"
+              className="text-primary underline ml-1 p-0 h-auto text-sm"
               type="button"
               onClick={() => setIsSignUp(true)}
             >
@@ -109,7 +148,7 @@ const LoginPage = () => {
           </>
         )}
       </div>
-      <div className="mt-2 text-sm text-muted-foreground w-full text-center">
+      <div className="mt-2 text-xs text-muted-foreground w-full text-center">
         By using Affogato, you agree to our{" "}
         <Link href="/terms" className="text-primary underline">
           Terms of Service
