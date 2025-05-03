@@ -1,8 +1,12 @@
-import { Navbar } from "@/components/sections/navbar";
-import { ThemeProvider } from "@/components/theme-provider";
-import { siteConfig } from "@/lib/site";
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Script from "next/script";
+
+import { siteConfig } from "@/lib/site";
+import AnimatedGradientBackground from "@/components/animated-gradient-background";
+import { Navbar } from "@/components/sections/navbar";
+import { ThemeProvider } from "@/components/theme-provider";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -35,20 +39,20 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {/* <head>
-        <Script src="https://unpkg.com/react-scan/dist/auto.global.js" />
-      </head> */}
+      {process.env.NODE_ENV === "development" && (
+        <head>
+          <Script src="https://unpkg.com/react-scan/dist/auto.global.js" />
+        </head>
+      )}
 
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-background`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <div className="max-w-7xl mx-auto border-x relative">
+        <ThemeProvider attribute="class" defaultTheme="dark">
+          <div className="absolute inset-0">
+            <AnimatedGradientBackground />
+          </div>
+          <div className="max-w-7xl mx-auto">
             <Navbar />
             {children}
           </div>
