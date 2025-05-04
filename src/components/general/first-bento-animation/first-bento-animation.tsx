@@ -1,14 +1,16 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { Icons } from "@/components/icons";
-import {
-  Reasoning,
-  ReasoningContent,
-  ReasoningResponse,
-} from "@/components/ui/reasoning";
 import { AnimatePresence, motion, useInView } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+
+import {
+  ReasoningContent,
+  ReasoningResponse,
+  Reasoning,
+} from "@/components/ui/reasoning/reasoning";
+
+import Icons from "../icons";
 
 export function ReasoningBasic() {
   const reasoningText = `Based on your calendar patterns and preferences, I recommend scheduling the team meeting for Tuesday at 2pm. This time slot has historically had the highest attendance rate, and it avoids conflicts with other recurring meetings.`;

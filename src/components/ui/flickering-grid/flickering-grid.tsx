@@ -24,7 +24,7 @@ interface FlickeringGridProps extends React.HTMLAttributes<HTMLDivElement> {
   fontWeight?: number | string;
 }
 
-export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
+const FlickeringGrid: React.FC<FlickeringGridProps> = ({
   squareSize = 3,
   gridGap = 3,
   flickerChance = 0.2,
@@ -56,7 +56,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
       cols: number,
       rows: number,
       squares: Float32Array,
-      dpr: number,
+      dpr: number
     ) => {
       ctx.clearRect(0, 0, width, height);
 
@@ -91,10 +91,10 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
             x,
             y,
             squareWidth,
-            squareHeight,
+            squareHeight
           ).data;
           const hasText = maskData.some(
-            (value, index) => index % 4 === 0 && value > 0,
+            (value, index) => index % 4 === 0 && value > 0
           );
 
           const opacity = squares[i * rows + j];
@@ -107,7 +107,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
         }
       }
     },
-    [memoizedColor, squareSize, gridGap, text, fontSize, fontWeight],
+    [memoizedColor, squareSize, gridGap, text, fontSize, fontWeight]
   );
 
   const setupCanvas = useCallback(
@@ -127,7 +127,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
 
       return { cols, rows, squares, dpr };
     },
-    [squareSize, gridGap, maxOpacity],
+    [squareSize, gridGap, maxOpacity]
   );
 
   const updateSquares = useCallback(
@@ -138,7 +138,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
         }
       }
     },
-    [flickerChance, maxOpacity],
+    [flickerChance, maxOpacity]
   );
 
   useEffect(() => {
@@ -176,7 +176,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
         gridParams.cols,
         gridParams.rows,
         gridParams.squares,
-        gridParams.dpr,
+        gridParams.dpr
       );
       animationFrameId = requestAnimationFrame(animate);
     };
@@ -191,7 +191,7 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
       ([entry]) => {
         setIsInView(entry.isIntersecting);
       },
-      { threshold: 0 },
+      { threshold: 0 }
     );
 
     intersectionObserver.observe(canvas);
@@ -224,3 +224,5 @@ export const FlickeringGrid: React.FC<FlickeringGridProps> = ({
     </div>
   );
 };
+
+export default FlickeringGrid;

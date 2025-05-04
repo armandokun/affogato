@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionHeader } from "@/components/section-header";
+import SectionHeader from "@/components/general/section-header";
 import { siteConfig } from "@/lib/config";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
@@ -17,7 +17,7 @@ function PricingTabs({ activeTab, setActiveTab, className }: TabsProps) {
     <div
       className={cn(
         "relative flex w-fit items-center rounded-full border p-0.5 backdrop-blur-sm cursor-pointer h-9 flex-row bg-muted",
-        className,
+        className
       )}
     >
       {["monthly", "yearly"].map((tab) => (
@@ -28,7 +28,7 @@ function PricingTabs({ activeTab, setActiveTab, className }: TabsProps) {
             "relative z-[1] px-2 h-8 flex items-center justify-center cursor-pointer",
             {
               "z-0": activeTab === tab,
-            },
+            }
           )}
         >
           {activeTab === tab && (
@@ -47,7 +47,7 @@ function PricingTabs({ activeTab, setActiveTab, className }: TabsProps) {
           <span
             className={cn(
               "relative block text-sm font-medium duration-200 shrink-0",
-              activeTab === tab ? "text-primary" : "text-muted-foreground",
+              activeTab === tab ? "text-primary" : "text-muted-foreground"
             )}
           >
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
@@ -65,7 +65,7 @@ function PricingTabs({ activeTab, setActiveTab, className }: TabsProps) {
 
 export function PricingSection() {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
-    "monthly",
+    "monthly"
   );
 
   // Update price animation
@@ -123,7 +123,7 @@ export function PricingSection() {
                 "rounded-xl grid grid-rows-[180px_auto_1fr] relative h-fit min-[650px]:h-full min-[900px]:h-fit",
                 tier.isPopular
                   ? "md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-accent"
-                  : "bg-[#F3F4F6] dark:bg-[#F9FAFB]/[0.02] border border-border",
+                  : "bg-[#F3F4F6] dark:bg-[#F9FAFB]/[0.02] border border-border"
               )}
             >
               <div className="flex flex-col gap-4 p-4">
@@ -169,7 +169,7 @@ export function PricingSection() {
                         className={cn(
                           "size-5 rounded-full border border-primary/20 flex items-center justify-center",
                           tier.isPopular &&
-                            "bg-muted-foreground/40 border-border",
+                            "bg-muted-foreground/40 border-border"
                         )}
                       >
                         <div className="size-3 flex items-center justify-center">

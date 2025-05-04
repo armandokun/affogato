@@ -1,7 +1,7 @@
 "use client";
 
-import { SectionHeader } from "@/components/section-header";
 import { siteConfig } from "@/lib/config";
+import SectionHeader from "@/components/general/section-header";
 
 export function BentoSection() {
   const { title, description, items } = siteConfig.bentoSection;

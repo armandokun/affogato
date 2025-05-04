@@ -1,9 +1,9 @@
-import { FirstBentoAnimation } from "@/components/first-bento-animation";
-import { FourthBentoAnimation } from "@/components/fourth-bento-animation";
-import { SecondBentoAnimation } from "@/components/second-bento-animation";
-import { ThirdBentoAnimation } from "@/components/third-bento-animation";
-import { FlickeringGrid } from "@/components/ui/flickering-grid";
-import { Globe } from "@/components/ui/globe";
+import FirstBentoAnimation from "@/components/general/first-bento-animation";
+import FourthBentoAnimation from "@/components/general/fourth-bento-animation";
+import SecondBentoAnimation from "@/components/general/second-bento-animation";
+import ThirdBentoAnimation from "@/components/general/third-bento-animation";
+import FlickeringGrid from "@/components/ui/flickering-grid/flickering-grid";
+import Globe from "@/components/ui/globe";
 import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
 

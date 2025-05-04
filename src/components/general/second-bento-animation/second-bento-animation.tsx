@@ -1,5 +1,5 @@
-import { Icons } from "@/components/icons";
-import { OrbitingCircles } from "@/components/ui/orbiting-circle";
+import Icons from "@/components/general/icons";
+import OrbitingCircles from "@/components/ui/orbiting-circle/orbiting-circle";
 
 export function SecondBentoAnimation() {
   return (

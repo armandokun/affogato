@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { Marquee } from "@/components/ui/marquee";
+import Marquee from "@/components/ui/marquee";
 import { cn } from "@/lib/utils";
 
 export interface TestimonialCardProps

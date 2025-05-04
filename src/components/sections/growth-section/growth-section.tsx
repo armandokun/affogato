@@ -1,6 +1,6 @@
 "use client";
 
-import { SectionHeader } from "@/components/section-header";
+import SectionHeader from "@/components/general/section-header";
 import { siteConfig } from "@/lib/config";
 
 export function GrowthSection() {

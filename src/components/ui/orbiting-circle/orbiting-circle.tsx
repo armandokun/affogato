@@ -19,7 +19,7 @@ export interface OrbitingCirclesProps extends HTMLMotionProps<"div"> {
   once?: boolean;
 }
 
-export function OrbitingCircles({
+const OrbitingCircles = ({
   className,
   children,
   reverse,
@@ -32,7 +32,7 @@ export function OrbitingCircles({
   startAnimationDelay = 0,
   once = false,
   ...props
-}: OrbitingCirclesProps) {
+}: OrbitingCirclesProps) => {
   const calculatedDuration = duration / speed;
 
   const ref = useRef(null);
@@ -124,6 +124,6 @@ export function OrbitingCircles({
         })}
     </>
   );
-}
+};
 
 export default OrbitingCircles;

@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Icons } from "./icons";
+import Icons from "./icons";
 import React from "react";
 
 const iconEntries = Object.entries(Icons);
