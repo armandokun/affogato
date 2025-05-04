@@ -9,7 +9,7 @@ import React, {
   useState,
 } from "react";
 
-interface FlickeringGridProps extends React.HTMLAttributes<HTMLDivElement> {
+type Props = React.HTMLAttributes<HTMLDivElement> & {
   squareSize?: number;
   gridGap?: number;
   flickerChance?: number;
@@ -22,9 +22,9 @@ interface FlickeringGridProps extends React.HTMLAttributes<HTMLDivElement> {
   textColor?: string;
   fontSize?: number;
   fontWeight?: number | string;
-}
+};
 
-const FlickeringGrid: React.FC<FlickeringGridProps> = ({
+const FlickeringGrid = ({
   squareSize = 3,
   gridGap = 3,
   flickerChance = 0.2,
@@ -37,7 +37,7 @@ const FlickeringGrid: React.FC<FlickeringGridProps> = ({
   fontSize = 140,
   fontWeight = 600,
   ...props
-}) => {
+}: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [isInView, setIsInView] = useState(false);

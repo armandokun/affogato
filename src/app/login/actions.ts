@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
+import { siteConfig } from "@/lib/config";
 
 export const loginWithPassword = async (formData: FormData) => {
   const supabase = await createClient();
@@ -43,14 +44,13 @@ export const signInWithOAuth = async (provider: "google" | "github") => {
   const { error, data } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/callback`,
+      redirectTo: `${siteConfig.url}/auth/callback`,
     },
   });
 
   if (error) redirect("/error");
 
   revalidatePath("/", "layout");
-
   redirect(data.url);
 };
 

@@ -1,10 +1,11 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { Children, useEffect, useRef, useState } from "react";
 import { cubicBezier, HTMLMotionProps, motion, useInView } from "motion/react";
-import React, { useEffect, useRef, useState } from "react";
 
-export interface OrbitingCirclesProps extends HTMLMotionProps<"div"> {
+import { cn } from "@/lib/utils";
+
+type Props = HTMLMotionProps<"div"> & {
   className?: string;
   children?: React.ReactNode;
   reverse?: boolean;
@@ -17,7 +18,7 @@ export interface OrbitingCirclesProps extends HTMLMotionProps<"div"> {
   index?: number;
   startAnimationDelay?: number;
   once?: boolean;
-}
+};
 
 const OrbitingCircles = ({
   className,
@@ -32,7 +33,7 @@ const OrbitingCircles = ({
   startAnimationDelay = 0,
   once = false,
   ...props
-}: OrbitingCirclesProps) => {
+}: Props) => {
   const calculatedDuration = duration / speed;
 
   const ref = useRef(null);
@@ -85,8 +86,8 @@ const OrbitingCircles = ({
         </motion.div>
       )}
       {shouldAnimate &&
-        React.Children.map(children, (child, index) => {
-          const angle = (360 / React.Children.count(children)) * index;
+        Children.map(children, (child, index) => {
+          const angle = (360 / Children.count(children)) * index;
           return (
             <div
               style={
