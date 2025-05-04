@@ -3,7 +3,7 @@
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Label, Separator } from "radix-ui";
-import React, { useState } from "react";
+import React, { FormEvent, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Icons } from "@/components/icons";
@@ -17,8 +17,12 @@ const LoginPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (formData: FormData) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
     setLoading(true);
+
+    const formData = new FormData(e.currentTarget);
 
     if (isSignUp) {
       await signupWithPassword(formData);
@@ -63,7 +67,7 @@ const LoginPage = () => {
         <span className="text-xs text-muted-foreground">OR</span>
         <Separator.Root className="flex-1 h-px bg-border" />
       </div>
-      <form className="flex flex-col gap-4 w-full">
+      <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
         <div>
           <Label.Root
             htmlFor="email"
@@ -73,6 +77,7 @@ const LoginPage = () => {
           </Label.Root>
           <input
             id="email"
+            name="email"
             type="email"
             autoComplete="email"
             required
@@ -99,6 +104,7 @@ const LoginPage = () => {
           </div>
           <input
             id="password"
+            name="password"
             type="password"
             autoComplete="current-password"
             required
@@ -106,12 +112,7 @@ const LoginPage = () => {
             placeholder="••••••••"
           />
         </div>
-        <Button
-          type="submit"
-          className="w-full mt-2"
-          disabled={loading}
-          formAction={handleSubmit}
-        >
+        <Button type="submit" className="w-full mt-2" disabled={loading}>
           {loading
             ? isSignUp
               ? "Signing up..."
