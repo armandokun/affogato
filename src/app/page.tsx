@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import AnimatedGradientBackground from "@/components/animated-gradient-background";
+import AnimatedGradientBackground from "@/components/general/animated-gradient-background";
 import HeroSection from "@/components/sections/hero-section";
 import Navbar from "@/components/sections/navbar";
 import { createClient } from "@/lib/supabase/server";
