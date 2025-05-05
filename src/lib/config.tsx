@@ -32,7 +32,7 @@ export const siteConfig = {
   name: "Cal AI",
   description: "Smart scheduling powered by AI.",
   cta: "Get Started",
-  url: process.env.NEXT_PUBLIC_APP_URL || "https://affogato.chat",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://affogato.chat",
   keywords: [
     "AI Calendar",
     "Smart Scheduling",

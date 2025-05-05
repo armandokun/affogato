@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
-import { siteConfig } from "@/lib/config";
 
 export const loginWithPassword = async (formData: FormData) => {
   const supabase = await createClient();
@@ -41,10 +40,21 @@ export const signupWithPassword = async (formData: FormData) => {
 export const signInWithOAuth = async (provider: "google" | "github") => {
   const supabase = await createClient();
 
+  const getURL = () => {
+    let url =
+      process?.env?.NEXT_PUBLIC_SITE_URL ??
+      process?.env?.NEXT_PUBLIC_VERCEL_URL ??
+      "http://localhost:3000";
+
+    url = url.startsWith("http") ? url : `https://${url}`;
+    url = url.endsWith("/") ? url.slice(0, -1) : url;
+    return url;
+  };
+
   const { error, data } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${siteConfig.url}/auth/callback`,
+      redirectTo: `${getURL()}/auth/callback`,
     },
   });
 
