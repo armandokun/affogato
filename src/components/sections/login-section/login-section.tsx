@@ -3,16 +3,24 @@
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Label, Separator } from "radix-ui";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
+import { redirect } from "next/navigation";
 
 import Button from "@/components/ui/button";
 import Icons from "@/components/general/icons";
-import { loginWithPassword, signupWithPassword } from "@/app/login/actions";
 import { createClient } from "@/lib/supabase/client";
+import { DASHBOARD } from "@/constants/routes";
 
 const LoginPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+  }, [isSignUp]);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -42,9 +50,51 @@ const LoginPage = () => {
       },
     });
 
-    if (error) console.error(error);
+    if (error) setErrorMessage(error.message);
 
     setLoading(false);
+  };
+
+  const loginWithPassword = async (formData: FormData) => {
+    setErrorMessage(null);
+
+    const supabase = createClient();
+
+    const data = {
+      email: formData.get("email")!.toString(),
+      password: formData.get("password")!.toString(),
+    };
+
+    const { error } = await supabase.auth.signInWithPassword(data);
+
+    if (error) {
+      setErrorMessage(error.message);
+
+      return;
+    }
+
+    redirect(DASHBOARD);
+  };
+
+  const signupWithPassword = async (formData: FormData) => {
+    setErrorMessage(null);
+
+    const supabase = createClient();
+
+    const data = {
+      email: formData.get("email")!.toString(),
+      password: formData.get("password")!.toString(),
+    };
+
+    const { error } = await supabase.auth.signUp(data);
+
+    if (error) {
+      setErrorMessage(error.message);
+
+      return;
+    }
+
+    setSuccessMessage("Please check your email for a confirmation link.");
   };
 
   return (
@@ -81,6 +131,12 @@ const LoginPage = () => {
         <span className="text-xs text-muted-foreground">OR</span>
         <Separator.Root className="flex-1 h-px bg-border" />
       </div>
+      {errorMessage && (
+        <div className="text-red-500 text-sm mb-2">{errorMessage}</div>
+      )}
+      {successMessage && (
+        <div className="text-green-500 text-sm mb-2">{successMessage}</div>
+      )}
       <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
         <div>
           <Label.Root
