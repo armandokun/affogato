@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
+import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 import { siteConfig } from "@/lib/site";
 
@@ -45,7 +46,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-background min-h-screen`}
       >
-        {children}
+        <TooltipProvider>{children}</TooltipProvider>
       </body>
     </html>
   );
