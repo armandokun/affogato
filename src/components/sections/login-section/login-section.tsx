@@ -7,11 +7,8 @@ import React, { FormEvent, useState } from "react";
 
 import Button from "@/components/ui/button";
 import Icons from "@/components/general/icons";
-import {
-  loginWithPassword,
-  signInWithOAuth,
-  signupWithPassword,
-} from "@/app/login/actions";
+import { loginWithPassword, signupWithPassword } from "@/app/login/actions";
+import { createClient } from "@/lib/supabase/client";
 
 const LoginPage = () => {
   const [isSignUp, setIsSignUp] = useState(false);
@@ -33,6 +30,23 @@ const LoginPage = () => {
     setLoading(false);
   };
 
+  const handleOAuthSignIn = async (provider: "google" | "github") => {
+    setLoading(true);
+
+    const supabase = createClient();
+
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) console.error(error);
+
+    setLoading(false);
+  };
+
   return (
     <div className="flex flex-col justify-center mx-auto px-6 py-12 gap-8 max-w-md h-full">
       <div className="flex flex-col items-start gap-8">
@@ -48,7 +62,7 @@ const LoginPage = () => {
         <Button
           variant="outline"
           className="w-full flex gap-2 justify-center"
-          onClick={() => signInWithOAuth("google")}
+          onClick={() => handleOAuthSignIn("google")}
           disabled={loading}
         >
           <Icons.google /> Continue with Google
@@ -56,7 +70,7 @@ const LoginPage = () => {
         <Button
           variant="outline"
           className="w-full flex gap-2 justify-center"
-          onClick={() => signInWithOAuth("github")}
+          onClick={() => handleOAuthSignIn("github")}
           disabled={loading}
         >
           <GitHubLogoIcon className="size-5" /> Continue with GitHub

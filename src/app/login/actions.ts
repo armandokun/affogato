@@ -37,33 +37,6 @@ export const signupWithPassword = async (formData: FormData) => {
   redirect("/dashboard");
 };
 
-export const signInWithOAuth = async (provider: "google" | "github") => {
-  const supabase = await createClient();
-
-  const getURL = () => {
-    let url =
-      process?.env?.NEXT_PUBLIC_SITE_URL ??
-      process?.env?.NEXT_PUBLIC_VERCEL_URL ??
-      "http://localhost:3000";
-
-    url = url.startsWith("http") ? url : `https://${url}`;
-    url = url.endsWith("/") ? url.slice(0, -1) : url;
-    return url;
-  };
-
-  const { error, data } = await supabase.auth.signInWithOAuth({
-    provider,
-    options: {
-      redirectTo: `${getURL()}/auth/callback`,
-    },
-  });
-
-  if (error) redirect("/error");
-
-  revalidatePath("/", "layout");
-  redirect(data.url);
-};
-
 export const signOut = async () => {
   const supabase = await createClient();
 
