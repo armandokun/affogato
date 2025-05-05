@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { FlickeringGrid } from "./flickering-grid";
+import FlickeringGrid from "./flickering-grid";
 
 const meta: Meta<typeof FlickeringGrid> = {
   title: "UI/FlickeringGrid",

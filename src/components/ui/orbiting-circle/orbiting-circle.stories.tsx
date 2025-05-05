@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { OrbitingCircles } from "./orbiting-circle";
+import OrbitingCircles from "./orbiting-circle";
 
 const meta: Meta<typeof OrbitingCircles> = {
   title: "UI/OrbitingCircles",
