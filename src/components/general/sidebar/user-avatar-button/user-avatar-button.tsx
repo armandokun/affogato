@@ -41,7 +41,7 @@ const SidebarUserAvatarButton = () => {
               )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownAvatarContentMenu />
+          <DropdownAvatarContentMenu onClose={() => setIsOpen(false)} />
         </DropdownMenu>
       </div>
       <div className="hidden md:flex flex-col items-center">
@@ -58,7 +58,7 @@ const SidebarUserAvatarButton = () => {
               />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownAvatarContentMenu />
+          <DropdownAvatarContentMenu onClose={() => setIsOpen(false)} />
         </DropdownMenu>
       </div>
     </>

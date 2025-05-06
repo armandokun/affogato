@@ -8,19 +8,30 @@ import {
 } from "@/components/ui/dropdown-menu/dropdown-menu";
 
 import { signOut } from "@/app/login/actions";
+import { SETTINGS } from "@/constants/routes";
 
-const DropdownAvatarContentMenu = () => {
+type Props = {
+  onClose: () => void;
+};
+
+const DropdownAvatarContentMenu = ({ onClose }: Props) => {
+  const handleSignOut = async () => {
+    await signOut();
+
+    onClose();
+  };
+
   return (
     <DropdownMenuContent className="mx-4" side="top" align="end">
-      <DropdownMenuItem className="cursor-pointer">
-        <Link href="/settings" className="flex items-center gap-4 w-full">
+      <DropdownMenuItem className="cursor-pointer" onClick={onClose}>
+        <Link href={SETTINGS} className="flex items-center gap-4 w-full">
           <Settings />
           <p className="text-sm font-medium">Settings</p>
         </Link>
       </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem
-        onClick={signOut}
+        onClick={handleSignOut}
         className="flex items-center gap-4 w-full cursor-pointer"
       >
         <LogOut />
