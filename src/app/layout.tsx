@@ -4,6 +4,7 @@ import Script from "next/script";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 
 import { siteConfig } from "@/lib/site";
+import { SessionProvider } from "@/containers/SessionProvider";
 
 import "./globals.css";
 
@@ -44,9 +45,11 @@ export default function RootLayout({
       )}
 
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-background min-h-screen`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-black min-h-screen`}
       >
-        <TooltipProvider>{children}</TooltipProvider>
+        <SessionProvider>
+          <TooltipProvider>{children}</TooltipProvider>
+        </SessionProvider>
       </body>
     </html>
   );

@@ -1,14 +1,11 @@
 import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
 import LoginSection from "@/components/sections/login-section";
 import LoginTestimonialSection from "@/components/sections/login-testimonial-section";
+import { useSession } from "@/hooks/useSession";
 
-const LoginPage = async () => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+const LoginPage = () => {
+  const { user } = useSession();
 
   if (user) redirect("/dashboard");
 

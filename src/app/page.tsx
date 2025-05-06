@@ -3,13 +3,10 @@ import { redirect } from "next/navigation";
 import AnimatedGradientBackground from "@/components/general/animated-gradient-background";
 import HeroSection from "@/components/sections/hero-section";
 import Navbar from "@/components/sections/navbar";
-import { createClient } from "@/lib/supabase/server";
+import getServerSession from "@/lib/auth";
 
 const Home = async () => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerSession();
 
   if (user) redirect("/dashboard");
 

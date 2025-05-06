@@ -1,16 +1,12 @@
 import { redirect } from "next/navigation";
-
-import Button from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/server";
-
-import Icons from "@/components/general/icons";
 import { ArrowUp, Globe, Paperclip } from "lucide-react";
 
+import Button from "@/components/ui/button";
+import Icons from "@/components/general/icons";
+import getServerSession from "@/lib/auth";
+
 const DashboardPage = async () => {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const user = await getServerSession();
 
   if (!user) redirect("/login");
 
