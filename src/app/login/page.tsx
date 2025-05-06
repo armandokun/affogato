@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 
+import getServerSession from "@/lib/auth";
 import LoginSection from "@/components/sections/login-section";
 import LoginTestimonialSection from "@/components/sections/login-testimonial-section";
-import { useSession } from "@/hooks/useSession";
 
-const LoginPage = () => {
-  const { user } = useSession();
+const LoginPage = async () => {
+  const user = await getServerSession();
 
   if (user) redirect("/dashboard");
 

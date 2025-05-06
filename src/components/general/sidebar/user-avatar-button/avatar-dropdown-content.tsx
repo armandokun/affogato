@@ -16,15 +16,19 @@ type Props = {
 
 const DropdownAvatarContentMenu = ({ onClose }: Props) => {
   const handleSignOut = async () => {
-    await signOut();
-
     onClose();
+
+    await signOut();
   };
 
   return (
     <DropdownMenuContent className="mx-4" side="top" align="end">
-      <DropdownMenuItem className="cursor-pointer" onClick={onClose}>
-        <Link href={SETTINGS} className="flex items-center gap-4 w-full">
+      <DropdownMenuItem className="cursor-pointer">
+        <Link
+          href={SETTINGS}
+          className="flex items-center gap-4 w-full"
+          onClick={onClose}
+        >
           <Settings />
           <p className="text-sm font-medium">Settings</p>
         </Link>

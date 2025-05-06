@@ -1,11 +1,12 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import { ChangeEvent, FormEvent, JSX, useEffect, useState } from "react";
+
 import Input from "@/components/ui/input";
 import Button from "@/components/ui/button";
-import { useSession } from "@/containers/SessionProvider";
 import { createClient } from "@/lib/supabase/client";
+import { useSession } from "@/containers/SessionProvider";
 
 type ProviderId = "gemini" | "claude" | "chatgpt";
 
@@ -14,7 +15,7 @@ type FormState = Record<ProviderId, string>;
 type Provider = {
   id: ProviderId;
   name: string;
-  logo: React.ReactElement;
+  logo: JSX.Element;
   placeholder: string;
 };
 
@@ -94,8 +95,8 @@ const SettingsPage = () => {
     fetchKeys();
   }, [user, userLoading]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
 
     if (!PROVIDERS.map((provider) => provider.id).includes(name as ProviderId))
       return;
@@ -103,8 +104,8 @@ const SettingsPage = () => {
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
 
     if (!user) return;
 
@@ -112,13 +113,15 @@ const SettingsPage = () => {
     setSuccess("");
     setError("");
 
+    const formatApiKey = (apiKey: string) => apiKey.trim().replace(/\s+/g, "");
+
     const supabase = createClient();
     const { error } = await supabase.from("user_api_keys").upsert(
       {
         user_id: user.id,
-        gemini_api_key: form.gemini,
-        claude_api_key: form.claude,
-        chatgpt_api_key: form.chatgpt,
+        gemini_api_key: formatApiKey(form.gemini),
+        claude_api_key: formatApiKey(form.claude),
+        chatgpt_api_key: formatApiKey(form.chatgpt),
         updated_at: new Date().toISOString(),
       },
       { onConflict: "user_id" }
@@ -135,7 +138,7 @@ const SettingsPage = () => {
 
   return (
     <div className="max-w-xl mx-auto py-12 px-4">
-      <h1 className="text-3xl font-bold mb-8 text-white">
+      <h1 className="text-3xl font-semibold mb-8 text-white">
         Model Provider Settings
       </h1>
       <form className="space-y-8" onSubmit={handleSubmit}>
