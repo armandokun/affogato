@@ -8,7 +8,7 @@ const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   if (!user.user) return;
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen flex-col md:flex-row">
       <AppSidebar user={user.user} />
       <div className="flex-1">{children}</div>
     </div>
