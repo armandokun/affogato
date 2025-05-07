@@ -1,9 +1,8 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { motion } from "motion/react";
 import { ArrowUp, Clock, Globe, Paperclip } from "lucide-react";
-import { useMemo } from "react";
-import { motion } from "framer-motion";
 
 import Button from "@/components/ui/button";
 import { useSession } from "@/containers/SessionProvider";
@@ -15,19 +14,12 @@ const ChatPage = () => {
     });
   const { user } = useSession();
 
-  const hasMessages = useMemo(
-    () => messages && messages.length > 0,
-    [messages]
-  );
+  const hasMessages = messages.length > 0;
 
   return (
-    <div
-      className={`flex flex-col w-full h-full transition-all duration-300 overflow-y-auto ${
-        hasMessages ? "justify-start" : "justify-center"
-      }`}
-    >
+    <div className="flex flex-col size-full">
       {hasMessages && (
-        <header className="hidden md:flex w-full items-center justify-between border-b border-border p-2 px-4 relative mb-2">
+        <header className="hidden md:flex items-center justify-between border-b border-border px-4 relative h-14">
           <div className="flex items-center gap-2">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
@@ -48,12 +40,22 @@ const ChatPage = () => {
               DoorDash announces $5 billion deals amid strong...
             </p>
           </div>
-          <div className="flex items-center gap-2"></div>
         </header>
       )}
-      <div className="flex-1 flex flex-col bg-background rounded-lg overflow-y-auto relative">
+      <motion.main
+        className="transition-all duration-300 overflow-y-auto mb-10"
+        initial={false}
+        animate={
+          hasMessages
+            ? { height: "90%", overflowY: "auto" }
+            : { height: "50%", overflow: "hidden" }
+        }
+        transition={{
+          duration: 0,
+        }}
+      >
         {hasMessages && (
-          <div className="flex-1 w-full max-w-2xl mx-auto px-2 sm:px-0 py-4">
+          <div className="w-full max-w-2xl mx-auto px-0 md:px-2 py-4 mb-10">
             {messages.map((message) => (
               <div
                 key={message.id}
@@ -73,56 +75,47 @@ const ChatPage = () => {
             {error && <div className="text-red-500">{error.message}</div>}
           </div>
         )}
-        <motion.div
-          className="w-full max-w-2xl mx-auto px-2 sm:px-0 z-10 absolute left-1/2 -translate-x-1/2"
-          animate={
-            hasMessages
-              ? { top: "auto", bottom: 32, y: 0 }
-              : { top: "50%", bottom: "auto", y: "-50%" }
-          }
-          initial={false}
-          transition={{ type: "spring", stiffness: 400, damping: 30 }}
+      </motion.main>
+      <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[40px]">
+        <form
+          onSubmit={handleSubmit}
+          className="flex items-center gap-2 w-full max-w-2xl bg-background border border-[#232329] rounded-full shadow-lg p-2 px-4 absolute bottom-2"
         >
-          <form
-            onSubmit={handleSubmit}
-            className="flex items-center gap-2 w-full bg-background border border-[#232329] rounded-full shadow-lg p-2 px-4"
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full text-muted-foreground"
+            type="button"
+            tabIndex={-1}
           >
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full text-muted-foreground"
-              type="button"
-              tabIndex={-1}
-            >
-              <Globe className="w-5 h-5" />
-            </Button>
-            <input
-              value={input}
-              onChange={handleInputChange}
-              placeholder="Klausti bet ko"
-              className="flex-1 bg-transparent outline-none px-2 py-3 text-lg text-white placeholder:text-muted-foreground rounded-full"
-              disabled={isLoading}
-            />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-full text-muted-foreground"
-              type="button"
-              tabIndex={-1}
-            >
-              <Paperclip className="w-5 h-5" />
-            </Button>
-            <Button
-              size="icon"
-              className="rounded-full"
-              type="submit"
-              disabled={isLoading || !input.trim()}
-            >
-              <ArrowUp className="w-5 h-5" />
-            </Button>
-          </form>
-        </motion.div>
-      </div>
+            <Globe className="size-5" />
+          </Button>
+          <input
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Klausti bet ko"
+            className="flex-1 outline-none px-2 py-3 text-md text-white placeholder:text-muted-foreground rounded-full"
+            disabled={isLoading}
+          />
+          <Button
+            variant="ghost"
+            size="icon"
+            className="rounded-full text-muted-foreground"
+            type="button"
+            tabIndex={-1}
+          >
+            <Paperclip className="size-5" />
+          </Button>
+          <Button
+            size="icon"
+            className="rounded-full"
+            type="submit"
+            disabled={isLoading || !input.trim()}
+          >
+            <ArrowUp className="size-5" />
+          </Button>
+        </form>
+      </footer>
     </div>
   );
 };
