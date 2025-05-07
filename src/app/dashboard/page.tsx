@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { motion } from "motion/react";
-import { ArrowUp, Clock, Globe, Paperclip } from "lucide-react";
+import { ArrowUp, Clock, Globe, Paperclip, Square } from "lucide-react";
 import { useRef, useEffect, useId } from "react";
 
 import Button from "@/components/ui/button";
@@ -17,6 +17,7 @@ const ChatPage = () => {
     handleSubmit,
     error,
     status,
+    stop,
     setMessages,
   } = useChat({
     api: "/api/chat",
@@ -162,14 +163,25 @@ const ChatPage = () => {
           >
             <Paperclip className="size-5" />
           </Button>
-          <Button
-            size="icon"
-            className="rounded-full"
-            type="submit"
-            disabled={!input.trim()}
-          >
-            <ArrowUp className="size-5" />
-          </Button>
+          {status === "streaming" || status === "submitted" ? (
+            <Button
+              size="icon"
+              className="rounded-full"
+              type="button"
+              onClick={stop}
+            >
+              <Square className="size-4" fill="black" />
+            </Button>
+          ) : (
+            <Button
+              size="icon"
+              className="rounded-full"
+              type="submit"
+              disabled={!input.trim()}
+            >
+              <ArrowUp className="size-5" />
+            </Button>
+          )}
         </form>
       </footer>
     </div>
