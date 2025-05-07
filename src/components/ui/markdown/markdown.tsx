@@ -117,29 +117,46 @@ const components: Partial<Components> = {
     <hr className="my-6 border-t border-muted-foreground" {...props} />
   ),
   table: ({ children, ...props }) => (
-    <div className="overflow-x-auto my-4">
-      <table className="min-w-full border-collapse table-auto" {...props}>
+    <div className="relative overflow-x-auto my-4">
+      <table
+        className="w-full text-sm text-left text-zinc-200 rounded-lg"
+        {...props}
+      >
         {children}
       </table>
     </div>
   ),
-  thead: ({ children, ...props }) => <thead {...props}>{children}</thead>,
+  thead: ({ children, ...props }) => (
+    <thead
+      className="text-xs uppercase text-zinc-400 border-b border-zinc-700"
+      {...props}
+    >
+      {children}
+    </thead>
+  ),
   tbody: ({ children, ...props }) => <tbody {...props}>{children}</tbody>,
   tr: ({ children, ...props }) => (
-    <tr className="border-b border-zinc-700 last:border-0" {...props}>
+    <tr
+      className="border-b border-zinc-700 hover:bg-zinc-800 transition-colors"
+      {...props}
+    >
       {children}
     </tr>
   ),
   th: ({ children, ...props }) => (
     <th
-      className="px-4 py-1 text-left font-semibold text-white text-sm border-0 border-b border-zinc-400"
+      scope="col"
+      className="px-6 py-3 font-semibold text-white whitespace-nowrap border-0"
       {...props}
     >
       {children}
     </th>
   ),
   td: ({ children, ...props }) => (
-    <td className="px-4 py-2 text-zinc-100 text-sm border-0" {...props}>
+    <td
+      className="px-6 py-4 text-zinc-100 whitespace-nowrap border-0"
+      {...props}
+    >
       {children}
     </td>
   ),
