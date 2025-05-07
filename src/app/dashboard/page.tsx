@@ -43,7 +43,7 @@ const ChatPage = () => {
           {
             id: placeholderId,
             role: "assistant",
-            content: "AI is thinking...",
+            content: "Thinking...",
           },
         ]);
       }
@@ -112,16 +112,16 @@ const ChatPage = () => {
                   key={message.id}
                   className={`mb-4 text-white ${
                     message.role === "user" ? "text-right" : "text-left"
-                  }${isLast && isAI ? " min-h-96" : ""} ${
-                    isPlaceholder ? "animate-pulse" : ""
-                  }`}
+                  }${isLast && isAI ? " min-h-96" : ""}`}
                 >
                   <span className="font-bold mr-2">
                     {message.role === "user" ? "You:" : "AI:"}
                   </span>
                   <span
                     className={
-                      isPlaceholder ? "text-muted-foreground" : undefined
+                      isPlaceholder
+                        ? "text-muted-foreground animate-pulse"
+                        : undefined
                     }
                   >
                     {message.content}
