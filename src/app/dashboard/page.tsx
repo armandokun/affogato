@@ -6,6 +6,7 @@ import { ArrowUp, Clock, Globe, Paperclip } from "lucide-react";
 
 import Button from "@/components/ui/button";
 import { useSession } from "@/containers/SessionProvider";
+import { cn } from "@/lib/utils";
 
 const ChatPage = () => {
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } =
@@ -43,7 +44,7 @@ const ChatPage = () => {
         </header>
       )}
       <motion.main
-        className="transition-all duration-300 overflow-y-auto mb-10"
+        className="transition-all duration-300 overflow-y-auto"
         initial={false}
         animate={
           hasMessages
@@ -55,7 +56,12 @@ const ChatPage = () => {
         }}
       >
         {hasMessages && (
-          <div className="w-full max-w-2xl mx-auto px-0 md:px-2 py-4 mb-10">
+          <div
+            className={cn(
+              "w-full max-w-2xl mx-auto px-0 md:px-2 py-4",
+              hasMessages && "mb-10"
+            )}
+          >
             {messages.map((message) => (
               <div
                 key={message.id}
