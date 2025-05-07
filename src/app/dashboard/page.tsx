@@ -6,6 +6,7 @@ import { ArrowUp, Clock, Globe, Paperclip, Square } from "lucide-react";
 import { useRef, useEffect, useId } from "react";
 
 import Button from "@/components/ui/button";
+import Markdown from "@/components/ui/markdown";
 import { useSession } from "@/containers/SessionProvider";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +35,7 @@ const ChatPage = () => {
       top: mainRef.current.scrollHeight,
       behavior: "smooth",
     });
-  }, [messages]);
+  }, [messages.length]);
 
   useEffect(() => {
     if (status === "submitted") {
@@ -119,13 +120,11 @@ const ChatPage = () => {
                     {message.role === "user" ? "You:" : "AI:"}
                   </span>
                   <span
-                    className={
-                      isPlaceholder
-                        ? "text-muted-foreground animate-pulse"
-                        : undefined
-                    }
+                    className={`${
+                      isPlaceholder ? "text-muted-foreground animate-pulse" : ""
+                    }`}
                   >
-                    {message.content}
+                    <Markdown>{message.content}</Markdown>
                   </span>
                 </div>
               );

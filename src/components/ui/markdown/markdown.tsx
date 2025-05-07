@@ -1,110 +1,136 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { cn } from "@/lib/utils";
-import { marked } from "marked";
-import { memo, useId, useMemo } from "react";
-import ReactMarkdown, { Components } from "react-markdown";
+"use client";
+
+import Link from "next/link";
+import { memo } from "react";
+import ReactMarkdown, { type Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
-import {
-  CodeBlock,
-  CodeBlockCode,
-} from "@/components/ui/code-block/code-block";
 
-export type MarkdownProps = {
-  children: string;
-  id?: string;
-  className?: string;
-  components?: Partial<Components>;
-};
-
-function parseMarkdownIntoBlocks(markdown: string): string[] {
-  const tokens = marked.lexer(markdown);
-  return tokens.map((token: any) => token.raw);
-}
-
-function extractLanguage(className?: string): string {
-  if (!className) return "plaintext";
-  const match = className.match(/language-(\w+)/);
-  return match ? match[1] : "plaintext";
-}
-
-const INITIAL_COMPONENTS: Partial<Components> = {
-  code: function CodeComponent({ className, children, ...props }: any) {
-    const isInline =
-      !props.node?.position?.start.line ||
-      props.node?.position?.start.line === props.node?.position?.end.line;
-
-    if (isInline) {
+const components: Partial<Components> = {
+  h1: ({ children, ...props }) => (
+    <h1 className="text-3xl font-semibold mt-6 mb-2 text-white" {...props}>
+      {children}
+    </h1>
+  ),
+  h2: ({ children, ...props }) => (
+    <h2 className="text-2xl font-semibold mt-6 mb-2 text-white" {...props}>
+      {children}
+    </h2>
+  ),
+  h3: ({ children, ...props }) => (
+    <h3 className="text-xl font-semibold mt-6 mb-2 text-white" {...props}>
+      {children}
+    </h3>
+  ),
+  h4: ({ children, ...props }) => (
+    <h4 className="text-lg font-semibold mt-6 mb-2 text-white" {...props}>
+      {children}
+    </h4>
+  ),
+  h5: ({ children, ...props }) => (
+    <h5 className="text-base font-semibold mt-6 mb-2 text-white" {...props}>
+      {children}
+    </h5>
+  ),
+  h6: ({ children, ...props }) => (
+    <h6 className="text-sm font-semibold mt-6 mb-2 text-white" {...props}>
+      {children}
+    </h6>
+  ),
+  p: ({ children, ...props }) => (
+    <p className="mb-4 leading-relaxed text-base" {...props}>
+      {children}
+    </p>
+  ),
+  ol: ({ children, ...props }) => (
+    <ol
+      className="list-decimal list-outside ml-4 mb-4 text-zinc-200"
+      {...props}
+    >
+      {children}
+    </ol>
+  ),
+  ul: ({ children, ...props }) => (
+    <ul className="list-disc list-outside ml-4 mb-4 text-zinc-200" {...props}>
+      {children}
+    </ul>
+  ),
+  li: ({ children, ...props }) => (
+    <li className="py-1 text-zinc-200" {...props}>
+      {children}
+    </li>
+  ),
+  blockquote: ({ children, ...props }) => (
+    <blockquote
+      className="border-l-4 border-muted-foreground pl-4 italic text-muted-foreground my-4"
+      {...props}
+    >
+      {children}
+    </blockquote>
+  ),
+  code: (props) => {
+    // @ts-expect-error: react-markdown passes extra props, but we only care about inline and children
+    const { inline, children, ...rest } = props;
+    if (inline) {
       return (
-        <span
-          className={cn(
-            "bg-primary-foreground rounded-sm px-1 font-mono text-sm",
-            className
-          )}
-          {...props}
+        <code
+          className="text-sm bg-zinc-100 dark:bg-zinc-800 py-0.5 px-1 rounded-md text-muted-foreground"
+          {...rest}
         >
           {children}
-        </span>
+        </code>
       );
     }
-
-    const language = extractLanguage(className);
-
     return (
-      <CodeBlock className={className}>
-        <CodeBlockCode code={children as string} language={language} />
-      </CodeBlock>
+      <div className="not-prose flex flex-col my-4">
+        <pre
+          className="text-sm w-full overflow-x-auto bg-zinc-100 dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-zinc-50 whitespace-pre-wrap break-words font-mono"
+          {...(rest as React.HTMLAttributes<HTMLPreElement>)}
+        >
+          <code>{children}</code>
+        </pre>
+      </div>
     );
   },
-  pre: function PreComponent({ children }: any) {
-    return <>{children}</>;
-  },
+  pre: ({ children }) => <>{children}</>,
+  strong: ({ children, ...props }) => (
+    <span className="font-semibold text-white" {...props}>
+      {children}
+    </span>
+  ),
+  em: ({ children, ...props }) => (
+    <em className="italic text-foreground" {...props}>
+      {children}
+    </em>
+  ),
+  a: ({ children, ...props }) => (
+    // @ts-expect-error External Link props for Next.js Link
+    <Link
+      className="text-blue-500 hover:underline break-all"
+      target="_blank"
+      rel="noreferrer"
+      {...props}
+    >
+      {children}
+    </Link>
+  ),
+  hr: (props) => (
+    <hr className="my-6 border-t border-muted-foreground" {...props} />
+  ),
 };
 
-const MemoizedMarkdownBlock = memo(
-  function MarkdownBlock({
-    content,
-    components = INITIAL_COMPONENTS,
-  }: {
-    content: string;
-    components?: Partial<Components>;
-  }) {
-    return (
-      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-        {content}
-      </ReactMarkdown>
-    );
-  },
-  function propsAreEqual(prevProps: any, nextProps: any) {
-    return prevProps.content === nextProps.content;
-  }
-);
+const remarkPlugins = [remarkGfm];
 
-MemoizedMarkdownBlock.displayName = "MemoizedMarkdownBlock";
-
-function MarkdownComponent({
-  children,
-  id,
-  className,
-  components = INITIAL_COMPONENTS,
-}: MarkdownProps) {
-  const generatedId = useId();
-  const blockId = id ?? generatedId;
-  const blocks = useMemo(() => parseMarkdownIntoBlocks(children), [children]);
-
+const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   return (
-    <div className={className}>
-      {blocks.map((block, index) => (
-        <MemoizedMarkdownBlock
-          key={`${blockId}-block-${index}`}
-          content={block}
-          components={components}
-        />
-      ))}
-    </div>
+    <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
+      {children}
+    </ReactMarkdown>
   );
-}
+};
 
-const Markdown = memo(MarkdownComponent);
-Markdown.displayName = "Markdown";
+const Markdown = memo(
+  NonMemoizedMarkdown,
+  (prevProps, nextProps) => prevProps.children === nextProps.children
+);
 
 export default Markdown;
