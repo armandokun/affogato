@@ -3,17 +3,56 @@
 import { useChat } from "@ai-sdk/react";
 import { motion } from "motion/react";
 import { ArrowUp, Clock, Globe, Paperclip } from "lucide-react";
+import { useRef, useEffect, useId } from "react";
 
 import Button from "@/components/ui/button";
 import { useSession } from "@/containers/SessionProvider";
 import { cn } from "@/lib/utils";
 
 const ChatPage = () => {
-  const { messages, input, handleInputChange, handleSubmit, isLoading, error } =
-    useChat({
-      api: "/api/chat",
-    });
+  const {
+    messages,
+    input,
+    handleInputChange,
+    handleSubmit,
+    error,
+    status,
+    setMessages,
+  } = useChat({
+    api: "/api/chat",
+  });
   const { user } = useSession();
+  const placeholderId = useId();
+
+  const mainRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!mainRef.current) return;
+
+    mainRef.current.scrollTo({
+      top: mainRef.current.scrollHeight,
+      behavior: "smooth",
+    });
+  }, [messages]);
+
+  useEffect(() => {
+    if (status === "submitted") {
+      if (!messages.some((m) => m.id === placeholderId)) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: placeholderId,
+            role: "assistant",
+            content: "AI is thinking...",
+          },
+        ]);
+      }
+    } else {
+      if (messages.some((m) => m.id === placeholderId)) {
+        setMessages((prev) => prev.filter((m) => m.id !== placeholderId));
+      }
+    }
+  }, [messages, placeholderId, setMessages, status]);
 
   const hasMessages = messages.length > 0;
 
@@ -54,6 +93,7 @@ const ChatPage = () => {
         transition={{
           duration: 0,
         }}
+        ref={mainRef}
       >
         {hasMessages && (
           <div
@@ -62,22 +102,33 @@ const ChatPage = () => {
               hasMessages && "mb-10"
             )}
           >
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`mb-4 text-white ${
-                  message.role === "user" ? "text-right" : "text-left"
-                }`}
-              >
-                <span className="font-bold mr-2">
-                  {message.role === "user" ? "You:" : "AI:"}
-                </span>
-                <span>{message.content}</span>
-              </div>
-            ))}
-            {isLoading && (
-              <div className="text-muted-foreground">AI is typing...</div>
-            )}
+            {messages.map((message, id) => {
+              const isLast = id === messages.length - 1;
+              const isAI = message.role !== "user";
+              const isPlaceholder = message.id === placeholderId;
+
+              return (
+                <div
+                  key={message.id}
+                  className={`mb-4 text-white ${
+                    message.role === "user" ? "text-right" : "text-left"
+                  }${isLast && isAI ? " min-h-96" : ""} ${
+                    isPlaceholder ? "animate-pulse" : ""
+                  }`}
+                >
+                  <span className="font-bold mr-2">
+                    {message.role === "user" ? "You:" : "AI:"}
+                  </span>
+                  <span
+                    className={
+                      isPlaceholder ? "text-muted-foreground" : undefined
+                    }
+                  >
+                    {message.content}
+                  </span>
+                </div>
+              );
+            })}
             {error && <div className="text-red-500">{error.message}</div>}
           </div>
         )}
@@ -101,7 +152,6 @@ const ChatPage = () => {
             onChange={handleInputChange}
             placeholder="Klausti bet ko"
             className="flex-1 outline-none px-2 py-3 text-md text-white placeholder:text-muted-foreground rounded-full"
-            disabled={isLoading}
           />
           <Button
             variant="ghost"
@@ -116,7 +166,7 @@ const ChatPage = () => {
             size="icon"
             className="rounded-full"
             type="submit"
-            disabled={isLoading || !input.trim()}
+            disabled={!input.trim()}
           >
             <ArrowUp className="size-5" />
           </Button>
