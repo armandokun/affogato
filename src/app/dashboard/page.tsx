@@ -111,6 +111,7 @@ const ChatPage = () => {
 
     const tempId = `${Date.now()}-${Math.random()}`;
     userMessageQueue.current.push(tempId);
+
     setMessageModels((prev) => ({
       ...prev,
       [tempId]: selectedModel,

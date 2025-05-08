@@ -1,5 +1,4 @@
-import { LogOut, Settings } from "lucide-react";
-import Link from "next/link";
+import { LogOut } from "lucide-react";
 
 import {
   DropdownMenuContent,
@@ -8,7 +7,6 @@ import {
 } from "@/components/ui/dropdown-menu/dropdown-menu";
 
 import { signOut } from "@/app/login/actions";
-import { SETTINGS } from "@/constants/routes";
 
 type Props = {
   onClose: () => void;
@@ -23,16 +21,6 @@ const DropdownAvatarContentMenu = ({ onClose }: Props) => {
 
   return (
     <DropdownMenuContent className="mx-4" side="top" align="end">
-      <DropdownMenuItem className="cursor-pointer">
-        <Link
-          href={SETTINGS}
-          className="flex items-center gap-4 w-full"
-          onClick={onClose}
-        >
-          <Settings />
-          <p className="text-sm font-medium">Settings</p>
-        </Link>
-      </DropdownMenuItem>
       <DropdownMenuSeparator />
       <DropdownMenuItem
         onClick={handleSignOut}
