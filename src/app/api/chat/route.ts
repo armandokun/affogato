@@ -1,7 +1,12 @@
-import { type Message, createDataStreamResponse, streamText } from "ai";
+import {
+  type Message,
+  createDataStreamResponse,
+  smoothStream,
+  streamText,
+} from "ai";
 import { NextResponse } from "next/server";
 import getServerSession from "@/lib/auth";
-import { myProvider } from "@/lib/ai/providers";
+import { LanguageModel, myProvider } from "@/lib/ai/providers";
 
 export const maxDuration = 60;
 
@@ -26,27 +31,22 @@ export async function POST(request: Request) {
       .find((m) => m.role === "user" && m.data && m.data.model);
 
     const selectedChatModel =
-      lastUserMessageWithModel?.data?.model || "openai-chat-model-small";
-
-    // Debug transform that logs every message
-    function debugTransform() {
-      return new TransformStream({
-        transform(msg, controller) {
-          console.log("Transform saw message:", msg);
-          controller.enqueue(msg);
-        },
-      });
-    }
+      lastUserMessageWithModel?.data?.model ||
+      LanguageModel.OPENAI_CHAT_MODEL_FAST;
 
     return createDataStreamResponse({
       execute: (dataStream) => {
-        console.log("Calling streamText with model:", selectedChatModel);
+        console.log(
+          "Calling streamText with model:",
+          myProvider.languageModel(selectedChatModel).modelId
+        );
+
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
           system: "You are a helpful assistant.",
           messages,
           maxSteps: 5,
-          experimental_transform: [debugTransform],
+          experimental_transform: smoothStream({ chunking: "word" }),
         });
 
         result.mergeIntoDataStream(dataStream, {

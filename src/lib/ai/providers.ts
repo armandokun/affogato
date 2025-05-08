@@ -21,12 +21,12 @@ export enum LanguageModel {
 export const myProvider = customProvider({
   languageModels: {
     [LanguageModel.OPENAI_CHAT_MODEL_FAST]: openai("gpt-4o-mini"),
-    [LanguageModel.OPENAI_CHAT_MODEL_LARGE]: openai("gpt-4"),
+    [LanguageModel.OPENAI_CHAT_MODEL_LARGE]: openai("gpt-4o"),
     [LanguageModel.ANTHROPIC_CHAT_MODEL_FAST]: anthropic(
       "claude-3-5-haiku-latest"
     ),
     [LanguageModel.ANTHROPIC_CHAT_MODEL_LATEST]: anthropic(
-      "claude-3-7-sonnet-latest"
+      "claude-3-7-sonnet-20250219"
     ),
     [LanguageModel.OPENAI_TITLE_MODEL]: openai("gpt-4-turbo"),
   },
