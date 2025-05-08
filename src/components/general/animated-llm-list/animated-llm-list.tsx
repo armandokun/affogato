@@ -3,8 +3,6 @@
 import Image from "next/image";
 import { cubicBezier, motion } from "framer-motion";
 
-import { cn } from "@/lib/utils";
-
 const AnimatedLlmItem = ({
   variant,
   llmName,
@@ -24,7 +22,6 @@ const AnimatedLlmItem = ({
           width={48}
           height={48}
           priority
-          className={cn(llmName === "chatgpt" && "invert")}
         />
       </div>
     </motion.div>

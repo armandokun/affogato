@@ -2,24 +2,60 @@
 
 import { useChat } from "@ai-sdk/react";
 import { motion } from "motion/react";
-import { ArrowUp, Clock, Globe, Paperclip, Square } from "lucide-react";
-import { useRef, useEffect, useId } from "react";
+import { ArrowUp, Clock, Paperclip, Square } from "lucide-react";
+import { useRef, useEffect, useId, useState } from "react";
+import Image from "next/image";
 
 import Button from "@/components/ui/button";
-import Markdown from "@/components/ui/markdown";
 import { useSession } from "@/containers/SessionProvider";
 import { cn } from "@/lib/utils";
+import Message from "@/components/general/message";
+import { LanguageModel } from "@/lib/ai/providers";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+} from "@/components/ui/dropdown-menu/dropdown-menu";
+
+const modelOptions = [
+  {
+    value: LanguageModel.OPENAI_CHAT_MODEL_FAST,
+    label: "4o-mini",
+    description: "Fast, cost-effective, and great for most tasks.",
+    logo: "/llm-icons/chatgpt.png",
+  },
+  {
+    value: LanguageModel.OPENAI_CHAT_MODEL_LARGE,
+    label: "4o",
+    description: "More accurate, better reasoning, slower.",
+    logo: "/llm-icons/chatgpt.png",
+  },
+  {
+    value: LanguageModel.ANTHROPIC_CHAT_MODEL_FAST,
+    label: "3.5 Haiku",
+    description: "Anthropic's fast model, good for general use.",
+    logo: "/llm-icons/claude.png",
+  },
+  {
+    value: LanguageModel.ANTHROPIC_CHAT_MODEL_LATEST,
+    label: "3.7 Sonnet",
+    description: "Anthropic's latest and most capable model.",
+    logo: "/llm-icons/claude.png",
+  },
+];
 
 const ChatPage = () => {
   const {
     messages,
     input,
     handleInputChange,
-    handleSubmit,
+    append,
     error,
     status,
     stop,
     setMessages,
+    setInput,
   } = useChat({
     api: "/api/chat",
   });
@@ -27,6 +63,14 @@ const ChatPage = () => {
   const placeholderId = useId();
 
   const mainRef = useRef<HTMLDivElement | null>(null);
+
+  const [selectedModel, setSelectedModel] = useState(
+    LanguageModel.OPENAI_CHAT_MODEL_FAST
+  );
+  const [messageModels, setMessageModels] = useState<{ [id: string]: string }>(
+    {}
+  );
+  const userMessageQueue = useRef<string[]>([]);
 
   useEffect(() => {
     if (!mainRef.current) return;
@@ -57,6 +101,41 @@ const ChatPage = () => {
   }, [messages, placeholderId, setMessages, status]);
 
   const hasMessages = messages.length > 0;
+
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!input.trim()) return;
+
+    setInput("");
+
+    const tempId = `${Date.now()}-${Math.random()}`;
+    userMessageQueue.current.push(tempId);
+    setMessageModels((prev) => ({
+      ...prev,
+      [tempId]: selectedModel,
+    }));
+
+    await append({
+      id: tempId,
+      role: "user",
+      content: input,
+      data: {
+        model: selectedModel,
+      },
+    });
+  };
+
+  const getModelForAssistantMessage = (messages: unknown[], id: number) => {
+    for (let i = id - 1; i >= 0; i--) {
+      const msg = messages[i] as { role?: string; id?: string };
+      if (msg.role === "user" && msg.id) {
+        return messageModels[msg.id];
+      }
+    }
+
+    return undefined;
+  };
 
   return (
     <div className="flex flex-col size-full">
@@ -109,6 +188,14 @@ const ChatPage = () => {
               const isAI = message.role !== "user";
               const isPlaceholder = message.id === placeholderId;
 
+              // For assistant messages, find the model used for the previous user message
+              let modelForMessage = undefined;
+              if (message.role === "assistant") {
+                modelForMessage = getModelForAssistantMessage(messages, id);
+              } else if (message.role === "user") {
+                modelForMessage = messageModels[message.id];
+              }
+
               return (
                 <div
                   key={message.id}
@@ -116,16 +203,15 @@ const ChatPage = () => {
                     message.role === "user" ? "text-right" : "text-left"
                   }${isLast && isAI ? " min-h-96" : ""}`}
                 >
-                  <span className="font-bold mr-2">
-                    {message.role === "user" ? "You:" : "AI:"}
-                  </span>
-                  <span
-                    className={`${
-                      isPlaceholder ? "text-muted-foreground animate-pulse" : ""
-                    }`}
-                  >
-                    <Markdown>{message.content}</Markdown>
-                  </span>
+                  <Message
+                    message={{
+                      ...message,
+                      ...(modelForMessage !== undefined
+                        ? { data: { model: modelForMessage } }
+                        : { data: undefined }),
+                    }}
+                    isPlaceholder={isPlaceholder}
+                  />
                 </div>
               );
             })}
@@ -135,22 +221,59 @@ const ChatPage = () => {
       </motion.main>
       <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[40px]">
         <form
-          onSubmit={handleSubmit}
+          onSubmit={handleSend}
           className="flex items-center gap-2 w-full max-w-2xl bg-background border border-[#232329] rounded-full shadow-lg p-2 px-4 absolute bottom-2"
         >
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full text-muted-foreground"
-            type="button"
-            tabIndex={-1}
-          >
-            <Globe className="size-5" />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                type="button"
+                className="bg-muted text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer"
+              >
+                <Image
+                  src={
+                    modelOptions.find((opt) => opt.value === selectedModel)
+                      ?.logo || ""
+                  }
+                  alt="Model logo"
+                  width={20}
+                  height={20}
+                  className="inline-block"
+                />
+                {modelOptions.find((opt) => opt.value === selectedModel)?.label}
+                <span className="ml-2">&#9662;</span>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent side="top" align="start" className="w-72">
+              {modelOptions.map((option) => (
+                <DropdownMenuItem
+                  key={option.value}
+                  onSelect={() => setSelectedModel(option.value)}
+                  className={`flex items-center gap-4 cursor-pointer ${
+                    selectedModel === option.value ? "bg-muted" : ""
+                  }`}
+                >
+                  <Image
+                    src={option.logo}
+                    alt={`${option.label} logo`}
+                    width={20}
+                    height={20}
+                    className="inline-block"
+                  />
+                  <div>
+                    <div className="font-semibold">{option.label}</div>
+                    <div className="text-xs text-muted-foreground">
+                      {option.description}
+                    </div>
+                  </div>
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
           <input
             value={input}
             onChange={handleInputChange}
-            placeholder="Klausti bet ko"
+            placeholder="How can I help you today?"
             className="flex-1 outline-none px-2 py-3 text-md text-white placeholder:text-muted-foreground rounded-full"
           />
           <Button

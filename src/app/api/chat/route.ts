@@ -1,12 +1,11 @@
-import { streamText } from "ai";
-import { createOpenAI } from "@ai-sdk/openai";
-
+import { type Message, createDataStreamResponse, streamText } from "ai";
+import { NextResponse } from "next/server";
 import getServerSession from "@/lib/auth";
-import { createClient } from "@/lib/supabase/server";
+import { myProvider } from "@/lib/ai/providers";
 
-export const maxDuration = 30;
+export const maxDuration = 60;
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
     const user = await getServerSession();
 
@@ -16,45 +15,49 @@ export async function POST(req: Request) {
       });
     }
 
-    const supabase = await createClient();
-    const { data: apiKeys, error } = await supabase
-      .from("user_api_keys")
-      .select("gemini_api_key, claude_api_key, chatgpt_api_key")
-      .eq("user_id", user.id)
-      .single();
+    const {
+      messages,
+    }: {
+      messages: Array<Message & { data?: { model?: string } }>;
+    } = await request.json();
 
-    if (error) {
-      return new Response(
-        JSON.stringify({ error: "Failed to fetch API keys" }),
-        {
-          status: 500,
-        }
-      );
+    const lastUserMessageWithModel = [...messages]
+      .reverse()
+      .find((m) => m.role === "user" && m.data && m.data.model);
+
+    const selectedChatModel =
+      lastUserMessageWithModel?.data?.model || "openai-chat-model-small";
+
+    // Debug transform that logs every message
+    function debugTransform() {
+      return new TransformStream({
+        transform(msg, controller) {
+          console.log("Transform saw message:", msg);
+          controller.enqueue(msg);
+        },
+      });
     }
 
-    // For now, just log the keys (do not expose in production!)
-    // console.log(apiKeys);
-    // TODO: Use the correct key for the selected model (OpenAI, Gemini, Claude)
+    return createDataStreamResponse({
+      execute: (dataStream) => {
+        console.log("Calling streamText with model:", selectedChatModel);
+        const result = streamText({
+          model: myProvider.languageModel(selectedChatModel),
+          system: "You are a helpful assistant.",
+          messages,
+          maxSteps: 5,
+          experimental_transform: [debugTransform],
+        });
 
-    // Use the user's ChatGPT API key if available, otherwise fallback to env
-    const openai = createOpenAI({
-      apiKey: apiKeys?.chatgpt_api_key || process.env.OPENAI_API_KEY,
+        result.mergeIntoDataStream(dataStream, {
+          sendReasoning: true,
+        });
+      },
+      onError: () => {
+        return "Oops, an error occured!";
+      },
     });
-
-    const { messages } = await req.json();
-
-    const result = streamText({
-      model: openai("gpt-4o-mini"),
-      system: "You are a helpful assistant.",
-      messages,
-    });
-
-    return result.toDataStreamResponse();
   } catch (error) {
-    console.error(error);
-
-    return new Response(JSON.stringify({ error: "Internal server error" }), {
-      status: 500,
-    });
+    return NextResponse.json({ error }, { status: 400 });
   }
 }

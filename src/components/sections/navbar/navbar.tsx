@@ -19,6 +19,7 @@ const Navbar = () => {
     const unsubscribe = scrollY.on("change", (latest) => {
       setHasScrolled(latest > 10);
     });
+
     return unsubscribe;
   }, [scrollY]);
 
