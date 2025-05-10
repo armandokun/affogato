@@ -250,9 +250,7 @@ const ChatPage = () => {
                 <DropdownMenuItem
                   key={option.value}
                   onSelect={() => setSelectedModel(option.value)}
-                  className={`flex items-center gap-4 cursor-pointer ${
-                    selectedModel === option.value ? "bg-muted" : ""
-                  }`}
+                  className="flex items-center gap-4 cursor-pointer mb-1"
                 >
                   <Image
                     src={option.logo}
