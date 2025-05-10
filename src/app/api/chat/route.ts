@@ -5,8 +5,10 @@ import {
   streamText,
 } from "ai";
 import { NextResponse } from "next/server";
+
 import getServerSession from "@/lib/auth";
 import { LanguageModel, myProvider } from "@/lib/ai/providers";
+import { systemPrompt } from "@/lib/ai/prompts";
 
 export const maxDuration = 60;
 
@@ -36,14 +38,11 @@ export async function POST(request: Request) {
 
     return createDataStreamResponse({
       execute: (dataStream) => {
-        console.log(
-          "Calling streamText with model:",
-          myProvider.languageModel(selectedChatModel).modelId
-        );
-
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: "You are a helpful assistant.",
+          system: systemPrompt({
+            selectedChatModel: selectedChatModel as LanguageModel,
+          }),
           messages,
           maxSteps: 5,
           experimental_transform: smoothStream({ chunking: "word" }),

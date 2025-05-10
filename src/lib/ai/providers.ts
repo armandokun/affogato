@@ -31,3 +31,30 @@ export const myProvider = customProvider({
     [LanguageModel.OPENAI_TITLE_MODEL]: openai("gpt-4-turbo"),
   },
 });
+
+export const modelDropdownOptions = [
+  {
+    value: LanguageModel.OPENAI_CHAT_MODEL_FAST,
+    label: "4o-mini",
+    description: "Fast, cost-effective, and great for most tasks.",
+    logo: "/llm-icons/chatgpt.png",
+  },
+  {
+    value: LanguageModel.OPENAI_CHAT_MODEL_LARGE,
+    label: "4o",
+    description: "More accurate, better reasoning, slower.",
+    logo: "/llm-icons/chatgpt.png",
+  },
+  {
+    value: LanguageModel.ANTHROPIC_CHAT_MODEL_FAST,
+    label: "3.5 Haiku",
+    description: "Anthropic's fast model, good for general use.",
+    logo: "/llm-icons/claude.png",
+  },
+  {
+    value: LanguageModel.ANTHROPIC_CHAT_MODEL_LATEST,
+    label: "3.7 Sonnet",
+    description: "Anthropic's latest and most capable model.",
+    logo: "/llm-icons/claude.png",
+  },
+];

@@ -11,39 +11,13 @@ import { useSession } from "@/containers/SessionProvider";
 import { cn } from "@/lib/utils";
 import Message from "@/components/general/message";
 import { LanguageModel } from "@/lib/ai/providers";
+import { modelDropdownOptions } from "@/lib/ai/providers";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu/dropdown-menu";
-
-const modelOptions = [
-  {
-    value: LanguageModel.OPENAI_CHAT_MODEL_FAST,
-    label: "4o-mini",
-    description: "Fast, cost-effective, and great for most tasks.",
-    logo: "/llm-icons/chatgpt.png",
-  },
-  {
-    value: LanguageModel.OPENAI_CHAT_MODEL_LARGE,
-    label: "4o",
-    description: "More accurate, better reasoning, slower.",
-    logo: "/llm-icons/chatgpt.png",
-  },
-  {
-    value: LanguageModel.ANTHROPIC_CHAT_MODEL_FAST,
-    label: "3.5 Haiku",
-    description: "Anthropic's fast model, good for general use.",
-    logo: "/llm-icons/claude.png",
-  },
-  {
-    value: LanguageModel.ANTHROPIC_CHAT_MODEL_LATEST,
-    label: "3.7 Sonnet",
-    description: "Anthropic's latest and most capable model.",
-    logo: "/llm-icons/claude.png",
-  },
-];
 
 const ChatPage = () => {
   const {
@@ -233,20 +207,25 @@ const ChatPage = () => {
               >
                 <Image
                   src={
-                    modelOptions.find((opt) => opt.value === selectedModel)
-                      ?.logo || ""
+                    modelDropdownOptions.find(
+                      (opt) => opt.value === selectedModel
+                    )?.logo || ""
                   }
                   alt="Model logo"
                   width={20}
                   height={20}
                   className="inline-block"
                 />
-                {modelOptions.find((opt) => opt.value === selectedModel)?.label}
+                {
+                  modelDropdownOptions.find(
+                    (opt) => opt.value === selectedModel
+                  )?.label
+                }
                 <span className="ml-2">&#9662;</span>
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent side="top" align="start" className="w-72">
-              {modelOptions.map((option) => (
+              {modelDropdownOptions.map((option) => (
                 <DropdownMenuItem
                   key={option.value}
                   onSelect={() => setSelectedModel(option.value)}
