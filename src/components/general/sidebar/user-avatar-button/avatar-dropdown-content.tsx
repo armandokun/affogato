@@ -3,9 +3,7 @@ import { LogOut } from "lucide-react";
 import {
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu/dropdown-menu";
-
 import { signOut } from "@/app/login/actions";
 
 type Props = {
@@ -21,7 +19,6 @@ const DropdownAvatarContentMenu = ({ onClose }: Props) => {
 
   return (
     <DropdownMenuContent className="mx-4" side="top" align="end">
-      <DropdownMenuSeparator />
       <DropdownMenuItem
         onClick={handleSignOut}
         className="flex items-center gap-4 w-full cursor-pointer"
