@@ -127,13 +127,12 @@ const ChatPage = () => {
               {user?.user_metadata.name.split(" ")[0]}
             </span>
             <span className="text-xs text-muted-foreground whitespace-nowrap flex items-center gap-1">
-              <Clock className="size-4" />
-              12 sec. ago
+              <Clock className="size-4" />1 sec. ago
             </span>
           </div>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
-            <p className="font-semibold text-sm">
-              DoorDash announces $5 billion deals amid strong...
+            <p className="font-semibold text-sm truncate md:max-w-[250px] lg:max-w-[450px]">
+              {messages[0].content}
             </p>
           </div>
         </header>
