@@ -16,7 +16,6 @@ const NewThreadButton = () => {
         <button
           onClick={() => {
             router.push("/");
-            router.refresh();
           }}
           className="size-10 flex items-center justify-center rounded-full bg-[#282929] group hover:bg-[#313232] transition-colors duration-200 ease-in-out cursor-pointer"
         >
