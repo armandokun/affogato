@@ -43,7 +43,7 @@ const LoginPage = () => {
 
     const supabase = createClient();
 
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -51,6 +51,10 @@ const LoginPage = () => {
     });
 
     if (error) setErrorMessage(error.message);
+
+    if (data.url) {
+      window.location.href = data.url;
+    }
 
     setLoading(false);
   };
