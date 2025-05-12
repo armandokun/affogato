@@ -28,6 +28,18 @@ const Composer = ({ input, setInput }: Props) => {
     }
   };
 
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      // Find the closest parent form and submit it
+      const form = textareaRef.current?.closest("form");
+
+      if (!form) return;
+
+      form.requestSubmit();
+    }
+  };
+
   return (
     <motion.textarea
       ref={textareaRef}
@@ -40,6 +52,7 @@ const Composer = ({ input, setInput }: Props) => {
       }}
       value={input}
       onChange={handleInputChange}
+      onKeyDown={handleKeyDown}
       rows={1}
       placeholder="How can I help you today?"
       className="flex-1 outline-none text-md text-white placeholder:text-muted-foreground resize-none w-full h-auto mb-2"
