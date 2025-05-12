@@ -46,6 +46,7 @@ export const MENU = [
   {
     key: "home",
     icon: Search,
+    show: true,
     label: "Home",
     href: "/dashboard",
     content: (
@@ -75,6 +76,7 @@ export const MENU = [
   },
   {
     key: "spaces",
+    show: false,
     icon: Users,
     label: "Spaces",
     href: "/dashboard/spaces",

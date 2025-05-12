@@ -34,6 +34,8 @@ const Sidebar = ({
         {MENU.map((item) => {
           const isActive = activeKey === item.key;
 
+          if (!item.show) return null;
+
           return (
             <div
               key={item.key}
