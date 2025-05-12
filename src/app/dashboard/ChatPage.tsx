@@ -19,6 +19,7 @@ import Composer from "@/components/general/composer";
 
 import { cn, setCookie } from "@/lib/utils";
 import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
+import Icons from "@/components/general/icons";
 
 const COOKIE_NAME = "affogato_selected_model";
 
@@ -198,6 +199,12 @@ const ChatPage = ({ initialModel }: Props) => {
           onSubmit={handleSend}
           className="w-full max-w-2xl bg-background border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors"
         >
+          {!hasMessages && (
+            <div className="absolute -top-20 left-1/2 -translate-x-1/2 items-center flex flex-row gap-2">
+              <Icons.logo className="size-10 hover:animate-spin-once" />
+              <p className="text-3xl font-semibold text-amber-50">Affogato</p>
+            </div>
+          )}
           <Composer input={input} setInput={setInput} />
           <div className="flex items-center justify-between gap-2 w-full">
             <DropdownMenu>

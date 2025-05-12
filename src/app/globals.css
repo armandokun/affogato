@@ -57,6 +57,8 @@
   --exitToRight: exitToRight 250ms ease;
   --animate-elliptical-orbit: elliptical-orbit 20s linear infinite;
   --animate-fade-to-radial: fadeToRadial 20s linear infinite;
+  --animate-spin-once: spin-once 0.7s cubic-bezier(0.22, 1, 0.36, 1) 1;
+
   @keyframes orbit {
     0% {
       transform: rotate(calc(var(--angle) * 1deg))
@@ -222,6 +224,12 @@
     }
     100% {
       background: radial-gradient(125% 125% at 50% 10%, #0a1020 0%, #3887ff 40%, #ff93b7 75%, #ff9a2b 100%);
+    }
+  }
+
+  @keyframes spin-once {
+    100% {
+      transform: rotate(360deg);
     }
   }
 }

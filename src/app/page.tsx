@@ -1,9 +1,9 @@
 import { redirect } from "next/navigation";
 
-import AnimatedGradientBackground from "@/components/general/animated-gradient-background";
-import HeroSection from "@/components/sections/hero-section";
-import Navbar from "@/components/sections/navbar";
 import getServerSession from "@/lib/auth";
+import Navbar from "@/components/sections/navbar";
+import HeroSection from "@/components/sections/hero-section";
+import AnimatedGradientBackground from "@/components/general/animated-gradient-background";
 
 const Home = async () => {
   const user = await getServerSession();
