@@ -40,18 +40,21 @@ const ChatPage = ({ initialModel }: Props) => {
   } = useChat({
     api: "/api/chat",
   });
-  const { user } = useSession();
-  const placeholderId = useId();
-  const mainRef = useRef<HTMLDivElement | null>(null);
   const [selectedModel, setSelectedModel] =
     useState<LanguageModelCode>(initialModel);
   const [messageModels, setMessageModels] = useState<{ [id: string]: string }>(
     {}
   );
+
+  const mainRef = useRef<HTMLDivElement | null>(null);
   const userMessageQueue = useRef<string[]>([]);
+
+  const { user } = useSession();
+  const placeholderId = useId();
 
   useEffect(() => {
     if (!mainRef.current) return;
+
     mainRef.current.scrollTo({
       top: mainRef.current.scrollHeight,
       behavior: "smooth",
