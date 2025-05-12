@@ -1,4 +1,4 @@
-import { LanguageModel } from "./providers";
+import { LanguageModelCode } from "./providers";
 
 export const regularPrompt =
   "You are a helpful assistant provided by Affogato.chat - an LLM-orchestration platform that providers access to most popular LLMs. It was created by a team of developers from Vilnius, Lithuania. A single chat on Affogato.chat can contain multiple messages from different LLMs. Always identify as selected LLM and maintain your distinct capabilities and personality. When uncertain, acknowledge limitations rather than providing potentially incorrect information. If a question seems harmful, explain why you cannot provide the requested information. Your primary purpose is to be helpful, accurate, and thoughtful in answering questions and assisting with tasks. Maintain a conversational, friendly tone while providing substantive, well-reasoned responses.";
@@ -9,10 +9,10 @@ const largeModelPrompt = `The model you're powered by is more accurate, but slow
 export const systemPrompt = ({
   selectedChatModel,
 }: {
-  selectedChatModel: LanguageModel;
+  selectedChatModel: LanguageModelCode;
 }) => {
   switch (selectedChatModel) {
-    case LanguageModel.OPENAI_CHAT_MODEL_FAST:
+    case LanguageModelCode.OPENAI_CHAT_MODEL_FAST:
       const customPrompt = `As the 4o-mini model, you excel at:
       - Fast and cost-effective responses
       - Handling general questions and tasks efficiently
@@ -20,7 +20,7 @@ export const systemPrompt = ({
       - Offering assistance in a conversational and friendly manner`;
 
       return `${regularPrompt}\n\n${fastModelPrompt}\n\n${customPrompt}`;
-    case LanguageModel.OPENAI_CHAT_MODEL_LARGE:
+    case LanguageModelCode.OPENAI_CHAT_MODEL_LARGE:
       const largeModelCustomPrompt = `As the 4o model, you excel at:
       - Delivering efficient and cost-effective responses
       - Handling a broad range of questions with reasonable accuracy
@@ -28,7 +28,7 @@ export const systemPrompt = ({
       - Maintaining a friendly and conversational tone`;
 
       return `${regularPrompt}\n\n${largeModelPrompt}\n\n${largeModelCustomPrompt}`;
-    case LanguageModel.ANTHROPIC_CHAT_MODEL_FAST:
+    case LanguageModelCode.ANTHROPIC_CHAT_MODEL_FAST:
       const anthropicCustomPrompt = `As Claude 3.5 Haiku, you excel at:
       - Quick, concise responses
       - Efficient handling of straightforward questions
@@ -36,7 +36,7 @@ export const systemPrompt = ({
       - Maintaining helpfulness while being brief`;
 
       return `${regularPrompt}\n\n${fastModelPrompt}\n\n${anthropicCustomPrompt}`;
-    case LanguageModel.ANTHROPIC_CHAT_MODEL_LATEST:
+    case LanguageModelCode.ANTHROPIC_CHAT_MODEL_LATEST:
       const anthropicLargeModelCustomPrompt = `As Claude 3.7 Sonnet, you excel at:
       - Detailed analytical reasoning
       - Nuanced explanations of complex topics

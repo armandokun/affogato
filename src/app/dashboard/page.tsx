@@ -10,7 +10,7 @@ import Button from "@/components/ui/button";
 import { useSession } from "@/containers/SessionProvider";
 import { cn } from "@/lib/utils";
 import Message from "@/components/general/message";
-import { LanguageModel } from "@/lib/ai/providers";
+import { LanguageModelCode } from "@/lib/ai/providers";
 import { modelDropdownOptions } from "@/lib/ai/providers";
 import {
   DropdownMenu,
@@ -23,7 +23,6 @@ const ChatPage = () => {
   const {
     messages,
     input,
-    handleInputChange,
     append,
     error,
     status,
@@ -39,12 +38,15 @@ const ChatPage = () => {
   const mainRef = useRef<HTMLDivElement | null>(null);
 
   const [selectedModel, setSelectedModel] = useState(
-    LanguageModel.OPENAI_CHAT_MODEL_FAST
+    LanguageModelCode.OPENAI_CHAT_MODEL_FAST
   );
   const [messageModels, setMessageModels] = useState<{ [id: string]: string }>(
     {}
   );
   const userMessageQueue = useRef<string[]>([]);
+  const maxRows = 10;
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const lineHeight = 24; // Adjust if your line height is different
 
   useEffect(() => {
     if (!mainRef.current) return;
@@ -110,6 +112,19 @@ const ChatPage = () => {
     }
 
     return undefined;
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setInput(e.target.value);
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+
+      const maxHeight = lineHeight * maxRows;
+
+      textareaRef.current.style.height =
+        Math.min(textareaRef.current.scrollHeight, maxHeight) + "px";
+    }
   };
 
   return (
@@ -196,91 +211,98 @@ const ChatPage = () => {
       <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[40px]">
         <form
           onSubmit={handleSend}
-          className="flex items-center gap-2 w-full max-w-2xl bg-background border border-[#232329] rounded-full shadow-lg p-2 px-4 absolute bottom-2"
+          className="w-full max-w-2xl bg-background border border-[#232329] rounded-lg shadow-lg p-4 absolute bottom-2"
         >
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button
-                type="button"
-                className="bg-muted text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer"
-              >
-                <Image
-                  src={
-                    modelDropdownOptions.find(
-                      (opt) => opt.value === selectedModel
-                    )?.logo || ""
-                  }
-                  alt="Model logo"
-                  width={20}
-                  height={20}
-                  className="inline-block"
-                />
-                {
-                  modelDropdownOptions.find(
-                    (opt) => opt.value === selectedModel
-                  )?.label
-                }
-                <span className="ml-2">&#9662;</span>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="top" align="start" className="w-72">
-              {modelDropdownOptions.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  onSelect={() => setSelectedModel(option.value)}
-                  className="flex items-center gap-4 cursor-pointer mb-1"
+          <textarea
+            ref={textareaRef}
+            value={input}
+            onChange={handleInputChange}
+            rows={1}
+            placeholder="How can I help you today?"
+            className="flex-1 outline-none text-md text-white placeholder:text-muted-foreground resize-none w-full h-auto mb-2"
+            autoFocus
+          />
+          <div className="flex items-center justify-between gap-2 w-full">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="bg-muted text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer"
                 >
                   <Image
-                    src={option.logo}
-                    alt={`${option.label} logo`}
+                    src={
+                      modelDropdownOptions.find(
+                        (opt) => opt.value === selectedModel
+                      )?.logo || ""
+                    }
+                    alt="Model logo"
                     width={20}
                     height={20}
                     className="inline-block"
                   />
-                  <div>
-                    <div className="font-semibold">{option.label}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {option.description}
+                  {
+                    modelDropdownOptions.find(
+                      (opt) => opt.value === selectedModel
+                    )?.label
+                  }
+                  <span className="ml-2">&#9662;</span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent side="top" align="start" className="w-72">
+                {modelDropdownOptions.map((option) => (
+                  <DropdownMenuItem
+                    key={option.value}
+                    onSelect={() => setSelectedModel(option.value)}
+                    className="flex items-center gap-4 cursor-pointer mb-1"
+                  >
+                    <Image
+                      src={option.logo}
+                      alt={`${option.label} logo`}
+                      width={20}
+                      height={20}
+                      className="inline-block"
+                    />
+                    <div>
+                      <div className="font-semibold">{option.label}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {option.description}
+                      </div>
                     </div>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <input
-            value={input}
-            onChange={handleInputChange}
-            placeholder="How can I help you today?"
-            className="flex-1 outline-none px-2 py-3 text-md text-white placeholder:text-muted-foreground rounded-full"
-          />
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-full text-muted-foreground"
-            type="button"
-            tabIndex={-1}
-          >
-            <Paperclip className="size-5" />
-          </Button>
-          {status === "streaming" || status === "submitted" ? (
-            <Button
-              size="icon"
-              className="rounded-full"
-              type="button"
-              onClick={stop}
-            >
-              <Square className="size-4" fill="black" />
-            </Button>
-          ) : (
-            <Button
-              size="icon"
-              className="rounded-full"
-              type="submit"
-              disabled={!input.trim()}
-            >
-              <ArrowUp className="size-5" />
-            </Button>
-          )}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="rounded-full text-muted-foreground"
+                type="button"
+                tabIndex={-1}
+              >
+                <Paperclip className="size-5" />
+              </Button>
+              {status === "streaming" || status === "submitted" ? (
+                <Button
+                  size="icon"
+                  className="rounded-full"
+                  type="button"
+                  onClick={stop}
+                >
+                  <Square className="size-4" fill="black" />
+                </Button>
+              ) : (
+                <Button
+                  size="icon"
+                  className="rounded-full"
+                  type="submit"
+                  disabled={!input.trim()}
+                >
+                  <ArrowUp className="size-5" />
+                </Button>
+              )}
+            </div>
+          </div>
         </form>
       </footer>
     </div>

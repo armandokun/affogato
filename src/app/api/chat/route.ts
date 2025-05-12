@@ -7,7 +7,7 @@ import {
 import { NextResponse } from "next/server";
 
 import getServerSession from "@/lib/auth";
-import { LanguageModel, myProvider } from "@/lib/ai/providers";
+import { LanguageModelCode, myProvider } from "@/lib/ai/providers";
 import { systemPrompt } from "@/lib/ai/prompts";
 
 export const maxDuration = 60;
@@ -32,16 +32,16 @@ export async function POST(request: Request) {
       .reverse()
       .find((m) => m.role === "user" && m.data && m.data.model);
 
-    const selectedChatModel =
+    const selectedChatModelCode =
       lastUserMessageWithModel?.data?.model ||
-      LanguageModel.OPENAI_CHAT_MODEL_FAST;
+      LanguageModelCode.OPENAI_CHAT_MODEL_FAST;
 
     return createDataStreamResponse({
       execute: (dataStream) => {
         const result = streamText({
-          model: myProvider.languageModel(selectedChatModel),
+          model: myProvider.languageModel(selectedChatModelCode),
           system: systemPrompt({
-            selectedChatModel: selectedChatModel as LanguageModel,
+            selectedChatModel: selectedChatModelCode as LanguageModelCode,
           }),
           messages,
           maxSteps: 5,
