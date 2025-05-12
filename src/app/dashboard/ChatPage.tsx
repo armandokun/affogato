@@ -5,11 +5,10 @@ import { motion } from "motion/react";
 import { ArrowUp, Clock, Paperclip, Square } from "lucide-react";
 import { useRef, useEffect, useId, useState } from "react";
 import Image from "next/image";
+
 import Button from "@/components/ui/button";
 import { useSession } from "@/containers/SessionProvider";
-import { cn, setCookie } from "@/lib/utils";
 import Message from "@/components/general/message";
-import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -17,6 +16,9 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu/dropdown-menu";
 import Composer from "@/components/general/composer";
+
+import { cn, setCookie } from "@/lib/utils";
+import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
 
 const COOKIE_NAME = "affogato_selected_model";
 
@@ -78,8 +80,15 @@ const ChatPage = ({ initialModel }: Props) => {
 
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (!input.trim()) return;
+
+    if (status === "streaming") {
+      stop();
+    }
+
     setInput("");
+
     const tempId = `${Date.now()}-${Math.random()}`;
     userMessageQueue.current.push(tempId);
     setMessageModels((prev) => ({
@@ -148,7 +157,7 @@ const ChatPage = ({ initialModel }: Props) => {
           <div
             className={cn(
               "w-full max-w-2xl mx-auto px-0 md:px-2 py-4",
-              hasMessages && "mb-10"
+              hasMessages && "mb-14"
             )}
           >
             {messages.map((message, id) => {
@@ -184,10 +193,10 @@ const ChatPage = ({ initialModel }: Props) => {
           </div>
         )}
       </motion.main>
-      <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[40px]">
+      <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[60px]">
         <form
           onSubmit={handleSend}
-          className="w-full max-w-2xl bg-background border border-[#232329] rounded-lg shadow-lg p-4 absolute bottom-2"
+          className="w-full max-w-2xl bg-background border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors"
         >
           <Composer input={input} setInput={setInput} />
           <div className="flex items-center justify-between gap-2 w-full">
