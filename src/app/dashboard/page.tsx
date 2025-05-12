@@ -18,6 +18,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu/dropdown-menu";
+import Composer from "@/components/general/composer";
 
 const ChatPage = () => {
   const {
@@ -44,9 +45,6 @@ const ChatPage = () => {
     {}
   );
   const userMessageQueue = useRef<string[]>([]);
-  const maxRows = 10;
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const lineHeight = 24; // Adjust if your line height is different
 
   useEffect(() => {
     if (!mainRef.current) return;
@@ -112,19 +110,6 @@ const ChatPage = () => {
     }
 
     return undefined;
-  };
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "auto";
-
-      const maxHeight = lineHeight * maxRows;
-
-      textareaRef.current.style.height =
-        Math.min(textareaRef.current.scrollHeight, maxHeight) + "px";
-    }
   };
 
   return (
@@ -213,15 +198,7 @@ const ChatPage = () => {
           onSubmit={handleSend}
           className="w-full max-w-2xl bg-background border border-[#232329] rounded-lg shadow-lg p-4 absolute bottom-2"
         >
-          <textarea
-            ref={textareaRef}
-            value={input}
-            onChange={handleInputChange}
-            rows={1}
-            placeholder="How can I help you today?"
-            className="flex-1 outline-none text-md text-white placeholder:text-muted-foreground resize-none w-full h-auto mb-2"
-            autoFocus
-          />
+          <Composer input={input} setInput={setInput} />
           <div className="flex items-center justify-between gap-2 w-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
