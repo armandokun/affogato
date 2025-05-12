@@ -9,7 +9,7 @@ export function cn(...inputs: ClassValue[]) {
 // Helper function to convert any CSS color to rgba
 export const getRGBA = (
   cssColor: React.CSSProperties["color"],
-  fallback: string = "rgba(180, 180, 180)",
+  fallback: string = "rgba(180, 180, 180)"
 ): string => {
   if (typeof window === "undefined") return fallback;
   if (!cssColor) return fallback;
@@ -68,3 +68,20 @@ export const hasErrorInput = [
   // ring color
   "ring-red-200 dark:ring-red-700/30",
 ];
+
+// --- Cookie helpers for client-side persistence ---
+export function setCookie(name: string, value: string, days = 365) {
+  if (typeof document === "undefined") return;
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(
+    value
+  )}; expires=${expires}; path=/`;
+}
+
+export function getCookie(name: string): string | undefined {
+  if (typeof document === "undefined") return undefined;
+  return document.cookie
+    .split("; ")
+    .find((row) => row.startsWith(name + "="))
+    ?.split("=")[1];
+}
