@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { type Message as AIMessage } from "ai";
 import Markdown from "@/components/ui/markdown";
+import { cn } from "@/lib/utils";
 
 const getModelLogo = (languageModelCode?: string) => {
   if (!languageModelCode) return "/logo.png";
@@ -33,7 +34,11 @@ const Message = ({ message, isPlaceholder = false }: Props) => {
           <Image src={logoSrc} alt="AI Assistant" width={20} height={20} />
         </div>
         <span
-          className={isPlaceholder ? "text-muted-foreground animate-pulse" : ""}
+          className={cn(
+            isPlaceholder
+              ? "text-muted-foreground animate-pulse"
+              : "[&>*:first-child]:mt-0"
+          )}
         >
           <Markdown>{message.content}</Markdown>
         </span>
