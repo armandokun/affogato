@@ -3,7 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { motion } from "motion/react";
 import { ArrowUp, Clock, Paperclip, Square } from "lucide-react";
-import { useRef, useEffect, useId, useState } from "react";
+import { useRef, useEffect, useId, useState, FormEvent } from "react";
 import Image from "next/image";
 
 import Button from "@/components/ui/button";
@@ -16,10 +16,10 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu/dropdown-menu";
 import Composer from "@/components/general/composer";
+import Icons from "@/components/general/icons";
 
 import { cn, setCookie } from "@/lib/utils";
 import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
-import Icons from "@/components/general/icons";
 
 const COOKIE_NAME = "affogato_selected_model";
 
@@ -82,14 +82,12 @@ const ChatPage = ({ initialModel }: Props) => {
 
   const hasMessages = messages.length > 0;
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSend = async (event: FormEvent) => {
+    event.preventDefault();
 
     if (!input.trim()) return;
 
-    if (status === "streaming") {
-      stop();
-    }
+    if (status === "streaming") stop();
 
     setInput("");
 
