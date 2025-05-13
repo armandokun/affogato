@@ -3,103 +3,33 @@
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Label, Separator } from "radix-ui";
-import React, { FormEvent, useEffect, useState } from "react";
-import { redirect } from "next/navigation";
+import React, { useActionState, useState } from "react";
 
 import Button from "@/components/ui/button";
 import Icons from "@/components/general/icons";
-import { createClient } from "@/lib/supabase/client";
-import { DASHBOARD } from "@/constants/routes";
+import {
+  signInWithPassword,
+  signUpWithPassword,
+  signInWithOAuth,
+} from "@/app/login/actions";
 
-const LoginPage = () => {
+const initialState = { error: "", success: "" };
+
+const LoginSection = () => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  useEffect(() => {
-    setErrorMessage(null);
-    setSuccessMessage(null);
-  }, [isSignUp]);
-
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    setLoading(true);
-
-    const formData = new FormData(e.currentTarget);
-
-    if (isSignUp) {
-      await signupWithPassword(formData);
-    } else {
-      await loginWithPassword(formData);
-    }
-
-    setLoading(false);
-  };
-
-  const handleOAuthSignIn = async (provider: "google" | "github") => {
-    setLoading(true);
-
-    const supabase = createClient();
-
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
-    });
-
-    if (error) setErrorMessage(error.message);
-
-    if (data.url) {
-      window.location.href = data.url;
-    }
-
-    setLoading(false);
-  };
-
-  const loginWithPassword = async (formData: FormData) => {
-    setErrorMessage(null);
-
-    const supabase = createClient();
-
-    const data = {
-      email: formData.get("email")!.toString(),
-      password: formData.get("password")!.toString(),
-    };
-
-    const { error } = await supabase.auth.signInWithPassword(data);
-
-    if (error) {
-      setErrorMessage(error.message);
-
-      return;
-    }
-
-    redirect(DASHBOARD);
-  };
-
-  const signupWithPassword = async (formData: FormData) => {
-    setErrorMessage(null);
-
-    const supabase = createClient();
-
-    const data = {
-      email: formData.get("email")!.toString(),
-      password: formData.get("password")!.toString(),
-    };
-
-    const { error } = await supabase.auth.signUp(data);
-
-    if (error) {
-      setErrorMessage(error.message);
-
-      return;
-    }
-
-    setSuccessMessage("Please check your email for a confirmation link.");
-  };
+  const [loginState, loginAction] = useActionState(
+    signInWithPassword,
+    initialState
+  );
+  const [signupState, signupAction] = useActionState(
+    signUpWithPassword,
+    initialState
+  );
+  const [oauthState, oauthAction] = useActionState(
+    signInWithOAuth,
+    initialState
+  );
 
   return (
     <div className="flex flex-col justify-center mx-auto px-6 py-12 gap-8 max-w-md h-full">
@@ -113,89 +43,135 @@ const LoginPage = () => {
         </h1>
       </div>
       <div className="flex flex-col gap-3 w-full mt-2">
-        <Button
-          variant="outline"
-          className="w-full flex gap-2 justify-center"
-          onClick={() => handleOAuthSignIn("google")}
-          disabled={loading}
-        >
-          <Icons.google /> Continue with Google
-        </Button>
-        <Button
-          variant="outline"
-          className="w-full flex gap-2 justify-center"
-          onClick={() => handleOAuthSignIn("github")}
-          disabled={loading}
-        >
-          <GitHubLogoIcon className="size-5" /> Continue with GitHub
-        </Button>
+        <form action={oauthAction} className="w-full">
+          <input type="hidden" name="provider" value="google" />
+          <Button
+            variant="outline"
+            className="w-full flex gap-2 justify-center"
+            type="submit"
+          >
+            <Icons.google /> Continue with Google
+          </Button>
+        </form>
+        <form action={oauthAction} className="w-full">
+          <input type="hidden" name="provider" value="github" />
+          <Button
+            variant="outline"
+            className="w-full flex gap-2 justify-center"
+            type="submit"
+          >
+            <GitHubLogoIcon className="size-5" /> Continue with GitHub
+          </Button>
+        </form>
+        {oauthState?.error && oauthState.error !== "" && (
+          <div className="text-red-500 text-sm mb-2">{oauthState.error}</div>
+        )}
       </div>
       <div className="flex items-center gap-2 my-2 w-full">
         <Separator.Root className="flex-1 h-px bg-border" />
         <span className="text-xs text-muted-foreground">OR</span>
         <Separator.Root className="flex-1 h-px bg-border" />
       </div>
-      {errorMessage && (
-        <div className="text-red-500 text-sm mb-2">{errorMessage}</div>
-      )}
-      {successMessage && (
-        <div className="text-green-500 text-sm mb-2">{successMessage}</div>
-      )}
-      <form className="flex flex-col gap-4 w-full" onSubmit={handleSubmit}>
-        <div>
-          <Label.Root
-            htmlFor="email"
-            className="block text-sm font-medium mb-1"
-          >
-            Email
-          </Label.Root>
-          <input
-            id="email"
-            name="email"
-            type="email"
-            autoComplete="email"
-            required
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="ada@lovelace.com"
-          />
-        </div>
-        <div>
-          <div className="flex items-center gap-2 justify-between">
+      {!isSignUp ? (
+        <form className="flex flex-col gap-4 w-full" action={loginAction}>
+          <div>
             <Label.Root
-              htmlFor="password"
+              htmlFor="email"
               className="block text-sm font-medium mb-1"
             >
-              Password
+              Email
             </Label.Root>
-            {!isSignUp && (
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="ada@lovelace.com"
+            />
+          </div>
+          <div>
+            <div className="flex items-center gap-2 justify-between">
+              <Label.Root
+                htmlFor="password"
+                className="block text-sm font-medium mb-1"
+              >
+                Password
+              </Label.Root>
               <Link
                 href="/forgot-password"
                 className="text-xs text-muted-foreground underline"
               >
                 Forgot password?
               </Link>
-            )}
+            </div>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="••••••••"
+            />
           </div>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="••••••••"
-          />
-        </div>
-        <Button type="submit" className="w-full mt-2" disabled={loading}>
-          {loading
-            ? isSignUp
-              ? "Signing up..."
-              : "Signing in..."
-            : isSignUp
-            ? "Sign up"
-            : "Sign in"}
-        </Button>
-      </form>
+          <Button type="submit" className="w-full mt-2">
+            Sign in
+          </Button>
+          {loginState?.error && (
+            <div className="text-red-500 text-sm mb-2">{loginState.error}</div>
+          )}
+        </form>
+      ) : (
+        <form className="flex flex-col gap-4 w-full" action={signupAction}>
+          <div>
+            <Label.Root
+              htmlFor="email"
+              className="block text-sm font-medium mb-1"
+            >
+              Email
+            </Label.Root>
+            <input
+              id="email"
+              name="email"
+              type="email"
+              autoComplete="email"
+              required
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="ada@lovelace.com"
+            />
+          </div>
+          <div>
+            <Label.Root
+              htmlFor="password"
+              className="block text-sm font-medium mb-1"
+            >
+              Password
+            </Label.Root>
+            <input
+              id="password"
+              name="password"
+              type="password"
+              autoComplete="current-password"
+              required
+              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              placeholder="••••••••"
+            />
+          </div>
+          <Button type="submit" className="w-full mt-2">
+            Sign up
+          </Button>
+          {signupState?.error && (
+            <div className="text-red-500 text-sm mb-2">{signupState.error}</div>
+          )}
+          {signupState?.success && (
+            <div className="text-green-500 text-sm mb-2">
+              {signupState.success}
+            </div>
+          )}
+        </form>
+      )}
       <div className="flex justify-center text-sm text-muted-foreground w-full">
         {isSignUp ? (
           <>
@@ -238,4 +214,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default LoginSection;
