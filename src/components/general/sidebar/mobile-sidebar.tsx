@@ -4,9 +4,10 @@ import { Library, Menu, SidebarClose } from "lucide-react";
 import Button from "@/components/ui/button/button";
 import { SheetContent } from "@/components/ui/sheet/sheet";
 import { Sheet, SheetClose, SheetTitle } from "@/components/ui/sheet/sheet";
+import useLibraryItems from "@/hooks/use-library-items";
 
 import Icons from "../icons";
-import { LIBRARY, MENU } from "./app-sidebar";
+import { MENU } from "./app-sidebar";
 import SidebarUserAvatarButton from "./user-avatar-button/user-avatar-button";
 
 type Props = {
@@ -16,6 +17,8 @@ type Props = {
 };
 
 const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
+  const { items: libraryItems, loading: loadingLibrary } = useLibraryItems();
+
   return (
     <>
       <header className="flex items-center gap-2 h-12 px-2 bg-black rounded-md">
@@ -81,16 +84,22 @@ const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
               </Link>
               <ul className="flex flex-col gap-1 ml-4">
                 <div className="relative pl-4 border-l border-muted-foreground/50">
-                  {LIBRARY.map((item) => (
-                    <li key={item.key}>
-                      <Link
-                        href={`/dashboard/library/${item.key}`}
-                        className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-white rounded-md p-2"
-                      >
-                        <span>{item.label}</span>
-                      </Link>
+                  {loadingLibrary ? (
+                    <li className="text-xs text-muted-foreground p-2">
+                      Loading...
                     </li>
-                  ))}
+                  ) : (
+                    libraryItems.map((item) => (
+                      <li key={item.id}>
+                        <Link
+                          href={`/dashboard/library/${item.id}`}
+                          className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-white rounded-md p-2"
+                        >
+                          <span>{item.title}</span>
+                        </Link>
+                      </li>
+                    ))
+                  )}
                 </div>
               </ul>
             </div>

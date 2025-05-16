@@ -6,41 +6,11 @@ import { Users, Search } from "lucide-react";
 import Link from "next/link";
 
 import useIsMobile from "@/hooks/use-mobile";
+import useLibraryItems from "@/hooks/use-library-items";
 
 import Sidebar from "./sidebar";
 import SidebarContentPanel from "./content-panel";
 import MobileSidebar from "./mobile-sidebar";
-
-export const LIBRARY = [
-  {
-    key: "saulius-krygeris-statistika",
-    label: "saulius krygeris statistika",
-  },
-  {
-    key: "saulius-krygeris",
-    label: "saulius krygeris",
-  },
-  {
-    key: "comuna-app",
-    label: "comuna app",
-  },
-  {
-    key: "vegetarian-burrito-recipe-rice",
-    label: "vegetarian burrito recipe rice",
-  },
-  {
-    key: "burrito-recipe",
-    label: "burrito recipe",
-  },
-  {
-    key: "for-all-mankind",
-    label: "for all mankind",
-  },
-  {
-    key: "rx3-rivian",
-    label: "rx3 rivian",
-  },
-];
 
 export const MENU = [
   {
@@ -49,30 +19,6 @@ export const MENU = [
     show: true,
     label: "Home",
     href: "/dashboard",
-    content: (
-      <>
-        <h2 className="text-lg font-medium">Home</h2>
-        <div className="h-px bg-muted-foreground/50 my-2" />
-        <Link
-          href="/dashboard/library"
-          className="text-sm text-muted-foreground font-medium hover:text-white hover:bg-accent rounded-md"
-        >
-          Library
-        </Link>
-        <ul className="flex flex-col gap-1">
-          {LIBRARY.map((item) => (
-            <li key={item.key}>
-              <Link
-                href={`/dashboard/library/${item.key}`}
-                className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-white rounded-md p-2"
-              >
-                <span>{item.label}</span>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </>
-    ),
   },
   {
     key: "spaces",
@@ -80,20 +26,73 @@ export const MENU = [
     icon: Users,
     label: "Spaces",
     href: "/dashboard/spaces",
-    content: (
-      <>
-        <h2 className="text-lg font-bold mb-2">Spaces</h2>
-        <p>Your spaces and projects.</p>
-      </>
-    ),
   },
 ];
 
 const AppSidebar = () => {
   const pathname = usePathname();
+  const { items: libraryItems, loading } = useLibraryItems();
 
   const [sidebarHovered, setSidebarHovered] = useState(false);
   const [panelHovered, setPanelHovered] = useState(false);
+  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
+  const [isSheetOpen, setIsSheetOpen] = useState(false);
+
+  const isMobile = useIsMobile();
+
+  const MENU = [
+    {
+      key: "home",
+      icon: Search,
+      show: true,
+      label: "Home",
+      href: "/dashboard",
+      content: (
+        <>
+          <h2 className="text-lg font-medium">Home</h2>
+          <div className="h-px bg-muted-foreground/50 my-2" />
+          <Link
+            href="/dashboard/library"
+            className="text-sm text-muted-foreground font-medium hover:text-white hover:bg-accent rounded-md"
+          >
+            Library
+          </Link>
+          <ul className="flex flex-col gap-1">
+            {loading ? (
+              <li className="text-xs text-muted-foreground p-2">Loading...</li>
+            ) : (
+              libraryItems.map((item) => (
+                <li key={item.id}>
+                  <Link
+                    href={`/dashboard/${item.id}`}
+                    className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-white rounded-md p-2"
+                  >
+                    <span className="truncate block max-w-[160px]">
+                      {item.title}
+                    </span>
+                  </Link>
+                </li>
+              ))
+            )}
+          </ul>
+        </>
+      ),
+    },
+    {
+      key: "spaces",
+      show: false,
+      icon: Users,
+      label: "Spaces",
+      href: "/dashboard/spaces",
+      content: (
+        <>
+          <h2 className="text-lg font-bold mb-2">Spaces</h2>
+          <p>Your spaces and projects.</p>
+        </>
+      ),
+    },
+  ];
+
   const [activeKey, setActiveKey] = useState(() => {
     return (
       MENU.find(
@@ -102,10 +101,6 @@ const AppSidebar = () => {
       )?.key || MENU[0].key
     );
   });
-  const [hoveredKey, setHoveredKey] = useState<string | null>(null);
-  const [isSheetOpen, setIsSheetOpen] = useState(false);
-
-  const isMobile = useIsMobile();
 
   const showPanel = sidebarHovered || panelHovered;
   const panelContentKey = hoveredKey || activeKey;
