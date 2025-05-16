@@ -92,10 +92,12 @@ const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
                     libraryItems.map((item) => (
                       <li key={item.id}>
                         <Link
-                          href={`/dashboard/library/${item.id}`}
+                          href={`/dashboard/${item.id}`}
                           className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-white rounded-md p-2"
                         >
-                          <span>{item.title}</span>
+                          <span className="truncate block max-w-[160px]">
+                            {item.title}
+                          </span>
                         </Link>
                       </li>
                     ))
