@@ -15,7 +15,7 @@ const NewThreadButton = () => {
       <TooltipTrigger asChild>
         <button
           onClick={() => {
-            router.push("/");
+            router.push("/dashboard");
           }}
           className="size-10 flex items-center justify-center rounded-full bg-[#282929] group hover:bg-[#313232] transition-colors duration-200 ease-in-out cursor-pointer"
         >
