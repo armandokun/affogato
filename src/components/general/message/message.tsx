@@ -1,9 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { type Message as AIMessage } from "ai";
-import Markdown from "@/components/ui/markdown";
+import { UIMessage } from "ai";
+
 import { cn } from "@/lib/utils";
+import Markdown from "@/components/ui/markdown";
+import { LanguageModelCode } from "@/lib/ai/providers";
 
 const getModelLogo = (languageModelCode?: string) => {
   if (!languageModelCode) return "/logo.png";
@@ -15,21 +17,25 @@ const getModelLogo = (languageModelCode?: string) => {
 };
 
 type Props = {
-  message: AIMessage & { data?: { model?: string } };
+  message: UIMessage;
   isPlaceholder?: boolean;
 };
 
 const Message = ({ message, isPlaceholder = false }: Props) => {
   const isAI = message.role === "assistant";
-  const model =
-    message.data && typeof message.data === "object" && "model" in message.data
-      ? (message.data as { model?: string }).model
-      : undefined;
-  const logoSrc = getModelLogo(model);
+
+  const modelCode =
+    // @ts-expect-error model_code is always being passed
+    message.data?.model_code ||
+    // @ts-expect-error model_code is always being passed
+    message.annotations?.[0].model_code ||
+    LanguageModelCode.OPENAI_CHAT_MODEL_FAST;
+
+  const logoSrc = getModelLogo(modelCode);
 
   if (isAI) {
     return (
-      <div className="flex items-start gap-2">
+      <div className="flex items-start gap-2 text-left">
         <div className="rounded-full p-1 flex-shrink-0 size-8 flex items-center justify-center">
           <Image src={logoSrc} alt="AI Assistant" width={20} height={20} />
         </div>

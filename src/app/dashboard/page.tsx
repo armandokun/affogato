@@ -2,8 +2,10 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 import { LOGIN } from "@/constants/routes";
-import getServerSession from "@/lib/auth";
+import { ChatVisibility } from "@/constants/chat";
+import { getServerSession } from "@/lib/auth";
 import { LanguageModelCode } from "@/lib/ai/providers";
+import { generateUUID } from "@/lib/utils";
 
 import ChatPage from "./ChatPage";
 
@@ -23,8 +25,14 @@ const DashboardPage = async () => {
     ? (cookieValue as LanguageModelCode)
     : LanguageModelCode.OPENAI_CHAT_MODEL_FAST;
 
+  const id = generateUUID();
+
   return (
     <ChatPage
+      chatId={id}
+      createdAt={new Date().toISOString()}
+      initialMessages={[]}
+      visibilityType={ChatVisibility.PERMANENT}
       initialModel={selectedModel || LanguageModelCode.OPENAI_CHAT_MODEL_FAST}
     />
   );

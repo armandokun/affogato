@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import getServerSession from "@/lib/auth";
+import { getServerSession } from "@/lib/auth";
 import LoginSection from "@/components/sections/login-section";
 import LoginTestimonialSection from "@/components/sections/login-testimonial-section";
 

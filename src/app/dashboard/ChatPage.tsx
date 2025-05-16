@@ -3,8 +3,16 @@
 import { useChat } from "@ai-sdk/react";
 import { motion } from "motion/react";
 import { ArrowUp, Clock, Paperclip, Square } from "lucide-react";
-import { useRef, useEffect, useId, useState, FormEvent } from "react";
+import {
+  useRef,
+  useEffect,
+  useId,
+  useState,
+  useCallback,
+  FormEvent,
+} from "react";
 import Image from "next/image";
+import { UIMessage } from "ai";
 
 import Button from "@/components/ui/button";
 import { useSession } from "@/containers/SessionProvider";
@@ -17,21 +25,40 @@ import {
 } from "@/components/ui/dropdown-menu/dropdown-menu";
 import Composer from "@/components/general/composer";
 import Icons from "@/components/general/icons";
+import { toast } from "@/components/ui/toast/toast";
 
-import { cn, setCookie } from "@/lib/utils";
+import {
+  cn,
+  fetchWithErrorHandlers,
+  generateUUID,
+  setCookie,
+} from "@/lib/utils";
+import { ChatSDKError } from "@/lib/errors";
 import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
+import { getRelativeTimeFromNow } from "@/lib/utils/date";
+import { ChatVisibility } from "@/constants/chat";
 
 const COOKIE_NAME = "affogato_selected_model";
 
 type Props = {
+  chatId: string;
   initialModel: LanguageModelCode;
+  initialMessages: Array<UIMessage>;
+  visibilityType: ChatVisibility;
+  createdAt: string;
 };
 
-const ChatPage = ({ initialModel }: Props) => {
+const ChatPage = ({
+  visibilityType,
+  initialModel,
+  initialMessages,
+  chatId,
+  createdAt,
+}: Props) => {
   const {
     messages,
     input,
-    append,
+    handleSubmit,
     error,
     status,
     stop,
@@ -39,15 +66,30 @@ const ChatPage = ({ initialModel }: Props) => {
     setInput,
   } = useChat({
     api: "/api/chat",
+    id: chatId,
+    initialMessages,
+    sendExtraMessageFields: true,
+    generateId: generateUUID,
+    fetch: fetchWithErrorHandlers,
+    experimental_prepareRequestBody: (body) => ({
+      id: chatId,
+      message: body.messages.at(-1),
+      selectedChatModelCode: selectedModelCode,
+      selectedVisibilityType: visibilityType,
+    }),
+    onError: (error) => {
+      if (error instanceof ChatSDKError) {
+        toast({
+          type: "error",
+          description: error.message,
+        });
+      }
+    },
   });
-  const [selectedModel, setSelectedModel] =
+  const [selectedModelCode, setSelectedModel] =
     useState<LanguageModelCode>(initialModel);
-  const [messageModels, setMessageModels] = useState<{ [id: string]: string }>(
-    {}
-  );
 
   const mainRef = useRef<HTMLDivElement | null>(null);
-  const userMessageQueue = useRef<string[]>([]);
 
   const { user } = useSession();
   const placeholderId = useId();
@@ -70,6 +112,9 @@ const ChatPage = ({ initialModel }: Props) => {
             id: placeholderId,
             role: "assistant",
             content: "Thinking...",
+            data: {
+              model_code: selectedModelCode,
+            },
           },
         ]);
       }
@@ -78,44 +123,24 @@ const ChatPage = ({ initialModel }: Props) => {
         setMessages((prev) => prev.filter((m) => m.id !== placeholderId));
       }
     }
-  }, [messages, placeholderId, setMessages, status]);
+  }, [messages, placeholderId, selectedModelCode, setMessages, status]);
 
   const hasMessages = messages.length > 0;
 
-  const handleSend = async (event: FormEvent) => {
-    event.preventDefault();
+  const submitForm = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
 
-    if (!input.trim()) return;
+      if (!input.trim()) return;
 
-    if (status === "streaming") stop();
+      if (status === "streaming") stop();
 
-    setInput("");
+      window.history.replaceState({}, "", `/dashboard/${chatId}`);
 
-    const tempId = `${Date.now()}-${Math.random()}`;
-    userMessageQueue.current.push(tempId);
-    setMessageModels((prev) => ({
-      ...prev,
-      [tempId]: selectedModel,
-    }));
-    await append({
-      id: tempId,
-      role: "user",
-      content: input,
-      data: {
-        model: selectedModel,
-      },
-    });
-  };
-
-  const getModelForAssistantMessage = (messages: unknown[], id: number) => {
-    for (let i = id - 1; i >= 0; i--) {
-      const msg = messages[i] as { role?: string; id?: string };
-      if (msg.role === "user" && msg.id) {
-        return messageModels[msg.id];
-      }
-    }
-    return undefined;
-  };
+      handleSubmit();
+    },
+    [input, status, stop, chatId, handleSubmit]
+  );
 
   return (
     <div className="flex flex-col size-full">
@@ -132,7 +157,8 @@ const ChatPage = ({ initialModel }: Props) => {
               {user?.user_metadata.name.split(" ")[0]}
             </span>
             <span className="text-xs text-muted-foreground whitespace-nowrap flex items-center gap-1">
-              <Clock className="size-4" />1 sec. ago
+              <Clock className="size-4" />
+              {getRelativeTimeFromNow(createdAt)}
             </span>
           </div>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
@@ -166,12 +192,7 @@ const ChatPage = ({ initialModel }: Props) => {
               const isLast = id === messages.length - 1;
               const isAI = message.role !== "user";
               const isPlaceholder = message.id === placeholderId;
-              let modelForMessage = undefined;
-              if (message.role === "assistant") {
-                modelForMessage = getModelForAssistantMessage(messages, id);
-              } else if (message.role === "user") {
-                modelForMessage = messageModels[message.id];
-              }
+
               return (
                 <div
                   key={message.id}
@@ -179,15 +200,7 @@ const ChatPage = ({ initialModel }: Props) => {
                     message.role === "user" ? "text-right" : "text-left"
                   }${isLast && isAI ? " min-h-96" : ""}`}
                 >
-                  <Message
-                    message={{
-                      ...message,
-                      ...(modelForMessage !== undefined
-                        ? { data: { model: modelForMessage } }
-                        : { data: undefined }),
-                    }}
-                    isPlaceholder={isPlaceholder}
-                  />
+                  <Message message={message} isPlaceholder={isPlaceholder} />
                 </div>
               );
             })}
@@ -197,7 +210,7 @@ const ChatPage = ({ initialModel }: Props) => {
       </motion.main>
       <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[60px]">
         <form
-          onSubmit={handleSend}
+          onSubmit={submitForm}
           className="w-full max-w-2xl bg-background border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors"
         >
           {!hasMessages && (
@@ -217,11 +230,11 @@ const ChatPage = ({ initialModel }: Props) => {
                       "bg-muted text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer transition-opacity"
                     }
                   >
-                    {selectedModel && (
+                    {selectedModelCode && (
                       <Image
                         src={
                           modelDropdownOptions.find(
-                            (opt) => opt.value === selectedModel
+                            (opt) => opt.value === selectedModelCode
                           )?.logo || ""
                         }
                         alt="Model logo"
@@ -232,7 +245,7 @@ const ChatPage = ({ initialModel }: Props) => {
                     )}
                     {
                       modelDropdownOptions.find(
-                        (opt) => opt.value === selectedModel
+                        (opt) => opt.value === selectedModelCode
                       )?.label
                     }
                     <span className="ml-2">&#9662;</span>

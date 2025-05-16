@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 
-import getServerSession from "@/lib/auth";
+import { getServerSession } from "@/lib/auth";
 import Navbar from "@/components/sections/navbar";
 import HeroSection from "@/components/sections/hero-section";
 import AnimatedGradientBackground from "@/components/general/animated-gradient-background";
