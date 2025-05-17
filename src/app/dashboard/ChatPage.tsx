@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { motion } from "motion/react";
-import { ArrowUp, Clock, Paperclip, Square } from "lucide-react";
+import { Clock } from "lucide-react";
 import {
   useRef,
   useEffect,
@@ -11,34 +11,18 @@ import {
   useCallback,
   FormEvent,
 } from "react";
-import Image from "next/image";
 import { UIMessage } from "ai";
 
-import Button from "@/components/ui/button";
 import { useSession } from "@/containers/SessionProvider";
 import Message from "@/components/general/message";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem,
-} from "@/components/ui/dropdown-menu/dropdown-menu";
 import Composer from "@/components/general/composer";
-import Icons from "@/components/general/icons";
 import { toast } from "@/components/ui/toast/toast";
 
-import {
-  cn,
-  fetchWithErrorHandlers,
-  generateUUID,
-  setCookie,
-} from "@/lib/utils";
+import { cn, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { ChatSDKError } from "@/lib/errors";
-import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
+import { LanguageModelCode } from "@/lib/ai/providers";
 import { getRelativeTimeFromNow } from "@/lib/utils/date";
 import { ChatVisibility } from "@/constants/chat";
-
-const COOKIE_NAME = "affogato_selected_model";
 
 type Props = {
   chatId: string;
@@ -209,108 +193,16 @@ const ChatPage = ({
         )}
       </motion.main>
       <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[60px]">
-        <form
-          onSubmit={submitForm}
-          className="w-full max-w-2xl bg-background border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors"
-        >
-          {!hasMessages && (
-            <div className="absolute -top-20 left-1/2 -translate-x-1/2 items-center flex flex-row gap-2">
-              <Icons.logo className="size-10 hover:animate-spin-once" />
-              <p className="text-3xl font-semibold text-amber-50">Affogato</p>
-            </div>
-          )}
-          <Composer input={input} setInput={setInput} />
-          <div className="flex items-center justify-between gap-2 w-full">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <div className="relative">
-                  <button
-                    type="button"
-                    className={
-                      "bg-muted text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer transition-opacity"
-                    }
-                  >
-                    {selectedModelCode && (
-                      <Image
-                        src={
-                          modelDropdownOptions.find(
-                            (opt) => opt.value === selectedModelCode
-                          )?.logo || ""
-                        }
-                        alt="Model logo"
-                        width={20}
-                        height={20}
-                        className="inline-block"
-                      />
-                    )}
-                    {
-                      modelDropdownOptions.find(
-                        (opt) => opt.value === selectedModelCode
-                      )?.label
-                    }
-                    <span className="ml-2">&#9662;</span>
-                  </button>
-                </div>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent side="top" align="start" className="w-72">
-                {modelDropdownOptions.map((option) => (
-                  <DropdownMenuItem
-                    key={option.value}
-                    onSelect={() => {
-                      setSelectedModel(option.value);
-                      setCookie(COOKIE_NAME, option.value);
-                    }}
-                    className="flex items-center gap-4 cursor-pointer mb-1"
-                  >
-                    <Image
-                      src={option.logo}
-                      alt={`${option.label} logo`}
-                      width={20}
-                      height={20}
-                      className="inline-block"
-                    />
-                    <div>
-                      <div className="font-semibold">{option.label}</div>
-                      <div className="text-xs text-muted-foreground">
-                        {option.description}
-                      </div>
-                    </div>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full text-muted-foreground"
-                type="button"
-                tabIndex={-1}
-              >
-                <Paperclip className="size-5" />
-              </Button>
-              {status === "streaming" || status === "submitted" ? (
-                <Button
-                  size="icon"
-                  className="rounded-full"
-                  type="button"
-                  onClick={stop}
-                >
-                  <Square className="size-4" fill="black" />
-                </Button>
-              ) : (
-                <Button
-                  size="icon"
-                  className="rounded-full"
-                  type="submit"
-                  disabled={!input.trim()}
-                >
-                  <ArrowUp className="size-5" />
-                </Button>
-              )}
-            </div>
-          </div>
-        </form>
+        <Composer
+          input={input}
+          setInput={setInput}
+          submitForm={submitForm}
+          hasMessages={hasMessages}
+          selectedModelCode={selectedModelCode}
+          setSelectedModel={setSelectedModel}
+          status={status}
+          stop={stop}
+        />
       </footer>
     </div>
   );
