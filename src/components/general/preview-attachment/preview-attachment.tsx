@@ -20,9 +20,7 @@ const PreviewAttachment = ({
       data-testid="input-attachment-preview"
       className="flex flex-col gap-2 mb-4"
     >
-      <div
-        className={`group relative flex flex-col items-center justify-between rounded-lg border border-zinc-700 bg-zinc-900 p-3 w-[120px] h-[120px] shadow-md`}
-      >
+      <div className="group relative flex flex-col items-center justify-between rounded-lg bg-black w-[120px] h-[120px] shadow-md">
         {/* Remove button */}
         {onRemove && (
           <button
@@ -42,14 +40,14 @@ const PreviewAttachment = ({
             key={url}
             src={url}
             alt={name ?? "An image attachment"}
-            className="rounded-md w-full h-full object-cover"
+            className="rounded-md w-full h-full object-cover border border-zinc-700"
           />
         ) : isPDF ? (
           <a
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex flex-col items-start justify-between w-full h-full"
+            className="flex flex-col items-start justify-between w-full h-full p-3 border border-zinc-700 rounded-lg"
             title={name}
           >
             <span className="text-sm font-medium text-zinc-100 line-clamp-2 break-all mb-1 text-left">

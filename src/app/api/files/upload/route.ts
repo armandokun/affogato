@@ -71,7 +71,7 @@ export async function POST(request: Request) {
       const { data: signedUrlData, error: signedUrlError } =
         await supabase.storage
           .from("chat-file-uploads")
-          .createSignedUrl(filePath, 60 * 60); // 1 hour
+          .createSignedUrl(filePath, 60 * 60 * 24 * 365); // 1 year
 
       if (signedUrlError) {
         return NextResponse.json(

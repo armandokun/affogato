@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import Markdown from "@/components/ui/markdown";
 import { LanguageModelCode } from "@/lib/ai/providers";
 
-import PreviewAttachment from "../preview-attachment";
+import AttachmentStack from "../attachment-stack/attachment-stack";
 
 const getModelLogo = (languageModelCode?: string) => {
   if (!languageModelCode) return "/logo.png";
@@ -54,19 +54,11 @@ const Message = ({ message, isPlaceholder = false }: Props) => {
     );
   }
 
+  const attachments = message.experimental_attachments || [];
+
   return (
     <>
-      {message.experimental_attachments &&
-        message.experimental_attachments.length > 0 && (
-          <div
-            data-testid={`message-attachments`}
-            className="flex flex-row justify-end gap-2"
-          >
-            {message.experimental_attachments.map((attachment) => (
-              <PreviewAttachment key={attachment.url} attachment={attachment} />
-            ))}
-          </div>
-        )}
+      {attachments.length > 0 && <AttachmentStack attachments={attachments} />}
       <div className="inline-block bg-muted text-white px-4 py-2 rounded-2xl max-w-[60%] text-left">
         {message.content}
       </div>
