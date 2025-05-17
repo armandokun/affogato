@@ -62,12 +62,12 @@ const Composer = ({
 
       if (response.ok) {
         const data = await response.json();
-        const { url, pathname, contentType } = data;
+        const { url, name, contentType } = data;
 
         return {
           url,
-          name: pathname,
-          contentType: contentType,
+          name,
+          contentType,
         };
       }
       const { error } = await response.json();

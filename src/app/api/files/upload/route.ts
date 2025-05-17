@@ -4,17 +4,19 @@ import { z } from "zod";
 import { getServerSession } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
-// Use Blob instead of File since File is not available in Node.js environment
 const FileSchema = z.object({
   file: z
     .instanceof(Blob)
     .refine((file) => file.size <= 10 * 1024 * 1024, {
       message: "File size should be less than 10MB",
     })
-    // Update the file type based on the kind of files you want to accept
-    .refine((file) => ["image/jpeg", "image/png"].includes(file.type), {
-      message: "File type should be JPEG or PNG",
-    }),
+    .refine(
+      (file) =>
+        ["image/jpeg", "image/png", "application/pdf"].includes(file.type),
+      {
+        message: "File type should be JPEG, PNG, or PDF",
+      }
+    ),
 });
 
 export async function POST(request: Request) {
@@ -80,7 +82,7 @@ export async function POST(request: Request) {
 
       return NextResponse.json({
         url: signedUrlData.signedUrl,
-        pathname: filePath,
+        name: filename,
         contentType: file.type,
       });
     } catch {
