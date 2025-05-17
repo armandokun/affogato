@@ -14,7 +14,7 @@ const SidebarContentPanel = ({
   return (
     <div
       className={cn(
-        "fixed top-0 left-[72px] h-screen w-48 bg-black shadow-lg p-6 z-10",
+        "fixed top-0 left-[72px] h-screen w-48 bg-black shadow-lg p-6 z-20",
         "transition-transform duration-200 ease-in-out",
         showPanel
           ? "translate-x-0 pointer-events-auto"
