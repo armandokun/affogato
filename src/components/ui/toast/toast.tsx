@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useEffect, useRef, useState, type ReactNode } from "react";
+import { AlertCircle, CheckCircle } from "lucide-react";
 import { toast as sonnerToast } from "sonner";
 
 import { cn } from "@/lib/utils";
-import { AlertCircle, CheckCircle } from "lucide-react";
 
 type Props = {
   id: string | number;
@@ -46,20 +46,20 @@ function Toast(props: Props) {
         data-testid="toast"
         key={id}
         className={cn(
-          "bg-zinc-100 p-3 rounded-lg w-full toast-mobile:w-fit flex flex-row gap-3",
+          "bg-black border border-zinc-800 shadow-lg p-4 rounded-lg w-full toast-mobile:w-fit flex flex-row gap-3",
           multiLine ? "items-start" : "items-center"
         )}
       >
         <div
           data-type={type}
           className={cn(
-            "data-[type=error]:text-red-600 data-[type=success]:text-green-600",
-            { "pt-1": multiLine }
+            "pt-1",
+            type === "error" ? "text-red-400" : "text-green-400"
           )}
         >
           {iconsByType[type]}
         </div>
-        <div ref={descriptionRef} className="text-zinc-950 text-sm">
+        <div ref={descriptionRef} className="text-zinc-100 text-sm">
           {description}
         </div>
       </div>
