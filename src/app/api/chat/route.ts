@@ -68,8 +68,13 @@ export async function POST(request: Request) {
 
     const previousMessages = await getMessagesByChatId({ id: chatId });
 
+    const transformedPreviousMessages = previousMessages.map((message) => ({
+      ...message,
+      experimental_attachments: message.attachments || [],
+    }));
+
     const messages = appendClientMessage({
-      messages: previousMessages,
+      messages: transformedPreviousMessages,
       message,
     });
 
@@ -102,8 +107,6 @@ export async function POST(request: Request) {
           maxSteps: 5,
           experimental_transform: smoothStream({ chunking: "word" }),
           onFinish: async ({ response }) => {
-            console.log(response.messages[response.messages.length - 1]);
-
             if (user.id) {
               try {
                 const assistantId = getTrailingMessageId({

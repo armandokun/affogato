@@ -40,7 +40,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
       // Note: content will soon be deprecated in @ai-sdk/react
       content: message.content,
       createdAt: message.created_at,
-      experimental_attachments: message.experimental_attachments,
+      experimental_attachments: message.attachments || [],
       data: {
         model_code: message.model_code,
       },

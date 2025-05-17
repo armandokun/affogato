@@ -1,6 +1,8 @@
-import { FormEvent } from "react";
+import { ChangeEvent, FormEvent, useCallback, useRef, useState } from "react";
 import { ArrowUp, Paperclip, Square } from "lucide-react";
 import Image from "next/image";
+import { UseChatHelpers } from "@ai-sdk/react";
+import { Attachment } from "ai";
 
 import {
   DropdownMenu,
@@ -9,41 +11,170 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu/dropdown-menu";
 import Button from "@/components/ui/button";
+import { toast } from "@/components/ui/toast/toast";
 
 import { setCookie } from "@/lib/utils";
 import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
 
 import Icons from "../icons";
 import ComposerInput from "./composer-input";
+import PreviewAttachment from "../preview-attachment";
 
 const COOKIE_NAME = "affogato_selected_model";
 
 type Props = {
-  input: string;
-  setInput: (input: string) => void;
-  submitForm: (event: FormEvent<HTMLFormElement>) => void;
+  chatId: string;
+  input: UseChatHelpers["input"];
+  setInput: UseChatHelpers["setInput"];
+  handleSubmit: UseChatHelpers["handleSubmit"];
+  status: UseChatHelpers["status"];
+  stop: UseChatHelpers["stop"];
   hasMessages: boolean;
   selectedModelCode: LanguageModelCode;
   setSelectedModel: (modelCode: LanguageModelCode) => void;
-  status: "ready" | "streaming" | "submitted" | "error";
-  stop: () => void;
 };
 
 const Composer = ({
+  chatId,
   input,
   setInput,
-  submitForm,
   hasMessages,
   selectedModelCode,
   setSelectedModel,
   status,
+  handleSubmit,
   stop,
 }: Props) => {
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const uploadFile = useCallback(async (file: File) => {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await fetch("/api/files/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const { url, pathname, contentType } = data;
+
+        return {
+          url,
+          name: pathname,
+          contentType: contentType,
+        };
+      }
+      const { error } = await response.json();
+      toast({
+        type: "error",
+        description: error,
+      });
+    } catch {
+      toast({
+        type: "error",
+        description: "Failed to upload file, please try again!",
+      });
+    }
+  }, []);
+
+  const handleFileChange = useCallback(
+    async (event: ChangeEvent<HTMLInputElement>) => {
+      const files = Array.from(event.target.files || []);
+
+      setUploadQueue(files.map((file) => file.name));
+
+      try {
+        const uploadPromises = files.map((file) => uploadFile(file));
+        const uploadedAttachments = await Promise.all(uploadPromises);
+        const successfullyUploadedAttachments = uploadedAttachments.filter(
+          (attachment) => attachment !== undefined
+        );
+
+        setAttachments((currentAttachments) => [
+          ...currentAttachments,
+          ...successfullyUploadedAttachments,
+        ]);
+      } catch (error) {
+        console.error("Error uploading files!", error);
+      } finally {
+        setUploadQueue([]);
+      }
+    },
+    [uploadFile]
+  );
+
+  const submitForm = useCallback(
+    (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      if (!input.trim()) return;
+
+      if (status === "streaming") stop();
+
+      window.history.replaceState({}, "", `/dashboard/${chatId}`);
+
+      handleSubmit(undefined, {
+        experimental_attachments: attachments,
+      });
+
+      setAttachments([]);
+    },
+    [input, status, stop, chatId, handleSubmit, attachments]
+  );
+
+  const handleAttachmentRemove = useCallback((attachment: Attachment) => {
+    setAttachments((current) =>
+      current.filter(
+        (a) => a.url !== attachment.url || a.name !== attachment.name
+      )
+    );
+  }, []);
+
   return (
     <form
       onSubmit={submitForm}
       className="w-full max-w-2xl bg-background border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors"
     >
+      {(attachments.length > 0 || uploadQueue.length > 0) && (
+        <div
+          data-testid="attachments-preview"
+          className="flex flex-row gap-2 overflow-x-scroll items-end"
+        >
+          {attachments.map((attachment) => (
+            <PreviewAttachment
+              key={attachment.url || attachment.name}
+              attachment={attachment}
+              onRemove={() => handleAttachmentRemove(attachment)}
+            />
+          ))}
+
+          {uploadQueue.map((filename) => (
+            <PreviewAttachment
+              key={filename}
+              attachment={{
+                url: "",
+                name: filename,
+                contentType: "",
+              }}
+              isUploading={true}
+            />
+          ))}
+        </div>
+      )}
+      <input
+        type="file"
+        className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
+        ref={fileInputRef}
+        multiple
+        onChange={handleFileChange}
+        tabIndex={-1}
+      />
       {!hasMessages && (
         <div className="absolute -top-20 left-1/2 -translate-x-1/2 items-center flex flex-row gap-2">
           <Icons.logo className="size-10 hover:animate-spin-once" />
@@ -117,6 +248,8 @@ const Composer = ({
             className="rounded-full text-muted-foreground"
             type="button"
             tabIndex={-1}
+            onClick={() => fileInputRef.current?.click()}
+            disabled={status !== "ready"}
           >
             <Paperclip className="size-5" />
           </Button>

@@ -10,7 +10,7 @@ export type DbMessage = {
   id: string;
   role: UIMessage["role"];
   parts: UIMessage["parts"];
-  experimental_attachments: UIMessage["experimental_attachments"];
+  attachments: UIMessage["experimental_attachments"];
   content: string;
   created_at: Date;
   model_code: LanguageModelCode;

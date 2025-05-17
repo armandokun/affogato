@@ -3,14 +3,7 @@
 import { useChat } from "@ai-sdk/react";
 import { motion } from "motion/react";
 import { Clock } from "lucide-react";
-import {
-  useRef,
-  useEffect,
-  useId,
-  useState,
-  useCallback,
-  FormEvent,
-} from "react";
+import { useRef, useEffect, useId, useState } from "react";
 import { UIMessage } from "ai";
 
 import { useSession } from "@/containers/SessionProvider";
@@ -111,21 +104,6 @@ const ChatPage = ({
 
   const hasMessages = messages.length > 0;
 
-  const submitForm = useCallback(
-    (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-
-      if (!input.trim()) return;
-
-      if (status === "streaming") stop();
-
-      window.history.replaceState({}, "", `/dashboard/${chatId}`);
-
-      handleSubmit();
-    },
-    [input, status, stop, chatId, handleSubmit]
-  );
-
   return (
     <div className="flex flex-col size-full">
       {hasMessages && (
@@ -194,9 +172,10 @@ const ChatPage = ({
       </motion.main>
       <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[60px]">
         <Composer
+          chatId={chatId}
           input={input}
           setInput={setInput}
-          submitForm={submitForm}
+          handleSubmit={handleSubmit}
           hasMessages={hasMessages}
           selectedModelCode={selectedModelCode}
           setSelectedModel={setSelectedModel}
