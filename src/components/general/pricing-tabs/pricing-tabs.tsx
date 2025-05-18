@@ -33,7 +33,7 @@ const PricingTabs = ({
           {activeTab === tab && (
             <motion.div
               layoutId="active-tab"
-              className="absolute inset-0 rounded-full bg-white dark:bg-[#3F3F46]  shadow-md border border-border"
+              className="absolute inset-0 rounded-full bg-[#3F3F46] shadow-md border border-border"
               transition={{
                 duration: 0.2,
                 type: "spring",

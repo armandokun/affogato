@@ -21,9 +21,7 @@ const PricingSection = () => {
           <h2 className="text-4xl font-semibold mb-4">
             Pricing that grows with you
           </h2>
-          <p className="text-gray-600 dark:text-gray-400">
-            No hidden fees, no surprises.
-          </p>
+          <p className="text-gray-400">No hidden fees, no surprises.</p>
         </div>
 
         <div className="flex justify-center my-5">
@@ -114,7 +112,7 @@ const PricingSection = () => {
                     {tier.buttonText}
                   </button>
                 </div>
-                <hr className="border-border dark:border-white/20" />
+                <hr className="border-white/20" />
                 <div className="p-4">
                   {tier.name !== "Free" && (
                     <p className="text-sm mb-4">
@@ -138,24 +136,7 @@ const PricingSection = () => {
                               viewBox="0 0 8 7"
                               fill="none"
                               xmlns="http://www.w3.org/2000/svg"
-                              className="block dark:hidden"
-                            >
-                              <path
-                                d="M1.5 3.48828L3.375 5.36328L6.5 0.988281"
-                                stroke="#101828"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
-
-                            <svg
-                              width="8"
-                              height="7"
-                              viewBox="0 0 8 7"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="hidden dark:block"
+                              className="block"
                             >
                               <path
                                 d="M1.5 3.48828L3.375 5.36328L6.5 0.988281"
