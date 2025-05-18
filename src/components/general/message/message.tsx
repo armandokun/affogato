@@ -15,6 +15,7 @@ const getModelLogo = (languageModelCode?: string) => {
 
   if (languageModelCode.includes("openai")) return "/llm-icons/chatgpt.png";
   if (languageModelCode.includes("anthropic")) return "/llm-icons/claude.png";
+  if (languageModelCode.includes("gemini")) return "/llm-icons/gemini.png";
 
   return "/llm-icons/chatgpt.png";
 };
@@ -172,17 +173,3 @@ const Message = ({ message }: Props) => {
 };
 
 export default Message;
-
-// export const PreviewMessage = memo(
-//   PurePreviewMessage,
-//   (prevProps, nextProps) => {
-//     if (prevProps.isLoading !== nextProps.isLoading) return false;
-//     if (prevProps.message.id !== nextProps.message.id) return false;
-//     if (prevProps.requiresScrollPadding !== nextProps.requiresScrollPadding)
-//       return false;
-//     if (!equal(prevProps.message.parts, nextProps.message.parts)) return false;
-//     if (!equal(prevProps.vote, nextProps.vote)) return false;
-
-//     return true;
-//   },
-// );

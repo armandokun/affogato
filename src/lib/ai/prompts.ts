@@ -44,6 +44,14 @@ export const systemPrompt = ({
       - Careful handling of sensitive topics`;
 
       return `${regularPrompt}\n\n${largeModelPrompt}\n\n${anthropicLargeModelCustomPrompt}`;
+    case LanguageModelCode.GEMINI_CHAT_MODEL_FAST:
+      const geminiCustomPrompt = `As Gemini 2.0 Flash, you excel at:
+      - Multimodal reasoning (text, images, and more)
+      - Providing up-to-date, factual, and helpful responses
+      - Handling complex and nuanced queries
+      - Maintaining a friendly, conversational, and helpful tone`;
+
+      return `${regularPrompt}\n\n${largeModelPrompt}\n\n${geminiCustomPrompt}`;
     default:
       return regularPrompt;
   }
