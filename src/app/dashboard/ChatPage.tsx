@@ -152,17 +152,16 @@ const ChatPage = ({
           >
             {messages.map((message, id) => {
               const isLast = id === messages.length - 1;
-              const isAI = message.role !== "user";
-              const isPlaceholder = message.id === placeholderId;
+              const isAI = message.role === "assistant";
 
               return (
                 <div
                   key={message.id}
-                  className={`mb-4 text-white ${
+                  className={`mb-12 text-white ${
                     message.role === "user" ? "text-right" : "text-left"
                   }${isLast && isAI ? " min-h-96" : ""}`}
                 >
-                  <Message message={message} isPlaceholder={isPlaceholder} />
+                  <Message message={message} />
                 </div>
               );
             })}

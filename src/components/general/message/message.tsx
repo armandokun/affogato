@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { UIMessage } from "ai";
+import { AnimatePresence, motion } from "motion/react";
 
 import { cn } from "@/lib/utils";
 import Markdown from "@/components/ui/markdown";
@@ -20,10 +21,9 @@ const getModelLogo = (languageModelCode?: string) => {
 
 type Props = {
   message: UIMessage;
-  isPlaceholder?: boolean;
 };
 
-const Message = ({ message, isPlaceholder = false }: Props) => {
+const Message = ({ message }: Props) => {
   const isAI = message.role === "assistant";
 
   const modelCode =
@@ -35,35 +35,154 @@ const Message = ({ message, isPlaceholder = false }: Props) => {
 
   const logoSrc = getModelLogo(modelCode);
 
-  if (isAI) {
-    return (
-      <div className="flex items-start gap-2 text-left">
-        <div className="rounded-full p-1 flex-shrink-0 size-8 flex items-center justify-center">
-          <Image src={logoSrc} alt="AI Assistant" width={20} height={20} />
-        </div>
-        <span
-          className={cn(
-            isPlaceholder
-              ? "text-muted-foreground animate-pulse"
-              : "[&>*:first-child]:mt-0"
-          )}
-        >
-          <Markdown>{message.content}</Markdown>
-        </span>
-      </div>
-    );
-  }
-
-  const attachments = message.experimental_attachments || [];
-
   return (
-    <>
-      {attachments.length > 0 && <AttachmentStack attachments={attachments} />}
-      <div className="inline-block bg-muted text-white px-4 py-2 rounded-2xl max-w-[60%] text-left">
-        {message.content}
-      </div>
-    </>
+    <AnimatePresence>
+      <motion.div
+        data-testid={`message-${message.role}`}
+        className="w-full mx-auto max-w-3xl px-4 group/message"
+        initial={{ y: 5, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        data-role={message.role}
+      >
+        <div
+          className={cn("flex gap-4 w-full", {
+            "mr-auto max-w-2xl w-fit": isAI,
+            "max-w-[70%] ml-auto": !isAI,
+          })}
+        >
+          {isAI && (
+            <div className="size-8 flex items-center rounded-full justify-center ring-1 shrink-0 ring-border bg-background">
+              <div className="translate-y-px">
+                <Image
+                  src={logoSrc}
+                  alt="AI Assistant"
+                  width={20}
+                  height={20}
+                />
+              </div>
+            </div>
+          )}
+
+          {isAI && message.parts.length === 0 && (
+            <div className="flex flex-col gap-4 w-full">
+              <div className="flex flex-col gap-4 text-muted-foreground">
+                Thinking...
+              </div>
+            </div>
+          )}
+
+          <div className="flex flex-col gap-4 w-full">
+            {message.experimental_attachments &&
+              message.experimental_attachments.length > 0 && (
+                <div className="flex flex-row justify-end gap-2">
+                  <AttachmentStack
+                    attachments={message.experimental_attachments}
+                  />
+                </div>
+              )}
+
+            {message.parts?.map((part, index) => {
+              const { type } = part;
+              const key = `message-${message.id}-part-${index}`;
+
+              if (type === "text") {
+                if (isAI) {
+                  return (
+                    <div key={key} className="flex flex-row gap-2 items-start">
+                      <div className="flex flex-col gap">
+                        <Markdown>{part.text}</Markdown>
+                      </div>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div key={key} className="flex flex-row gap-2 justify-end">
+                    <div className="flex flex-col gap-4 bg-muted text-white px-4 py-2 rounded-xl text-left">
+                      {part.text}
+                    </div>
+                  </div>
+                );
+              }
+
+              if (type === "tool-invocation") {
+                const { toolInvocation } = part;
+                const { toolName, toolCallId, state } = toolInvocation;
+
+                if (state === "call") {
+                  return (
+                    <div key={toolCallId}>
+                      {toolName === "webSearch" && (
+                        <h3 className="text-muted-foreground animate-pulse">
+                          Web Search
+                        </h3>
+                      )}
+                    </div>
+                  );
+                }
+
+                if (state === "result") {
+                  const { result } = toolInvocation;
+
+                  if (toolName === "webSearch") {
+                    return (
+                      <div
+                        key={`${toolCallId}-result`}
+                        className="flex flex-row gap-2 items-center"
+                      >
+                        {result.map(
+                          (source: {
+                            id: string;
+                            url: string;
+                            favicon: string;
+                            title: string;
+                          }) => {
+                            return (
+                              <div key={source.id}>
+                                <div className="flex flex-row gap-2">
+                                  <a
+                                    href={source.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                  >
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                      src={source.favicon}
+                                      alt={source.title}
+                                      className="size-8 rounded-full border border-muted bg-white"
+                                    />
+                                  </a>
+                                </div>
+                              </div>
+                            );
+                          }
+                        )}
+                        <p className="text-muted-foreground">Sources</p>
+                      </div>
+                    );
+                  }
+                }
+              }
+            })}
+          </div>
+        </div>
+      </motion.div>
+    </AnimatePresence>
   );
 };
 
 export default Message;
+
+// export const PreviewMessage = memo(
+//   PurePreviewMessage,
+//   (prevProps, nextProps) => {
+//     if (prevProps.isLoading !== nextProps.isLoading) return false;
+//     if (prevProps.message.id !== nextProps.message.id) return false;
+//     if (prevProps.requiresScrollPadding !== nextProps.requiresScrollPadding)
+//       return false;
+//     if (!equal(prevProps.message.parts, nextProps.message.parts)) return false;
+//     if (!equal(prevProps.vote, nextProps.vote)) return false;
+
+//     return true;
+//   },
+// );

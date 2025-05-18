@@ -21,6 +21,7 @@ import { ChatSDKError } from "@/lib/errors";
 import { generateTitleFromUserMessage } from "@/app/dashboard/actions";
 import { ChatVisibility } from "@/constants/chat";
 import { getTrailingMessageId } from "@/lib/utils";
+import { webSearch } from "@/lib/ai/tools";
 
 export async function POST(request: Request) {
   const {
@@ -104,6 +105,9 @@ export async function POST(request: Request) {
           messages,
           maxSteps: 5,
           experimental_transform: smoothStream({ chunking: "word" }),
+          tools: {
+            webSearch,
+          },
           onFinish: async ({ response }) => {
             if (user.id) {
               try {

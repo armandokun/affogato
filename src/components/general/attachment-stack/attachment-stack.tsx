@@ -70,7 +70,7 @@ const AttachmentStack = ({ attachments }: Props) => {
   return (
     <>
       {attachments.length > maxStacked ? (
-        <div className="relative flex flex-row justify-end gap-2 min-h-[100px] mb-4">
+        <div className="relative flex flex-row justify-end gap-2 min-h-[100px]">
           <div
             className="relative"
             style={{ width: ATTACHMENT_SIZE, height: ATTACHMENT_SIZE }}
