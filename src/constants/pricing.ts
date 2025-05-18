@@ -1,0 +1,47 @@
+export const PRICING_PLANS = [
+  {
+    id: "free",
+    name: "Free",
+    price: 0,
+    yearlyPrice: 0,
+    features: [
+      "20 messages per day",
+      "Access to most popular models",
+      "Limited access to web search, file uploads and more",
+    ],
+    description: "Perfect for trying out the app",
+    buttonText: "Start Free",
+    buttonColor: "bg-accent text-primary",
+    isPopular: false,
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    price: 15,
+    yearlyPrice: 150,
+    features: [
+      "1000 messages per day",
+      "Access to all models",
+      "Unlimited access to web search, file uploads and more",
+    ],
+    description: "Perfect for daily use",
+    buttonText: "Start Pro",
+    buttonColor: "bg-accent text-primary",
+    isPopular: true,
+  },
+  {
+    id: "unlimited",
+    name: "Unlimited",
+    price: 99,
+    yearlyPrice: 999,
+    features: [
+      "Unlimited messages",
+      "Unlimited access to web search, file uploads and more",
+      "Access to new features before they're released",
+    ],
+    description: "Perfect for AI addicts",
+    buttonText: "Start Unlimited",
+    buttonColor: "bg-accent text-primary",
+    isPopular: false,
+  },
+];

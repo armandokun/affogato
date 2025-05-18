@@ -99,3 +99,56 @@ export async function getMessagesByChatId({ id }: { id: string }) {
     );
   }
 }
+
+export async function getMessageCountByUserId({
+  id,
+  differenceInHours,
+}: {
+  id: string;
+  differenceInHours: number;
+}) {
+  try {
+    const supabase = await createClient();
+
+    const since = new Date(
+      Date.now() - differenceInHours * 60 * 60 * 1000
+    ).toISOString();
+
+    const { data: chats, error: chatsError } = await supabase
+      .from("chats")
+      .select("id")
+      .eq("user_id", id);
+
+    if (chatsError) {
+      throw new ChatSDKError(
+        "bad_request:database",
+        "Failed to get chats for user in getMessageCountByUserId"
+      );
+    }
+
+    const chatIds = chats?.map((c: { id: string }) => c.id) || [];
+
+    if (chatIds.length === 0) return 0;
+
+    const { count, error: messagesError } = await supabase
+      .from("messages")
+      .select("id", { count: "exact", head: true })
+      .in("chat_id", chatIds)
+      .gte("created_at", since)
+      .eq("role", "user");
+
+    if (messagesError) {
+      throw new ChatSDKError(
+        "bad_request:database",
+        "Failed to count messages in getMessageCountByUserId"
+      );
+    }
+
+    return count ?? 0;
+  } catch {
+    throw new ChatSDKError(
+      "bad_request:database",
+      "Failed to get message count by user id"
+    );
+  }
+}

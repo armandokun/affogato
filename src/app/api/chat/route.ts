@@ -13,6 +13,7 @@ import { LanguageModelCode, myProvider } from "@/lib/ai/providers";
 import { systemPrompt } from "@/lib/ai/prompts";
 import {
   getChatById,
+  getMessageCountByUserId,
   getMessagesByChatId,
   saveChat,
   saveMessage,
@@ -22,6 +23,8 @@ import { generateTitleFromUserMessage } from "@/app/dashboard/actions";
 import { ChatVisibility } from "@/constants/chat";
 import { getTrailingMessageId } from "@/lib/utils";
 import { webSearch } from "@/lib/ai/tools";
+import { entitlementsByUserType, UserType } from "@/constants/user";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   const {
@@ -43,6 +46,32 @@ export async function POST(request: Request) {
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
       });
+    }
+
+    const supabase = await createClient();
+
+    const { data: profileData, error: profileError } = await supabase
+      .from("profiles")
+      .select("type")
+      .eq("user_id", user.id)
+      .single();
+
+    if (profileError) {
+      throw new ChatSDKError(
+        "bad_request:database",
+        "Failed to get user profile"
+      );
+    }
+
+    const userType = profileData.type as UserType;
+
+    const messageCount = await getMessageCountByUserId({
+      id: user.id,
+      differenceInHours: 24,
+    });
+
+    if (messageCount > entitlementsByUserType[userType].maxMessagesPerDay) {
+      return new ChatSDKError("rate_limit:chat").toResponse();
     }
 
     const chatId = id;
