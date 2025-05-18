@@ -1,7 +1,40 @@
-import Button from "@/components/ui/button";
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
 
+import Button from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/client";
+import { useSession } from "@/containers/SessionProvider";
+import { PlanType } from "@/constants/user";
+
 const CheckoutSuccessPage = () => {
+  const { user } = useSession();
+
+  useEffect(() => {
+    const makeCurrentUserPremium = async () => {
+      if (!user?.id) return;
+
+      const supabase = createClient();
+
+      const { error } = await supabase
+        .from("subscriptions")
+        .update({
+          plan_id: PlanType.PRO,
+          current_period_end: new Date(
+            Date.now() + 30 * 24 * 60 * 60 * 1000
+          ).toISOString(),
+        })
+        .eq("user_id", user?.id);
+
+      if (error) {
+        console.error(error);
+      }
+    };
+
+    makeCurrentUserPremium();
+  }, [user?.id]);
+
   return (
     <div className="flex flex-col items-center justify-center size-full py-12">
       <div className="mb-6">
