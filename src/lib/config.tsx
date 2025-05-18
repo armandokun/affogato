@@ -29,18 +29,22 @@ export const Highlight = ({
 export const BLUR_FADE_DELAY = 0.15;
 
 export const siteConfig = {
-  name: "Cal AI",
-  description: "Smart scheduling powered by AI.",
+  name: "Affogato",
+  description: "LLMs in one place. For one subscription price.",
   cta: "Get Started",
   url: process.env.NEXT_PUBLIC_SITE_URL || "https://affogato.chat",
   keywords: [
-    "AI Calendar",
-    "Smart Scheduling",
-    "Productivity",
-    "Time Management",
+    "LLMs",
+    "AI",
+    "ChatGPT",
+    "Claude",
+    "Gemini",
+    "Perplexity",
+    "AI Chat",
+    "AI Chat Models",
   ],
   links: {
-    email: "support@affogato.chat",
+    email: "armandas@sobeck.app",
     twitter: "https://twitter.com/affogato_chat",
     discord: "https://discord.gg/affogato",
     github: "https://github.com/affogato-chat",

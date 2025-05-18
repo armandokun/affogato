@@ -158,12 +158,12 @@ const AnimatedGradientBackground: React.FC<AnimatedGradientBackgroundProps> = ({
           ease: [0.25, 0.1, 0.25, 1], // Cubic bezier easing
         },
       }}
-      className={`absolute inset-0 overflow-hidden ${containerClassName}`}
+      className={`overflow-hidden w-full h-full ${containerClassName}`}
     >
       <div
         ref={containerRef}
         style={containerStyle}
-        className="absolute inset-0 transition-transform"
+        className="w-full h-full transition-transform"
       />
     </motion.div>
   );
