@@ -13,6 +13,8 @@ export const PRICING_PLANS = [
     buttonText: "Start Free",
     buttonColor: "bg-accent text-primary",
     isPopular: false,
+    stripePriceIdYearly: null,
+    stripePriceIdMonthly: null,
   },
   {
     id: "pro",
@@ -28,6 +30,8 @@ export const PRICING_PLANS = [
     buttonText: "Start Pro",
     buttonColor: "bg-accent text-primary",
     isPopular: true,
+    stripePriceIdYearly: "price_1RPxIbPI4OHhk9KwZsDU0ocC",
+    stripePriceIdMonthly: "price_1RPxHIPI4OHhk9KwUdrYtQFQ",
   },
   {
     id: "unlimited",
@@ -43,5 +47,7 @@ export const PRICING_PLANS = [
     buttonText: "Start Unlimited",
     buttonColor: "bg-accent text-primary",
     isPopular: false,
+    stripePriceIdYearly: "price_1RPxJRPI4OHhk9Kwo05IKvsg",
+    stripePriceIdMonthly: "price_1RPxIyPI4OHhk9KwCSw4FNm3",
   },
 ];
