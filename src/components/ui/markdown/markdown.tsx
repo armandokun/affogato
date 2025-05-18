@@ -70,6 +70,7 @@ const components: Partial<Components> = {
   code: (props) => {
     // @ts-expect-error: react-markdown passes extra props, but we only care about inline and children
     const { inline, children, ...rest } = props;
+
     if (inline) {
       return (
         <code

@@ -4,6 +4,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { useEffect, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import { CheckIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
@@ -240,23 +241,8 @@ const PricingPage = () => {
                               "bg-muted-foreground/40 border-border"
                           )}
                         >
-                          <div className="size-3 flex items-center justify-center">
-                            <svg
-                              width="8"
-                              height="7"
-                              viewBox="0 0 8 7"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                              className="block"
-                            >
-                              <path
-                                d="M1.5 3.48828L3.375 5.36328L6.5 0.988281"
-                                stroke="#FAFAFA"
-                                strokeWidth="1.5"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                              />
-                            </svg>
+                          <div className="size-5 flex items-center justify-center">
+                            <CheckIcon className="size-3" />
                           </div>
                         </div>
                         <span className="text-sm">{feature}</span>
