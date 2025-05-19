@@ -23,7 +23,7 @@ const Navbar = () => {
   return (
     <header
       className={cn(
-        "sticky z-50 mx-4 flex justify-center transition-all duration-300 md:mx-0",
+        "sticky z-50 flex justify-center transition-all duration-300",
         hasScrolled ? "top-6" : "top-4 mx-0"
       )}
     >

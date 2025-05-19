@@ -8,11 +8,12 @@ import ProviderShowcase from "@/components/sections/provider-showcase";
 import FeatureSection from "@/components/sections/feature-section";
 import FAQ from "@/components/sections/faq-section";
 import { Footer } from "@/components/sections/footer-section/footer-section";
+import { DASHBOARD } from "@/constants/routes";
 
 const Home = async () => {
   const user = await getServerSession();
 
-  if (user) redirect("/dashboard");
+  if (user) redirect(DASHBOARD);
 
   return (
     <>
@@ -20,7 +21,7 @@ const Home = async () => {
         <Navbar />
         <HeroSection />
         <div className="max-w-7xl mx-auto w-full mt-30">
-          <main className="flex flex-col items-center justify-center w-full gap-50">
+          <main className="flex flex-col items-center justify-center w-full gap-30 md:gap-50">
             <ProviderShowcase />
             <FeatureSection />
             <PricingSection />
