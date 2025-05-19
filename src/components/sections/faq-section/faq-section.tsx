@@ -15,7 +15,7 @@ const FAQS = [
   {
     question: "How is this the same price as ChatGPT?",
     answer:
-      "That’s a great question! Some people might think “this is too good to be true!” The truth is, we have a developer relationship with all of the AI vendors through something called an API. Every time a user generates something (whether a message, image, etc.) we get billed for that usage. Our pricing plans are designed in such a way to maximize the amount of usage without costing us more than you’re paying. This is how we are able to give open access to all AI models for a flat monthly fee.",
+      "That’s a great question! Some people might think “this is too good to be true!” The truth is, we have a developer relationship with all of the AI vendors through something called an API. Every time a user generates a message something we get billed for that usage. Our pricing plans are designed in such a way to maximize the amount of usage without costing us more than you’re paying. This is how we are able to give open access to all AI models for a flat monthly fee.",
   },
   {
     question: "Do I need a ChatGPT account to use Affogato?",
@@ -70,7 +70,8 @@ export default function FAQ() {
         </Accordion>
       </div>
       <h4 className="mb-12 text-center text-sm font-medium tracking-tight text-foreground/80">
-        Still have questions? Email us at{" "}
+        Still have questions? <br />
+        Email us at{" "}
         <a href={`mailto:${siteConfig.links.email}`} className="underline">
           {siteConfig.links.email}
         </a>
