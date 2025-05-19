@@ -18,7 +18,7 @@ const FeatureSection = () => {
               >
                 <BrainCircuit className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-lg font-semibold">Works as expected.</h3>
+              <h3 className="text-lg font-semibold">Feels familiar.</h3>
               <p className="text-gray-400">
                 Comes preinstalled with web search, document uploads and
                 reasoning.
