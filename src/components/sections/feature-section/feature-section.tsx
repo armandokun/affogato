@@ -3,8 +3,8 @@ import { BrainCircuit, Globe, Sparkle } from "lucide-react";
 
 const FeatureSection = () => {
   return (
-    <section id="features" className="py-20 text-center">
-      <div className="container mx-auto px-4 md:px-8">
+    <section id="features" className="text-center">
+      <div className="container">
         <h2 className="text-4xl font-semibold text-center">Features</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
           <MagicCard className="rounded-xl min-h-[250px] flex items-center justify-center">
@@ -38,8 +38,8 @@ const FeatureSection = () => {
               </div>
               <h3 className="text-lg font-semibold">All you can eat buffet.</h3>
               <p className="text-gray-400">
-                You can add as many LLMs as you want. We support all major
-                providers.
+                Choose from a wide range of providers. We support most up to
+                date models.
               </p>
             </div>
           </MagicCard>

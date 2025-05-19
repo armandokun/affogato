@@ -19,8 +19,8 @@ const Home = async () => {
       <div className="flex flex-col p-4 md:max-w-4xl lg:max-w-7xl md:mx-auto">
         <Navbar />
         <HeroSection />
-        <div className="max-w-7xl mx-auto w-full">
-          <main className="flex flex-col items-center justify-center w-full">
+        <div className="max-w-7xl mx-auto w-full mt-30">
+          <main className="flex flex-col items-center justify-center w-full gap-50">
             <ProviderShowcase />
             <FeatureSection />
             <PricingSection />

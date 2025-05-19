@@ -11,13 +11,13 @@ import PricingTabs from "@/components/general/pricing-tabs";
 import { CheckIcon } from "lucide-react";
 
 const PricingSection = () => {
-  const [activeTab, setActiveTab] = useState<"yearly" | "monthly">("yearly");
+  const [activeTab, setActiveTab] = useState<"yearly" | "monthly">("monthly");
 
   const router = useRouter();
 
   return (
-    <section id="pricing" className="py-20">
-      <div className="container mx-auto px-4 md:px-8">
+    <section id="pricing">
+      <div className="container mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-semibold mb-4">
             Pricing that grows with you

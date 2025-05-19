@@ -13,7 +13,7 @@ const providers = [
 
 const ProviderShowcase = () => {
   return (
-    <section id="companies" className="py-20">
+    <section id="companies">
       <div className="py-14">
         <div className="container mx-auto">
           <h3 className="text-center text-sm font-semibold text-gray-500 uppercase">

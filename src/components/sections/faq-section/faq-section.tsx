@@ -51,7 +51,7 @@ const FAQS = [
 
 export default function FAQ() {
   return (
-    <section id="faq" className="py-20">
+    <section id="faq">
       <h2 className="text-4xl font-semibold text-center my-6">FAQ</h2>
       <div className="min-w-[50vw]">
         <Accordion
