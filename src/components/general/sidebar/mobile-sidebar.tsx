@@ -75,13 +75,10 @@ const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
                   </Link>
                 );
               })}
-              <Link
-                href="/dashboard/library"
-                className="flex items-center gap-2 font-medium hover:bg-accent rounded-md p-2 text-muted-foreground"
-              >
+              <div className="flex items-center gap-2 font-medium hover:bg-accent rounded-md p-2 text-muted-foreground">
                 <Library size={20} />
                 <span>Library</span>
-              </Link>
+              </div>
               <ul className="flex flex-col gap-1 ml-4">
                 <div className="relative pl-4 border-l border-muted-foreground/50">
                   {loadingLibrary ? (

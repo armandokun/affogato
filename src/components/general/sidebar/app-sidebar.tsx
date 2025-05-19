@@ -51,12 +51,9 @@ const AppSidebar = () => {
         <>
           <h2 className="text-lg font-medium">Home</h2>
           <div className="h-px bg-muted-foreground/50 my-2" />
-          <Link
-            href="/dashboard/library"
-            className="text-sm text-muted-foreground font-medium hover:text-white hover:bg-accent rounded-md"
-          >
+          <div className="text-sm text-muted-foreground font-medium rounded-md">
             Library
-          </Link>
+          </div>
           <ul className="flex flex-col gap-1">
             {loading ? (
               <li className="text-xs text-muted-foreground p-2">Loading...</li>
