@@ -281,3 +281,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+::selection {
+  background: var(--secondary);
+  color: #fff;
+}

@@ -58,7 +58,7 @@ const HeroSection = () => {
                 animate="visible"
                 variants={descriptionVariants}
               >
-                <p className="text-base md:text-lg text-center text-muted-foreground font-medium text-balance leading-relaxed tracking-tight">
+                <p className="text-base md:text-lg text-center text-muted-foreground text-balance leading-relaxed tracking-tight">
                   Skip extra subscriptions. Use the best Large Language Models
                   in a single, unified chat with Affogato.
                 </p>
