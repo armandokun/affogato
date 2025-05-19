@@ -1,63 +1,61 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
+import { encodedRedirect } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { DASHBOARD } from "@/constants/routes";
+import { DASHBOARD, LOGIN } from "@/constants/routes";
+import { toast } from "@/components/ui/toast/toast";
 
 export const signOut = async () => {
   const supabase = await createClient();
 
   const { error } = await supabase.auth.signOut();
 
-  if (error) redirect("/error");
+  if (error) return toast({ description: error.message, type: "error" });
 
-  redirect("/");
+  redirect(LOGIN);
 };
 
-export const signInWithPassword = async (
-  prevState: { error: string; success: string },
-  formData: FormData
-) => {
+export const signInWithPassword = async (formData: FormData) => {
   const supabase = await createClient();
 
-  const email = formData.get("email")?.toString() || "";
-  const password = formData.get("password")?.toString() || "";
+  const data = {
+    email: formData.get("email")?.toString() || "",
+    password: formData.get("password")?.toString() || "",
+  };
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { error } = await supabase.auth.signInWithPassword(data);
 
-  if (error) {
-    return { error: error.message, success: "" };
-  }
+  if (error) return encodedRedirect("error", LOGIN, error.message);
 
+  revalidatePath("/", "layout");
   redirect(DASHBOARD);
 };
 
-export const signUpWithPassword = async (
-  prevState: { error: string; success: string },
-  formData: FormData
-) => {
+export const signUpWithPassword = async (formData: FormData) => {
   const supabase = await createClient();
 
-  const email = formData.get("email")?.toString() || "";
-  const password = formData.get("password")?.toString() || "";
-
-  const { error } = await supabase.auth.signUp({ email, password });
-
-  if (error) {
-    return { error: error.message, success: "" };
-  }
-
-  return {
-    error: "",
-    success: "Please check your email for a confirmation link.",
+  const data = {
+    email: formData.get("email")?.toString() || "",
+    password: formData.get("password")?.toString() || "",
   };
+
+  console.log(data);
+
+  const { error } = await supabase.auth.signUp(data);
+
+  if (error) return encodedRedirect("error", LOGIN, error.message);
+
+  return encodedRedirect(
+    "success",
+    LOGIN,
+    "Please check your email for a confirmation link."
+  );
 };
 
-export const signInWithOAuth = async (
-  prevState: { error: string; success: string },
-  formData: FormData
-) => {
+export const signInWithOAuth = async (formData: FormData) => {
   const provider = formData.get("provider") as "google" | "github";
 
   const supabase = await createClient();
@@ -69,9 +67,9 @@ export const signInWithOAuth = async (
     },
   });
 
-  if (error) return { error: error.message, success: "" };
+  if (error) return encodedRedirect("error", LOGIN, error.message);
 
-  if (data.url) redirect(data.url);
+  if (data.url) return redirect(data.url);
 
-  return { error: "No redirect URL from provider.", success: "" };
+  return encodedRedirect("error", LOGIN, "No redirect URL from provider.");
 };

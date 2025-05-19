@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Label, Separator } from "radix-ui";
-import React, { useActionState, useState } from "react";
 
 import Button from "@/components/ui/button";
 import Icons from "@/components/general/icons";
@@ -12,24 +12,13 @@ import {
   signUpWithPassword,
   signInWithOAuth,
 } from "@/app/login/actions";
+import AuthSubmitButton from "@/components/general/auth-submit-button";
+import FormMessage, {
+  Message,
+} from "@/components/general/form-message/form-message";
 
-const initialState = { error: "", success: "" };
-
-const LoginSection = () => {
+const LoginSection = ({ formMessage }: { formMessage: Message }) => {
   const [isSignUp, setIsSignUp] = useState(false);
-
-  const [loginState, loginAction] = useActionState(
-    signInWithPassword,
-    initialState
-  );
-  const [signupState, signupAction] = useActionState(
-    signUpWithPassword,
-    initialState
-  );
-  const [oauthState, oauthAction] = useActionState(
-    signInWithOAuth,
-    initialState
-  );
 
   return (
     <div className="flex flex-col justify-center mx-auto px-6 py-12 gap-8 max-w-md h-full">
@@ -43,135 +32,93 @@ const LoginSection = () => {
         </h1>
       </div>
       <div className="flex flex-col gap-3 w-full mt-2">
-        <form action={oauthAction} className="w-full">
+        <form className="w-full">
           <input type="hidden" name="provider" value="google" />
-          <Button
-            variant="outline"
-            className="w-full flex gap-2 justify-center"
-            type="submit"
+          <AuthSubmitButton
+            title="Continue with Google"
+            pendingTitle="Continuing with Google..."
+            formAction={signInWithOAuth}
           >
-            <Icons.google /> Continue with Google
-          </Button>
+            <Icons.google className="size-4" />
+          </AuthSubmitButton>
         </form>
-        <form action={oauthAction} className="w-full">
+        <form className="w-full">
           <input type="hidden" name="provider" value="github" />
-          <Button
-            variant="outline"
-            className="w-full flex gap-2 justify-center"
-            type="submit"
+          <AuthSubmitButton
+            title="Continue with GitHub"
+            pendingTitle="Continuing with GitHub..."
+            formAction={signInWithOAuth}
           >
-            <GitHubLogoIcon className="size-5" /> Continue with GitHub
-          </Button>
+            <GitHubLogoIcon className="size-4" />
+          </AuthSubmitButton>
         </form>
-        {oauthState?.error && oauthState.error !== "" && (
-          <div className="text-red-500 text-sm mb-2">{oauthState.error}</div>
-        )}
       </div>
       <div className="flex items-center gap-2 my-2 w-full">
         <Separator.Root className="flex-1 h-px bg-border" />
         <span className="text-xs text-muted-foreground">OR</span>
         <Separator.Root className="flex-1 h-px bg-border" />
       </div>
-      {!isSignUp ? (
-        <form className="flex flex-col gap-4 w-full" action={loginAction}>
-          <div>
-            <Label.Root
-              htmlFor="email"
-              className="block text-sm font-medium mb-1"
-            >
-              Email
-            </Label.Root>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="ada@lovelace.com"
-            />
-          </div>
-          <div>
-            <div className="flex items-center gap-2 justify-between">
-              <Label.Root
-                htmlFor="password"
-                className="block text-sm font-medium mb-1"
-              >
-                Password
-              </Label.Root>
-              <Link
-                href="/forgot-password"
-                className="text-xs text-muted-foreground underline"
-              >
-                Forgot password?
-              </Link>
-            </div>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="••••••••"
-            />
-          </div>
-          <Button type="submit" className="w-full mt-2">
-            Sign in
-          </Button>
-          {loginState?.error && (
-            <div className="text-red-500 text-sm mb-2">{loginState.error}</div>
-          )}
-        </form>
-      ) : (
-        <form className="flex flex-col gap-4 w-full" action={signupAction}>
-          <div>
-            <Label.Root
-              htmlFor="email"
-              className="block text-sm font-medium mb-1"
-            >
-              Email
-            </Label.Root>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              required
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="ada@lovelace.com"
-            />
-          </div>
-          <div>
+      <form className="flex flex-col gap-4 w-full">
+        <div>
+          <Label.Root
+            htmlFor="email"
+            className="block text-sm font-medium mb-1"
+          >
+            Email
+          </Label.Root>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="ada@lovelace.com"
+          />
+        </div>
+        <div>
+          <div className="flex items-center gap-2 justify-between">
             <Label.Root
               htmlFor="password"
               className="block text-sm font-medium mb-1"
             >
               Password
             </Label.Root>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              autoComplete="current-password"
-              required
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              placeholder="••••••••"
-            />
+            <Link
+              href="/forgot-password"
+              className="text-xs text-muted-foreground underline"
+            >
+              Forgot password?
+            </Link>
           </div>
-          <Button type="submit" className="w-full mt-2">
-            Sign up
-          </Button>
-          {signupState?.error && (
-            <div className="text-red-500 text-sm mb-2">{signupState.error}</div>
-          )}
-          {signupState?.success && (
-            <div className="text-green-500 text-sm mb-2">
-              {signupState.success}
-            </div>
-          )}
-        </form>
-      )}
+          <input
+            id="password"
+            name="password"
+            type="password"
+            autoComplete="current-password"
+            required
+            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="••••••••"
+          />
+        </div>
+
+        {isSignUp ? (
+          <>
+            <AuthSubmitButton
+              title="Sign up"
+              pendingTitle="Signing up..."
+              formAction={signUpWithPassword}
+            />
+          </>
+        ) : (
+          <AuthSubmitButton
+            title="Sign in"
+            pendingTitle="Signing in..."
+            formAction={signInWithPassword}
+          />
+        )}
+        <FormMessage message={formMessage} />
+      </form>
       <div className="flex justify-center text-sm text-muted-foreground w-full">
         {isSignUp ? (
           <>
