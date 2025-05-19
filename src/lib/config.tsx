@@ -1,11 +1,8 @@
-import FirstBentoAnimation from "@/components/general/first-bento-animation";
-import FourthBentoAnimation from "@/components/general/fourth-bento-animation";
-import SecondBentoAnimation from "@/components/general/second-bento-animation";
-import ThirdBentoAnimation from "@/components/general/third-bento-animation";
-import FlickeringGrid from "@/components/ui/flickering-grid/flickering-grid";
-import Globe from "@/components/ui/globe";
-import { cn } from "@/lib/utils";
 import { motion } from "motion/react";
+
+import { cn } from "@/lib/utils";
+import Globe from "@/components/ui/globe";
+import FlickeringGrid from "@/components/ui/flickering-grid/flickering-grid";
 
 export const Highlight = ({
   children,
@@ -290,48 +287,6 @@ export const siteConfig = {
           "We are constantly updating and improving our features to provide the best experience.",
         image:
           "https://images.unsplash.com/photo-1666882990322-e7f3b8df4f75?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDF8fHxlbnwwfHx8fHw%3D",
-      },
-    ],
-  },
-  bentoSection: {
-    title: "Empower Your Workflow with AI",
-    description:
-      "Ask your AI Agent for real-time collaboration, seamless integrations, and actionable insights to streamline your operations.",
-    items: [
-      {
-        id: 1,
-        content: <FirstBentoAnimation />,
-        title: "Real-time AI Collaboration",
-        description:
-          "Experience real-time assistance. Ask your AI Agent to coordinate tasks, answer questions, and maintain team alignment.",
-      },
-      {
-        id: 2,
-        content: <SecondBentoAnimation />,
-        title: "Seamless Integrations",
-        description:
-          "Unite your favorite tools for effortless connectivity. Boost productivity through interconnected workflows.",
-      },
-      {
-        id: 3,
-        content: (
-          <ThirdBentoAnimation
-            data={[20, 30, 25, 45, 40, 55, 75]}
-            toolTipValues={[
-              1234, 1678, 2101, 2534, 2967, 3400, 3833, 4266, 4700, 5133,
-            ]}
-          />
-        ),
-        title: "Instant Insight Reporting",
-        description:
-          "Transform raw data into clear insights in seconds. Empower smarter decisions with real-time, always-learning intelligence.",
-      },
-      {
-        id: 4,
-        content: <FourthBentoAnimation once={false} />,
-        title: "Smart Automation",
-        description:
-          "Set it, forget it. Your AI Agent tackles repetitive tasks so you can focus on strategy, innovation, and growth.",
       },
     ],
   },
