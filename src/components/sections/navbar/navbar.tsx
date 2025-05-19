@@ -7,9 +7,6 @@ import { motion, useScroll } from "motion/react";
 import { cn } from "@/lib/utils";
 import Icons from "@/components/general/icons";
 
-const INITIAL_WIDTH = "70rem";
-const MAX_WIDTH = "800px";
-
 const Navbar = () => {
   const [hasScrolled, setHasScrolled] = useState(false);
 
@@ -31,19 +28,24 @@ const Navbar = () => {
       )}
     >
       <motion.div
-        initial={{ width: INITIAL_WIDTH }}
-        animate={{ width: hasScrolled ? MAX_WIDTH : INITIAL_WIDTH }}
+        initial={{ width: "100%" }}
+        animate={{ width: hasScrolled ? "90%" : "100%" }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
       >
         <div
           className={cn(
             "mx-auto max-w-7xl rounded-2xl transition-all duration-300  xl:px-0",
             hasScrolled
-              ? "px-2 border border-border backdrop-blur-lg bg-background/75"
-              : "shadow-none px-7"
+              ? "border border-border backdrop-blur-lg bg-background/75"
+              : "shadow-none"
           )}
         >
-          <div className="flex h-[56px] items-center justify-between p-4">
+          <div
+            className={cn(
+              "flex h-[56px] items-center justify-between py-4",
+              hasScrolled ? "px-6" : "px-0"
+            )}
+          >
             <Link href="/" className="flex items-center gap-2">
               <Icons.logo className="size-7 md:size-8" />
               <p className="text-lg font-semibold text-primary">Affogato</p>
