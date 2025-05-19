@@ -10,6 +10,7 @@ import { useSession } from "@/containers/SessionProvider";
 import Message from "@/components/general/message";
 import Composer from "@/components/general/composer";
 import { toast } from "@/components/ui/toast/toast";
+import UserAvatar from "@/components/general/sidebar/user-avatar-button/user-avatar";
 
 import { cn, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { ChatSDKError } from "@/lib/errors";
@@ -109,14 +110,10 @@ const ChatPage = ({
       {hasMessages && (
         <header className="hidden md:flex items-center justify-between border-b border-border px-4 relative h-14">
           <div className="flex items-center gap-2">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={user?.user_metadata.avatar_url}
-              className="size-6 rounded-full"
-              alt="avatar"
-            />
+            <UserAvatar avatarUrl={user?.user_metadata?.avatar_url} />
             <span className="font-semibold text-white truncate max-w-[120px] text-sm">
-              {user?.user_metadata.name.split(" ")[0]}
+              {user?.user_metadata?.name?.split(" ")[0] ||
+                user?.user_metadata.email}
             </span>
             <span className="text-xs text-muted-foreground whitespace-nowrap flex items-center gap-1">
               <Clock className="size-4" />
