@@ -1,7 +1,8 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown, ChevronUp, User } from "lucide-react";
 
 import { useSession } from "@/containers/SessionProvider";
 
@@ -24,32 +25,39 @@ const SidebarUserAvatarButton = () => {
           <DropdownMenuTrigger asChild>
             <div>
               <Button
-                className="hidden md:block rounded-full p-2 size-12"
+                className="hidden md:flex rounded-full p-2 size-12 items-center justify-center"
                 variant="ghost"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={user?.user_metadata?.avatar_url || ""}
-                  alt="User avatar"
-                  className="object-cover rounded-full"
-                  width={36}
-                  height={36}
-                />
+                {user?.user_metadata?.avatar_url ? (
+                  <img
+                    src={user?.user_metadata?.avatar_url || ""}
+                    alt="User avatar"
+                    className="object-cover rounded-full"
+                    width={36}
+                    height={36}
+                  />
+                ) : (
+                  <User className="size-5 text-muted-foreground" />
+                )}
               </Button>
               <Button
                 className="flex md:hidden rounded-full p-2 w-full h-12"
                 variant="outline"
               >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={user?.user_metadata?.avatar_url || ""}
-                  alt="User avatar"
-                  className="object-cover rounded-full"
-                  width={36}
-                  height={36}
-                />
-                <span className="text-sm font-semibold md:hidden text-muted-foreground">
-                  {user?.user_metadata?.name?.split(" ")[0]}
+                {user?.user_metadata?.avatar_url ? (
+                  <img
+                    src={user?.user_metadata?.avatar_url || ""}
+                    alt="User avatar"
+                    className="object-cover rounded-full"
+                    width={36}
+                    height={36}
+                  />
+                ) : (
+                  <User className="size-4 text-muted-foreground" />
+                )}
+                <span className="text-sm font-semibold md:hidden text-muted-foreground truncate max-w-[120px]">
+                  {user?.user_metadata?.name?.split(" ")[0] ||
+                    user?.user_metadata.email}
                 </span>
                 {isOpen ? (
                   <ChevronUp className="ml-auto size-4 text-muted-foreground" />
