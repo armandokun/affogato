@@ -1,4 +1,4 @@
-export enum PlanType {
+export enum PlanCode {
   FREE = "free",
   PRO = "pro",
   UNLIMITED = "unlimited",
@@ -8,14 +8,14 @@ type Entitlements = {
   maxMessagesPerDay: number;
 };
 
-export const entitlementsByPlanId: Record<PlanType, Entitlements> = {
-  [PlanType.FREE]: {
+export const entitlementsByPlanCode: Record<PlanCode, Entitlements> = {
+  [PlanCode.FREE]: {
     maxMessagesPerDay: 20,
   },
-  [PlanType.PRO]: {
+  [PlanCode.PRO]: {
     maxMessagesPerDay: 200,
   },
-  [PlanType.UNLIMITED]: {
+  [PlanCode.UNLIMITED]: {
     maxMessagesPerDay: 2000,
   },
 };

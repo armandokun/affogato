@@ -6,7 +6,7 @@ import Link from "next/link";
 import Button from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { useSession } from "@/containers/SessionProvider";
-import { PlanType } from "@/constants/user";
+import { PlanCode } from "@/constants/user";
 
 const CheckoutSuccessPage = () => {
   const { user } = useSession();
@@ -20,7 +20,7 @@ const CheckoutSuccessPage = () => {
       const { error } = await supabase
         .from("subscriptions")
         .update({
-          plan_id: PlanType.PRO,
+          plan_code: PlanCode.PRO,
           current_period_end: new Date(
             Date.now() + 30 * 24 * 60 * 60 * 1000
           ).toISOString(),

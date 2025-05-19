@@ -48,7 +48,7 @@ const PricingPage = () => {
         return;
       }
 
-      setSelectedPlan(data?.plan_id ?? null);
+      setSelectedPlan(data?.plan_code ?? null);
     };
 
     getSelectedPlan();
