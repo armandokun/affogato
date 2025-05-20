@@ -5,7 +5,9 @@ const FeatureSection = () => {
   return (
     <section id="features" className="text-center">
       <div className="container">
-        <h2 className="text-4xl font-semibold text-center">Features</h2>
+        <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
+          Features
+        </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
           <MagicCard className="rounded-xl min-h-[250px] flex items-center justify-center">
             <div className="p-4 px-6 flex flex-col items-center justify-center">

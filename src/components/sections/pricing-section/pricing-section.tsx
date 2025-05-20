@@ -19,7 +19,7 @@ const PricingSection = () => {
     <section id="pricing">
       <div className="container mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-semibold mb-4">
+          <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
             Pricing that grows with you
           </h2>
           <p className="text-gray-400">No hidden fees, no surprises.</p>

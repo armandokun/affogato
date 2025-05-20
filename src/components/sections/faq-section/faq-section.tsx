@@ -10,7 +10,7 @@ const FAQS = [
   {
     question: "Is Affogato the same as ChatGPT?",
     answer:
-      "Yes! But better. Affogato gives you the same easy-to-use chat interface but instead of just ChatGPT, you can chat with the top AI models in the world from ChatGPT, Claude, Gemini, and dozens of others. Give you the ultimate fleet of AI models at your disposal.",
+      "Almost! Affogato gives you the same easy-to-use chat interface but instead of just ChatGPT, you can chat with the top AI models in the world from ChatGPT, Claude, Gemini, and dozens of others. Give you the ultimate fleet of AI models at your disposal. The only difference is that Affogato only supports messages, with image generation coming soon.",
   },
   {
     question: "How is this the same price as ChatGPT?",
@@ -30,7 +30,7 @@ const FAQS = [
   {
     question: "Is there a free trial?",
     answer:
-      "Currently Affogato does not offer a free trial. However we do offer a generous 30-day money back guarantee. If you give Affogato a genuine test run and haven’t found it useful in the first 30 days, we’ll refund your payment no questions asked.",
+      "You can use Affogato for 20 messages a day for free, if you need more, feel free to upgrade. If you're not happy with our product, we do offer a generous 30-day money back guarantee. If you give Affogato a genuine test run and haven’t found it useful in the first 30 days, we’ll refund your payment no questions asked.",
   },
   {
     question: "How often does Affogato update the AI models available?",
@@ -49,33 +49,45 @@ const FAQS = [
   },
 ];
 
-export default function FAQ() {
+const FaqSection = () => {
   return (
-    <section id="faq">
-      <h2 className="text-4xl font-semibold text-center my-6">FAQ</h2>
-      <div className="min-w-[50vw]">
-        <Accordion
-          type="single"
-          collapsible
-          className="px-10 w-full max-w-2xl mx-auto py-10"
-        >
-          {FAQS.map((faq, index) => (
-            <AccordionItem key={index} value={`item-${index}`}>
-              <AccordionTrigger className="text-left hover:no-underline cursor-pointer">
-                {faq.question}
-              </AccordionTrigger>
-              <AccordionContent>{faq.answer}</AccordionContent>
-            </AccordionItem>
-          ))}
-        </Accordion>
+    <section
+      id="faq"
+      className="max-w-2xl w-full mx-auto overflow-x-hidden min-w-0"
+    >
+      <div className="container mx-auto px-4 py-16 max-w-2xl w-full overflow-x-hidden min-w-0">
+        <div className="text-center space-y-4 py-6 mx-auto max-w-2xl w-full min-w-0">
+          <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
+            Frequently Asked Questions
+          </h2>
+        </div>
+        <div className="w-full max-w-2xl mx-auto min-w-0 overflow-x-hidden">
+          <Accordion
+            type="single"
+            collapsible
+            className="w-full max-w-2xl mx-auto min-w-0"
+          >
+            {FAQS.map((faq, index) => (
+              <AccordionItem key={index} value={`item-${index}`}>
+                <AccordionTrigger className="text-left">
+                  {faq.question}
+                </AccordionTrigger>
+                <AccordionContent className="break-words break-all">
+                  {faq.answer}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+        <div className="text-center text-sm mt-6">
+          Still have questions? <br /> Email us at{" "}
+          <a href={`mailto:${siteConfig.links.email}`} className="underline">
+            {siteConfig.links.email}
+          </a>
+        </div>
       </div>
-      <h4 className="mb-12 text-center text-sm font-medium tracking-tight text-foreground/80">
-        Still have questions? <br />
-        Email us at{" "}
-        <a href={`mailto:${siteConfig.links.email}`} className="underline">
-          {siteConfig.links.email}
-        </a>
-      </h4>
     </section>
   );
-}
+};
+
+export default FaqSection;
