@@ -69,10 +69,10 @@ const FaqSection = () => {
           >
             {FAQS.map((faq, index) => (
               <AccordionItem key={index} value={`item-${index}`}>
-                <AccordionTrigger className="text-left">
+                <AccordionTrigger className="text-left break-words">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="break-words break-all">
+                <AccordionContent className="break-words">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>
