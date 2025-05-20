@@ -23,7 +23,7 @@ const ProviderShowcase = () => {
             {providers.map((logo) => (
               <Image
                 key={logo}
-                src={`/provider-icons/${logo}.png`}
+                src={`/provider-icons/${logo.toLowerCase()}.png`}
                 alt={logo}
                 width={128}
                 height={48}
