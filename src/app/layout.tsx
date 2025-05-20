@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import { TooltipProvider } from "@radix-ui/react-tooltip";
 import { Toaster } from "sonner";
+import { Analytics } from "@vercel/analytics/next";
 
 import { siteConfig } from "@/lib/site";
 import { SessionProvider } from "@/containers/SessionProvider";
@@ -44,7 +45,7 @@ export default function RootLayout({
           <Script src="https://unpkg.com/react-scan/dist/auto.global.js" />
         </head>
       )}
-
+      <Analytics />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-black min-h-screen`}
       >
