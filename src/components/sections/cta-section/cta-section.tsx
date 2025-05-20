@@ -7,14 +7,12 @@ import { LOGIN } from "@/constants/routes";
 
 const CtaSection = () => {
   return (
-    <section id="cta" className="w-full">
+    <section id="cta" className="w-full max-w-4xl mx-auto">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row items-center justify-around gap-8">
-          {/* Logo: Top on mobile, right on desktop */}
           <div className="flex justify-center md:justify-end md:w-1/2 md:order-2">
             <Icons.logo className="size-50 md:size-80" />
           </div>
-          {/* Text and CTA: Bottom on mobile, left on desktop */}
           <div className="flex flex-col items-center md:items-start md:w-1/2 text-center md:text-left md:order-1">
             <h2 className="text-4xl font-medium mb-4 text-balance max-w-3xl tracking-tighter">
               Try Affogato Now
