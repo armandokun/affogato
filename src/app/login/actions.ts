@@ -1,11 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
 
 import { encodedRedirect } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { DASHBOARD, LOGIN } from "@/constants/routes";
+import { LOGIN } from "@/constants/routes";
 import { toast } from "@/components/ui/toast/toast";
 
 export const signOut = async () => {
@@ -18,33 +17,17 @@ export const signOut = async () => {
   redirect(LOGIN);
 };
 
-export const signInWithPassword = async (formData: FormData) => {
+export const signInWithEmail = async (formData: FormData) => {
   const supabase = await createClient();
 
-  const data = {
-    email: formData.get("email")?.toString() || "",
-    password: formData.get("password")?.toString() || "",
-  };
+  const email = formData.get("email")?.toString() || "";
 
-  const { error } = await supabase.auth.signInWithPassword(data);
-
-  if (error) return encodedRedirect("error", LOGIN, error.message);
-
-  revalidatePath("/", "layout");
-  redirect(DASHBOARD);
-};
-
-export const signUpWithPassword = async (formData: FormData) => {
-  const supabase = await createClient();
-
-  const data = {
-    email: formData.get("email")?.toString() || "",
-    password: formData.get("password")?.toString() || "",
-  };
-
-  console.log(data);
-
-  const { error } = await supabase.auth.signUp(data);
+  const { error } = await supabase.auth.signInWithOtp({
+    email,
+    options: {
+      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+    },
+  });
 
   if (error) return encodedRedirect("error", LOGIN, error.message);
 

@@ -7,11 +7,7 @@ import { Label, Separator } from "radix-ui";
 
 import Button from "@/components/ui/button";
 import Icons from "@/components/general/icons";
-import {
-  signInWithPassword,
-  signUpWithPassword,
-  signInWithOAuth,
-} from "@/app/login/actions";
+import { signInWithEmail, signInWithOAuth } from "@/app/login/actions";
 import AuthSubmitButton from "@/components/general/auth-submit-button";
 import FormMessage, {
   Message,
@@ -76,45 +72,19 @@ const LoginSection = ({ formMessage }: { formMessage: Message }) => {
             placeholder="ada@lovelace.com"
           />
         </div>
-        <div>
-          <div className="flex items-center gap-2 justify-between">
-            <Label.Root
-              htmlFor="password"
-              className="block text-sm font-medium mb-1"
-            >
-              Password
-            </Label.Root>
-            <Link
-              href="/forgot-password"
-              className="text-xs text-muted-foreground underline"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <input
-            id="password"
-            name="password"
-            type="password"
-            autoComplete="current-password"
-            required
-            className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-            placeholder="••••••••"
-          />
-        </div>
-
         {isSignUp ? (
           <>
             <AuthSubmitButton
               title="Sign up"
               pendingTitle="Signing up..."
-              formAction={signUpWithPassword}
+              formAction={signInWithEmail}
             />
           </>
         ) : (
           <AuthSubmitButton
             title="Sign in"
             pendingTitle="Signing in..."
-            formAction={signInWithPassword}
+            formAction={signInWithEmail}
           />
         )}
         <FormMessage message={formMessage} />
