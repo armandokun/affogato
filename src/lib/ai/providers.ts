@@ -66,7 +66,7 @@ export const modelDropdownOptions = [
   },
   {
     value: LanguageModelCode.GEMINI_CHAT_MODEL_FAST,
-    label: "Gemini 2.0 Flash",
+    label: "2.0 Flash",
     description: "Google's most reliable and efficient model.",
     logo: "/llm-icons/gemini.png",
   },
