@@ -29,7 +29,7 @@ const PricingSection = () => {
           <PricingTabs activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
 
-        <div className="grid min-[650px]:grid-cols-2 min-[900px]:grid-cols-3 gap-4 w-full max-w-6xl mx-auto px-6">
+        <div className="grid min-[650px]:grid-cols-2 min-[900px]:grid-cols-3 gap-4 w-full max-w-6xl mx-auto">
           {PRICING_PLANS.map((tier) => {
             return (
               <div

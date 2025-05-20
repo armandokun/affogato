@@ -9,6 +9,7 @@ import FeatureSection from "@/components/sections/feature-section";
 import FAQ from "@/components/sections/faq-section";
 import { Footer } from "@/components/sections/footer-section/footer-section";
 import { DASHBOARD } from "@/constants/routes";
+import CtaSection from "@/components/sections/cta-section";
 
 const Home = async () => {
   const user = await getServerSession();
@@ -26,6 +27,7 @@ const Home = async () => {
             <FeatureSection />
             <PricingSection />
             <FAQ />
+            <CtaSection />
             <Footer />
           </main>
         </div>
