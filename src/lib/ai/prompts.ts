@@ -43,7 +43,7 @@ export const systemPrompt = ({
 
       return `${regularPrompt}\n\n${fastModelPrompt}\n\n${anthropicCustomPrompt}`;
     case LanguageModelCode.ANTHROPIC_CHAT_MODEL_LATEST:
-      const anthropicLargeModelCustomPrompt = `As Claude 3.7 Sonnet, you excel at:
+      const anthropicLargeModelCustomPrompt = `As Claude 4.0 Sonnet, you excel at:
       - Detailed analytical reasoning
       - Nuanced explanations of complex topics
       - Thoughtful and balanced responses to subjective questions

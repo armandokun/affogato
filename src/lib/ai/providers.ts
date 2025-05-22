@@ -32,7 +32,7 @@ export const myProvider = customProvider({
       "claude-3-5-haiku-latest"
     ),
     [LanguageModelCode.ANTHROPIC_CHAT_MODEL_LATEST]: anthropic(
-      "claude-3-7-sonnet-20250219"
+      "claude-4-sonnet-20250514"
     ),
     [LanguageModelCode.OPENAI_TITLE_MODEL]: openai("gpt-4-turbo"),
     [LanguageModelCode.GEMINI_CHAT_MODEL_FAST]: google("gemini-2.0-flash"),
@@ -43,25 +43,25 @@ export const modelDropdownOptions = [
   {
     value: LanguageModelCode.OPENAI_CHAT_MODEL_FAST,
     label: "4o-mini",
-    description: "Fast, cost-effective, and great for most tasks.",
+    description: "Perfect for most tasks and talks like ChatGPT.",
     logo: "/llm-icons/chatgpt.png",
   },
   {
     value: LanguageModelCode.OPENAI_CHAT_MODEL_LARGE,
     label: "4o",
-    description: "More accurate, better reasoning, slower.",
+    description: "Handles complex topics, excels at visual understanding.",
     logo: "/llm-icons/chatgpt.png",
   },
   {
     value: LanguageModelCode.ANTHROPIC_CHAT_MODEL_FAST,
     label: "3.5 Haiku",
-    description: "Anthropic's fast model, good for general use.",
+    description: "Perfect for most tasks and talks like Claude.",
     logo: "/llm-icons/claude.png",
   },
   {
     value: LanguageModelCode.ANTHROPIC_CHAT_MODEL_LATEST,
-    label: "3.7 Sonnet",
-    description: "Anthropic's latest and most capable model.",
+    label: "4.0 Sonnet",
+    description: "High performance matched with creativity of Claude.",
     logo: "/llm-icons/claude.png",
   },
   {
