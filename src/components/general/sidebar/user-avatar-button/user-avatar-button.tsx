@@ -12,7 +12,11 @@ import { DropdownMenu } from "@/components/ui/dropdown-menu/dropdown-menu";
 import DropdownAvatarContentMenu from "./avatar-dropdown-content";
 import UserAvatar from "./user-avatar";
 
-const SidebarUserAvatarButton = () => {
+type Props = {
+  onClose: () => void;
+};
+
+const SidebarUserAvatarButton = ({ onClose }: Props) => {
   const { user } = useSession();
   const [isOpen, setIsOpen] = useState(false);
 
@@ -47,7 +51,13 @@ const SidebarUserAvatarButton = () => {
               </Button>
             </div>
           </DropdownMenuTrigger>
-          <DropdownAvatarContentMenu onClose={() => setIsOpen(false)} />
+          <DropdownAvatarContentMenu
+            onClose={() => {
+              onClose();
+
+              setIsOpen(false);
+            }}
+          />
         </DropdownMenu>
       </div>
     </>

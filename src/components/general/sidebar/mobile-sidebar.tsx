@@ -105,7 +105,7 @@ const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
           </div>
           <div className="flex items-center justify-center">
             <div className="w-full">
-              <SidebarUserAvatarButton />
+              <SidebarUserAvatarButton onClose={() => setIsSheetOpen(false)} />
             </div>
           </div>
         </SheetContent>

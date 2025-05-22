@@ -84,7 +84,11 @@ const Sidebar = ({
           );
         })}
       </div>
-      <SidebarUserAvatarButton />
+      <SidebarUserAvatarButton
+        onClose={() => {
+          setSidebarHovered(false);
+        }}
+      />
     </nav>
   );
 };
