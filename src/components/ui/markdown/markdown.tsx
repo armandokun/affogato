@@ -67,29 +67,26 @@ const components: Partial<Components> = {
       {children}
     </blockquote>
   ),
-  code: (props) => {
-    // @ts-expect-error: react-markdown passes extra props, but we only care about inline and children
-    const { inline, children, ...rest } = props;
-
-    if (inline) {
+  code: ({ className, children, ...props }) => {
+    if (className) {
       return (
-        <code
-          className="text-sm bg-zinc-100 dark:bg-zinc-800 py-0.5 px-1 rounded-md text-muted-foreground"
-          {...rest}
-        >
-          {children}
-        </code>
+        <div className="not-prose flex flex-col my-4">
+          <pre className="text-sm w-full overflow-x-auto bg-zinc-100 dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-zinc-50 whitespace-pre-wrap break-words font-mono">
+            <code className={className} {...props}>
+              {children}
+            </code>
+          </pre>
+        </div>
       );
     }
+
     return (
-      <div className="not-prose flex flex-col my-4">
-        <pre
-          className="text-sm w-full overflow-x-auto bg-zinc-100 dark:bg-zinc-900 p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl text-zinc-900 dark:text-zinc-50 whitespace-pre-wrap break-words font-mono"
-          {...(rest as React.HTMLAttributes<HTMLPreElement>)}
-        >
-          <code>{children}</code>
-        </pre>
-      </div>
+      <code
+        className="text-sm bg-zinc-100 dark:bg-zinc-800 py-0.5 px-1 rounded-md text-muted-foreground"
+        {...props}
+      >
+        {children}
+      </code>
     );
   },
   pre: ({ children }) => <>{children}</>,
