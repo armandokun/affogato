@@ -12,16 +12,14 @@ export const webSearch = tool({
   execute: async ({ query }) => {
     const { results } = await exa.searchAndContents(query, {
       livecrawl: "always",
-      numResults: 3,
+      numResults: 6,
     });
-
-    console.log({ results });
 
     return results.map((result) => ({
       id: result.id,
       title: result.title,
       url: result.url,
-      content: result.text.slice(0, 1000), // take just the first 1000 characters
+      content: result.text.slice(0, 1000),
       publishedDate: result.publishedDate,
       favicon: result.favicon,
     }));
