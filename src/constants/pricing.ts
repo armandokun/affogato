@@ -1,5 +1,35 @@
-export const PRICING_PLANS = [
+import Stripe from "stripe";
+
+export const STRIPE_PRICING_TIERS = [
   {
+    id: "pro",
+    name: "Pro",
+    features: [
+      "1000 messages per day",
+      "Access to all models",
+      "Unlimited access to web search, file uploads and more",
+    ],
+    description: "Perfect for daily use",
+    buttonText: "Start Pro",
+    buttonColor: "bg-accent text-primary",
+    isPopular: true,
+  },
+  {
+    id: "unlimited",
+    name: "Unlimited",
+    features: [
+      "Unlimited messages",
+      "Unlimited access to web search, file uploads and more",
+      "Access to new features before they're released",
+    ],
+    description: "Perfect for AI addicts",
+    buttonText: "Start Unlimited",
+    buttonColor: "bg-accent text-primary",
+    isPopular: false,
+  },
+];
+
+export const FREE_TIER = {
     id: "free",
     name: "Free",
     price: 0,
@@ -13,41 +43,34 @@ export const PRICING_PLANS = [
     buttonText: "Start Free",
     buttonColor: "bg-accent text-primary",
     isPopular: false,
-    stripePriceIdYearly: null,
-    stripePriceIdMonthly: null,
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: 15,
-    yearlyPrice: 150,
-    features: [
-      "1000 messages per day",
-      "Access to all models",
-      "Unlimited access to web search, file uploads and more",
-    ],
-    description: "Perfect for daily use",
-    buttonText: "Start Pro",
-    buttonColor: "bg-accent text-primary",
-    isPopular: true,
-    stripePriceIdYearly: "price_1RPxIbPI4OHhk9KwZsDU0ocC",
-    stripePriceIdMonthly: "price_1RPxHIPI4OHhk9KwUdrYtQFQ",
-  },
-  {
-    id: "unlimited",
-    name: "Unlimited",
-    price: 99,
-    yearlyPrice: 999,
-    features: [
-      "Unlimited messages",
-      "Unlimited access to web search, file uploads and more",
-      "Access to new features before they're released",
-    ],
-    description: "Perfect for AI addicts",
-    buttonText: "Start Unlimited",
-    buttonColor: "bg-accent text-primary",
-    isPopular: false,
-    stripePriceIdYearly: "price_1RPxJRPI4OHhk9Kwo05IKvsg",
-    stripePriceIdMonthly: "price_1RPxIyPI4OHhk9KwCSw4FNm3",
-  },
-];
+} as PricingTier;
+
+export type PricingPrice = {
+  id: string,
+  productId: string
+  unitAmount: number | null,
+  currency: string,
+  interval: Stripe.Price.Recurring.Interval | undefined,
+  trialPeriodDays: number | null | undefined
+}
+
+export type PricingProduct = {
+  id: string,
+  name: string,
+  description: string | null,
+  defaultPriceId: string | undefined
+}
+
+export type PricingTier = {
+  id: string,
+  name: string,
+  features: string[],
+  description: string,
+  buttonText: string,
+  buttonColor: string,
+  isPopular: boolean,
+  price: number,
+  yearlyPrice: number,
+  stripePriceIdMonthly: string,
+  stripePriceIdYearly: string,
+}

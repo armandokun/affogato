@@ -23,7 +23,7 @@ import { generateTitleFromUserMessage } from "@/app/dashboard/actions";
 import { ChatVisibility } from "@/constants/chat";
 import { getTrailingMessageId } from "@/lib/utils";
 import { webSearch } from "@/lib/ai/tools";
-import { entitlementsByPlanCode, PlanCode } from "@/constants/user";
+import { entitlementsByPlanName, PlanName } from "@/constants/user";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -50,27 +50,27 @@ export async function POST(request: Request) {
 
     const supabase = await createClient();
 
-    const { data: profileData, error: profileError } = await supabase
+    const { data: userSubscriptionData, error: userSubscriptionError } = await supabase
       .from("subscriptions")
-      .select("plan_code")
+      .select("plan_name")
       .eq("user_id", user.id)
       .single();
 
-    if (profileError) {
+    if (userSubscriptionError) {
       throw new ChatSDKError(
         "bad_request:database",
-        "Failed to get user profile"
+        "Failed to get user subscription"
       );
     }
 
-    const planCode = profileData.plan_code as PlanCode;
+    const planName = userSubscriptionData.plan_name.toLowerCase() as PlanName;
 
     const messageCount = await getMessageCountByUserId({
       id: user.id,
       differenceInHours: 24,
     });
 
-    if (messageCount > entitlementsByPlanCode[planCode].maxMessagesPerDay) {
+    if (messageCount > entitlementsByPlanName[planName].maxMessagesPerDay) {
       return new ChatSDKError("rate_limit:chat").toResponse();
     }
 

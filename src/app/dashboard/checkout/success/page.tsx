@@ -1,42 +1,10 @@
-"use client";
-
-import { useEffect } from "react";
 import Link from "next/link";
 
 import Button from "@/components/ui/button";
-import { createClient } from "@/lib/supabase/client";
-import { useSession } from "@/containers/SessionProvider";
-import { PlanCode } from "@/constants/user";
 
 const CheckoutSuccessPage = () => {
-  const { user } = useSession();
-
-  useEffect(() => {
-    const makeCurrentUserPremium = async () => {
-      if (!user?.id) return;
-
-      const supabase = createClient();
-
-      const { error } = await supabase
-        .from("subscriptions")
-        .update({
-          plan_code: PlanCode.PRO,
-          current_period_end: new Date(
-            Date.now() + 30 * 24 * 60 * 60 * 1000
-          ).toISOString(),
-        })
-        .eq("user_id", user?.id);
-
-      if (error) {
-        console.error(error);
-      }
-    };
-
-    makeCurrentUserPremium();
-  }, [user?.id]);
-
   return (
-    <div className="flex flex-col items-center justify-center size-full py-12">
+    <div className="flex flex-col items-center justify-center size-full py-12 px-4">
       <div className="mb-6">
         <svg
           width="64"
@@ -69,12 +37,12 @@ const CheckoutSuccessPage = () => {
           />
         </svg>
       </div>
-      <h1 className="text-2xl font-bold mb-2 text-center">
+      <h1 className="text-2xl font-semibold mb-2 text-center">
         Thank you for subscribing!
       </h1>
       <p className="text-muted-foreground mb-6 text-center max-w-md">
         Your payment was successful and your subscription is now active. You can
-        now enjoy all premium features.
+        now enjoy all paid plan features.
       </p>
       <Button asChild className="rounded-full">
         <Link href="/dashboard">Go to Dashboard</Link>

@@ -10,11 +10,18 @@ import FAQ from "@/components/sections/faq-section";
 import { Footer } from "@/components/sections/footer-section/footer-section";
 import { DASHBOARD } from "@/constants/routes";
 import CtaSection from "@/components/sections/cta-section";
+import { getStripePrices } from "@/lib/payments/stripe";
+import { getStripeProducts } from "@/lib/payments/stripe";
 
 const Home = async () => {
   const user = await getServerSession();
 
   if (user) redirect(DASHBOARD);
+
+  const [prices, products] = await Promise.all([
+    getStripePrices(),
+    getStripeProducts(),
+  ]);
 
   return (
     <>
@@ -25,7 +32,7 @@ const Home = async () => {
           <main className="flex flex-col items-center justify-center w-full gap-30 md:gap-50">
             <ProviderShowcase />
             <FeatureSection />
-            <PricingSection />
+            <PricingSection prices={prices} products={products} />
             <FAQ />
             <CtaSection />
             <Footer />

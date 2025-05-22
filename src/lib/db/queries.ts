@@ -152,3 +152,56 @@ export async function getMessageCountByUserId({
     );
   }
 }
+
+export async function getUserSubscriptionByUserId({ userId }: { userId: string }) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from("subscriptions").select("*").eq("user_id", userId).single();
+
+  if (error) throw new ChatSDKError("bad_request:database", "Failed to get user subscription by user id");
+
+  return data;
+}
+
+export async function getUserByStripeCustomerId({ stripeCustomerId }: { stripeCustomerId: string }) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from("subscriptions").select("*").eq("stripe_customer_id", stripeCustomerId).single();
+
+  if (error) throw new ChatSDKError("bad_request:database", "Failed to get user by stripe customer id");
+
+  return data;
+}
+
+export async function updateUserSubscription(
+  userId: string,
+  subscriptionData: {
+    stripeCustomerId?: string;
+    stripeProductId: string | null;
+    stripePriceId: string | null;
+    stripeSubscriptionId: string | null;
+    planName: string | null;
+    subscriptionStatus: string;
+  }
+) {
+  const supabase = await createClient();
+
+  const transformedSubscriptionData = {
+    stripe_customer_id: subscriptionData.stripeCustomerId,
+    stripe_subscription_id: subscriptionData.stripeSubscriptionId,
+    stripe_product_id: subscriptionData.stripeProductId,
+    stripe_price_id: subscriptionData.stripePriceId,
+    plan_name: subscriptionData.planName,
+    status: subscriptionData.subscriptionStatus,
+  }
+
+  const { data, error } = await supabase.from("subscriptions").update({
+    ...transformedSubscriptionData,
+      updated_at: new Date()
+    })
+    .eq("user_id", userId);
+
+  if (error) throw new ChatSDKError("bad_request:database", "Failed to update user subscription");
+
+  return data;
+}
