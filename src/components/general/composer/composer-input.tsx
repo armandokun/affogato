@@ -1,4 +1,4 @@
-import { ChangeEvent, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 
 type Props = {
@@ -13,6 +13,12 @@ const ComposerInput = ({ input, setInput }: Props) => {
   const lineHeight = 24;
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (input.length > 0) return;
+
+    setTextareaHeight(24);
+  }, [input]);
 
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
@@ -31,7 +37,7 @@ const ComposerInput = ({ input, setInput }: Props) => {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      // Find the closest parent form and submit it
+
       const form = textareaRef.current?.closest("form");
 
       if (!form) return;
