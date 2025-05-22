@@ -61,18 +61,22 @@ const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
             <div className="flex flex-col gap-1 py-4">
               {MENU.map((item) => {
                 const isActive = pathname === item.href;
+                const show = item.show;
 
                 return (
-                  <Link
-                    href={item.href}
-                    key={item.key}
-                    className={`flex items-center gap-2 font-medium hover:bg-accent rounded-md p-2 ${
-                      isActive ? "text-white" : "text-muted-foreground"
-                    }`}
-                  >
-                    <item.icon size={20} />
-                    <span>{item.label}</span>
-                  </Link>
+                  show && (
+                    <Link
+                      href={item.href}
+                      key={item.key}
+                      onClick={() => setIsSheetOpen(false)}
+                      className={`flex items-center gap-2 font-medium hover:bg-accent rounded-md p-2 ${
+                        isActive ? "text-white" : "text-muted-foreground"
+                      }`}
+                    >
+                      <item.icon size={20} />
+                      <span>{item.label}</span>
+                    </Link>
+                  )
                 );
               })}
               <div className="flex items-center gap-2 font-medium hover:bg-accent rounded-md p-2 text-muted-foreground">
@@ -90,6 +94,7 @@ const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
                       <li key={item.id}>
                         <Link
                           href={`/dashboard/${item.id}`}
+                          onClick={() => setIsSheetOpen(false)}
                           className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-white rounded-md p-2"
                         >
                           <span className="truncate block max-w-[160px]">

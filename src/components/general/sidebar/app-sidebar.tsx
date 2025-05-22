@@ -51,9 +51,6 @@ const AppSidebar = () => {
         <>
           <h2 className="text-lg font-medium">Home</h2>
           <div className="h-px bg-muted-foreground/50 my-2" />
-          <div className="text-sm text-muted-foreground font-medium rounded-md">
-            Library
-          </div>
           <ul className="flex flex-col gap-1">
             {loading ? (
               <li className="text-xs text-muted-foreground p-2">Loading...</li>
@@ -62,9 +59,9 @@ const AppSidebar = () => {
                 <li key={item.id}>
                   <Link
                     href={`/dashboard/${item.id}`}
-                    className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-white rounded-md p-2"
+                    className="flex items-center gap-2 text-xs font-medium text-muted-foreground hover:text-white rounded-md py-2"
                   >
-                    <span className="truncate block max-w-[160px]">
+                    <span className="truncate block max-w-[180px]">
                       {item.title}
                     </span>
                   </Link>
