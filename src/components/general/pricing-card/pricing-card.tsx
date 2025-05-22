@@ -5,7 +5,7 @@ import { CheckIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { PricingTier } from "@/constants/pricing";
-import { checkoutAction } from "@/lib/payments/actions";
+import { checkoutAction, customerPortalAction } from "@/lib/payments/actions";
 import { useSession } from "@/containers/SessionProvider";
 
 type Props = {
@@ -109,17 +109,20 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
             className={cn(
               "h-10 w-full flex items-center justify-center text-sm font-normal tracking-wide rounded-full px-4 transition-all ease-out mt-2 bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 cursor-pointer",
               isSelected &&
-                "bg-accent text-primary cursor-no-drop hover:bg-accent"
+                "border-primary border bg-transparent hover:bg-background"
             )}
             formAction={(formData) => {
               if (!user?.id) return;
 
-              checkoutAction(formData, user.id);
+              if (isSelected) {
+                customerPortalAction(formData, user.id);
+              } else {
+                checkoutAction(formData, user.id);
+              }
             }}
-            disabled={isSelected}
-            tabIndex={isSelected ? -1 : 0}
+            tabIndex={0}
           >
-            {isSelected ? "Current Plan" : tier.buttonText}
+            {isSelected ? "Manage Subscription" : tier.buttonText}
           </button>
         </form>
       </div>
