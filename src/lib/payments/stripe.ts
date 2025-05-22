@@ -35,7 +35,7 @@ export async function createCheckoutSession({
     success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
     cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/pricing`,
     customer: user.stripe_customer_id ?? undefined,
-    client_reference_id: user.id,
+    client_reference_id: user.user_id,
     allow_promotion_codes: true,
     metadata: {
       user_id: userId,
