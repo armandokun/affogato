@@ -26,7 +26,7 @@ const Sidebar = ({
       onMouseEnter={() => setSidebarHovered(true)}
       onMouseLeave={() => setSidebarHovered(false)}
     >
-      <div className="flex flex-col items-center gap-6">
+      <div className="flex flex-col items-center gap-8">
         <LogoButton />
         <NewThreadButton />
       </div>
