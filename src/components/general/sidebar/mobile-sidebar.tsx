@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Library, Menu, SidebarClose } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Library, Menu, Plus, SidebarClose } from "lucide-react";
 
 import Button from "@/components/ui/button/button";
 import { SheetContent } from "@/components/ui/sheet/sheet";
@@ -9,6 +10,7 @@ import useLibraryItems from "@/hooks/use-library-items";
 import Icons from "../icons";
 import { MENU } from "./app-sidebar";
 import SidebarUserAvatarButton from "./user-avatar-button/user-avatar-button";
+import { DASHBOARD } from "@/constants/routes";
 
 type Props = {
   isSheetOpen: boolean;
@@ -17,6 +19,8 @@ type Props = {
 };
 
 const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
+  const router = useRouter();
+
   const { items: libraryItems, loading: loadingLibrary } = useLibraryItems();
 
   return (
@@ -79,9 +83,23 @@ const MobileSidebar = ({ isSheetOpen, setIsSheetOpen, pathname }: Props) => {
                   )
                 );
               })}
-              <div className="flex items-center gap-2 font-medium hover:bg-accent rounded-md p-2 text-muted-foreground">
-                <Library size={20} />
-                <span>Library</span>
+              <div className="flex items-center gap-2 font-medium rounded-md p-2 text-muted-foreground justify-between">
+                <div className="flex-row items-center flex gap-2">
+                  <Library size={20} />
+                  <span>Library</span>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-full"
+                  onClick={() => {
+                    setIsSheetOpen(false);
+
+                    router.push(DASHBOARD);
+                  }}
+                >
+                  <Plus size={24} />
+                </Button>
               </div>
               <ul className="flex flex-col gap-1 ml-4">
                 <div className="relative pl-4 border-l border-muted-foreground/50">
