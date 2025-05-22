@@ -115,7 +115,7 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
               if (!user?.id) return;
 
               if (isSelected) {
-                customerPortalAction(formData, user.id);
+                customerPortalAction(user.id);
               } else {
                 checkoutAction(formData, user.id);
               }

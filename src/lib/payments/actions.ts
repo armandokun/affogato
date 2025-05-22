@@ -11,7 +11,7 @@ export const checkoutAction = async (formData: FormData, userId: string) => {
   await createCheckoutSession({ userId, priceId });
 }
 
-export const customerPortalAction = async (_, userId: string) => {
+export const customerPortalAction = async (userId: string) => {
   const user = await getUserSubscriptionByUserId({ userId });
 
   if (!user) throw new Error('User not found');
