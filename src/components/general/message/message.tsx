@@ -9,6 +9,7 @@ import Markdown from "@/components/ui/markdown";
 import { LanguageModelCode } from "@/lib/ai/providers";
 
 import AttachmentStack from "../attachment-stack/attachment-stack";
+import AvatarStack from "@/components/ui/avatar-stack";
 
 const getModelLogo = (languageModelCode?: string) => {
   if (!languageModelCode) return "/logo.png";
@@ -126,39 +127,27 @@ const Message = ({ message }: Props) => {
                   const { result } = toolInvocation;
 
                   if (toolName === "webSearch") {
+                    const avatars = result.map(
+                      (source: {
+                        id: string;
+                        url: string;
+                        favicon: string;
+                        title: string;
+                      }) => {
+                        return {
+                          imageUrl: source.favicon,
+                          linkUrl: source.url,
+                        };
+                      }
+                    );
+
                     return (
                       <div
                         key={`${toolCallId}-result`}
                         className="flex flex-row gap-2 items-center"
                       >
-                        {result.map(
-                          (source: {
-                            id: string;
-                            url: string;
-                            favicon: string;
-                            title: string;
-                          }) => {
-                            return (
-                              <div key={source.id}>
-                                <div className="flex flex-row gap-2">
-                                  <a
-                                    href={source.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                  >
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img
-                                      src={source.favicon}
-                                      alt={source.title}
-                                      className="size-8 rounded-full border border-muted bg-white"
-                                    />
-                                  </a>
-                                </div>
-                              </div>
-                            );
-                          }
-                        )}
-                        <p className="text-muted-foreground">Sources</p>
+                        <AvatarStack avatars={avatars} />
+                        <p className="text-muted-foreground text-sm">Sources</p>
                       </div>
                     );
                   }
