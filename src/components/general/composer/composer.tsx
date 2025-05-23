@@ -139,7 +139,7 @@ const Composer = ({
       <GlobalDragDrop onFilesDrop={handleFiles} />
       <form
         onSubmit={submitForm}
-        className="w-full max-w-2xl bg-background border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors z-15"
+        className="w-full max-w-2xl bg-transparent backdrop-blur-xl border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors z-15"
       >
         {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
@@ -193,7 +193,7 @@ const Composer = ({
                 <button
                   type="button"
                   className={
-                    "bg-muted text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer transition-opacity"
+                    "bg-white/5 backdrop-blur-xl text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer transition-opacity"
                   }
                 >
                   {selectedModelCode && (
