@@ -7,9 +7,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import Markdown from "@/components/ui/markdown";
 import { LanguageModelCode } from "@/lib/ai/providers";
+import AvatarStack from "@/components/ui/avatar-stack";
+import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
 
 import AttachmentStack from "../attachment-stack/attachment-stack";
-import AvatarStack from "@/components/ui/avatar-stack";
 
 const getModelLogo = (languageModelCode?: string) => {
   if (!languageModelCode) return "/logo.png";
@@ -67,8 +68,8 @@ const Message = ({ message }: Props) => {
 
           {isAI && message.parts.length === 0 && (
             <div className="flex flex-col gap-4 w-full">
-              <div className="flex flex-col gap-4 text-muted-foreground">
-                Thinking...
+              <div className="flex flex-col gap-4">
+                <AnimatedShinyText>Thinking...</AnimatedShinyText>
               </div>
             </div>
           )}
@@ -115,9 +116,7 @@ const Message = ({ message }: Props) => {
                   return (
                     <div key={toolCallId}>
                       {toolName === "webSearch" && (
-                        <h3 className="text-muted-foreground animate-pulse">
-                          Web Search
-                        </h3>
+                        <AnimatedShinyText>Web Search</AnimatedShinyText>
                       )}
                     </div>
                   );

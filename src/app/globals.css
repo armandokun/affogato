@@ -58,6 +58,7 @@
   --animate-elliptical-orbit: elliptical-orbit 20s linear infinite;
   --animate-fade-to-radial: fadeToRadial 20s linear infinite;
   --animate-spin-once: spin-once 0.7s cubic-bezier(0.22, 1, 0.36, 1) 1;
+  --animate-shiny-text: shiny-text 4s infinite;
 
   @keyframes orbit {
     0% {
@@ -230,6 +231,18 @@
   @keyframes spin-once {
     100% {
       transform: rotate(360deg);
+    }
+  }
+
+  @keyframes shiny-text {
+    0%,
+    90%,
+    100% {
+      background-position: calc(-100% - var(--shiny-width)) 0;
+    }
+    30%,
+    60% {
+      background-position: calc(100% + var(--shiny-width)) 0;
     }
   }
 }
