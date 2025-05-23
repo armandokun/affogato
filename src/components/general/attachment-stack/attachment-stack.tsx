@@ -129,7 +129,7 @@ const AttachmentStack = ({ attachments }: Props) => {
           </div>
         </div>
       ) : (
-        <div className="flex flex-row gap-2 mb-4 justify-end">
+        <div className="flex flex-row gap-2 justify-end">
           {attachments.map((attachment) => (
             <div
               key={attachment.url}

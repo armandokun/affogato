@@ -132,6 +132,8 @@ export async function POST(request: Request) {
           model: myProvider.languageModel(lastSelectedModelCode),
           system: systemPrompt({ selectedChatModel: lastSelectedModelCode }),
           messages,
+          temperature: 0.5,
+          topP: 0.9,
           maxSteps: 5,
           experimental_transform: smoothStream({ chunking: "word" }),
           tools: {
