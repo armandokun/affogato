@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import Markdown from "@/components/ui/markdown";
 import { LanguageModelCode } from "@/lib/ai/providers";
 import AvatarStack from "@/components/ui/avatar-stack";
-import { AnimatedShinyText } from "@/components/magicui/animated-shiny-text";
+import AnimatedShinyText from "@/components/magicui/animated-shiny-text";
 
 import AttachmentStack from "../attachment-stack/attachment-stack";
 
