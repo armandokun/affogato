@@ -63,6 +63,7 @@ export const modelDropdownOptions = [
     label: "4.0 Sonnet",
     description: "High performance matched with creativity of Claude.",
     logo: "/llm-icons/claude.png",
+    badge: "New",
   },
   {
     value: LanguageModelCode.GEMINI_CHAT_MODEL_FAST,
