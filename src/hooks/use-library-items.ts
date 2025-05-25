@@ -25,7 +25,7 @@ export default function useLibraryItems() {
         .from("chats")
         .select("id, title, created_at")
         .eq("user_id", user.id)
-        .limit(10)
+        .limit(15)
         .order("created_at", { ascending: false });
 
       if (!error && data) setItems(data);
