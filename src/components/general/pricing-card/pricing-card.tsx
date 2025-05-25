@@ -2,11 +2,13 @@
 
 import { AnimatePresence, motion } from "motion/react";
 import { CheckIcon } from "lucide-react";
+import { redirect } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 import { PricingTier } from "@/constants/pricing";
 import { checkoutAction, customerPortalAction } from "@/lib/payments/actions";
 import { useSession } from "@/containers/SessionProvider";
+import { LOGIN } from "@/constants/routes";
 
 type Props = {
   tier: PricingTier;
@@ -112,7 +114,7 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
                 "border-primary border bg-transparent hover:bg-background"
             )}
             formAction={(formData) => {
-              if (!user?.id) return;
+              if (!user?.id) redirect(LOGIN);
 
               if (isSelected) {
                 customerPortalAction(user.id);
