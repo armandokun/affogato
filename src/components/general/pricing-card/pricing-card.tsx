@@ -19,6 +19,19 @@ type Props = {
 const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
   const { user } = useSession();
 
+  const getFeatureTitle = () => {
+    switch (tier.name) {
+      case "Free":
+        return "Plan includes";
+      case "Pro":
+        if (user) return "Everything in Pro +";
+
+        return "Everything in Free +";
+      case "Unlimited":
+        return "Everything in Pro +";
+    }
+  };
+
   return (
     <div
       key={tier.name}
@@ -130,13 +143,7 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
       </div>
       <hr className="border-white/20" />
       <div className="p-4">
-        <p className="text-sm mb-4">
-          {tier.name !== "Free" ? (
-            <>Everything in {tier.name === "Pro" ? "Free" : "Pro"} +</>
-          ) : (
-            "Plan includes"
-          )}
-        </p>
+        <p className="text-sm mb-4">{getFeatureTitle()}</p>
         <ul className="space-y-3">
           {tier.features.map((feature) => (
             <li key={feature} className="flex items-center gap-2">
