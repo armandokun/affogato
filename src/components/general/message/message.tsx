@@ -101,7 +101,7 @@ const Message = ({ message }: Props) => {
 
                 return (
                   <div key={key} className="flex flex-row gap-2 justify-end">
-                    <div className="flex flex-col gap-4 bg-muted text-white px-4 py-2 rounded-xl text-left">
+                    <div className="flex flex-col gap-4 bg-muted text-white px-4 py-2 rounded-xl text-left whitespace-pre-wrap">
                       {part.text}
                     </div>
                   </div>
