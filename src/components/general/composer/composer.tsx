@@ -185,7 +185,11 @@ const Composer = ({
             <p className="text-3xl font-semibold text-amber-50">Affogato</p>
           </div>
         )}
-        <ComposerInput input={input} setInput={setInput} />
+        <ComposerInput
+          input={input}
+          setInput={setInput}
+          onImagePaste={(file) => handleFiles([file])}
+        />
         <div className="flex items-center justify-between gap-2 w-full">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

@@ -4,9 +4,10 @@ import { motion } from "motion/react";
 type Props = {
   input: string;
   setInput: (input: string) => void;
+  onImagePaste?: (file: File) => void;
 };
 
-const ComposerInput = ({ input, setInput }: Props) => {
+const ComposerInput = ({ input, setInput, onImagePaste }: Props) => {
   const [textareaHeight, setTextareaHeight] = useState(24);
 
   const maxRows = 10;
@@ -46,6 +47,25 @@ const ComposerInput = ({ input, setInput }: Props) => {
     }
   };
 
+  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    if (!event.clipboardData) return;
+
+    const items = event.clipboardData.items;
+
+    for (let i = 0; i < items.length; i++) {
+      if (items[i].type.indexOf("image") !== -1) {
+        const file = items[i].getAsFile();
+
+        if (file && typeof onImagePaste === "function") {
+          event.preventDefault();
+          onImagePaste(file);
+
+          break;
+        }
+      }
+    }
+  };
+
   return (
     <motion.textarea
       ref={textareaRef}
@@ -59,6 +79,7 @@ const ComposerInput = ({ input, setInput }: Props) => {
       value={input}
       onChange={handleInputChange}
       onKeyDown={handleKeyDown}
+      onPaste={handlePaste}
       rows={1}
       placeholder="How can I help you today?"
       className="flex-1 outline-none text-md text-white placeholder:text-muted-foreground resize-none w-full h-auto mb-2"
