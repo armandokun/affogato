@@ -24,7 +24,7 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
       case "Free":
         return "Plan includes";
       case "Pro":
-        if (user) return "Everything in Pro +";
+        if (user) return "Plan includes";
 
         return "Everything in Free +";
       case "Unlimited":

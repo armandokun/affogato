@@ -5,8 +5,8 @@ export const STRIPE_PRICING_TIERS = [
     id: "pro",
     name: "Pro",
     features: [
-      "1000 messages per day",
-      "Access to all models",
+      "100 messages per day",
+      "Access to all available models",
       "Unlimited access to web search, file uploads and more",
     ],
     description: "Perfect for daily use",
@@ -35,8 +35,8 @@ export const FREE_TIER = {
     price: 0,
     yearlyPrice: 0,
     features: [
-      "20 messages per day",
-      "Access to most popular models",
+      "10 messages per day",
+      "Access to main models",
       "Limited access to web search, file uploads and more",
     ],
     description: "Perfect for trying out the app",

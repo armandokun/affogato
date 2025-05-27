@@ -10,13 +10,13 @@ type Entitlements = {
 
 export const entitlementsByPlanName: Record<PlanName, Entitlements> = {
   [PlanName.FREE]: {
-    maxMessagesPerDay: 20,
+    maxMessagesPerDay: 10,
   },
   [PlanName.PRO]: {
-    maxMessagesPerDay: 200,
+    maxMessagesPerDay: 100,
   },
   [PlanName.UNLIMITED]: {
-    maxMessagesPerDay: 2000,
+    maxMessagesPerDay: 1000,
   },
 };
 
