@@ -1,13 +1,21 @@
-import AppSidebar from "@/components/general/sidebar/app-sidebar";
+import { CSSProperties, ReactNode } from "react";
 
-const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
+import { SidebarInset } from "@/components/general/sidebar/sidebar";
+import { AppSidebar } from "@/components/general/sidebar/app-sidebar";
+import { SidebarProvider } from "@/containers/SidebarProvider";
+
+const DashboardLayout = async ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex h-screen flex-col md:flex-row bg-black rounded-md">
+    <SidebarProvider
+      style={
+        {
+          "--sidebar-width": "17rem",
+        } as CSSProperties
+      }
+    >
       <AppSidebar />
-      <div className="flex-1 bg-background rounded-lg m-2 md:ml-0 mt-0 md:mt-2">
-        {children}
-      </div>
-    </div>
+      <SidebarInset>{children}</SidebarInset>
+    </SidebarProvider>
   );
 };
 

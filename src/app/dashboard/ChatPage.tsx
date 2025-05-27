@@ -6,17 +6,17 @@ import { Clock } from "lucide-react";
 import { useRef, useEffect, useId, useState } from "react";
 import { UIMessage } from "ai";
 
-import { useSession } from "@/containers/SessionProvider";
 import Message from "@/components/general/message";
 import Composer from "@/components/general/composer";
 import { toast } from "@/components/ui/toast/toast";
-import UserAvatar from "@/components/general/sidebar/user-avatar-button/user-avatar";
+import { SidebarTrigger } from "@/components/general/sidebar/sidebar";
 
+import { ChatVisibility } from "@/constants/chat";
 import { cn, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
 import { ChatSDKError } from "@/lib/errors";
 import { LanguageModelCode } from "@/lib/ai/providers";
 import { getRelativeTimeFromNow } from "@/lib/utils/date";
-import { ChatVisibility } from "@/constants/chat";
+import useSidebar from "@/hooks/use-sidebar";
 
 type Props = {
   chatId: string;
@@ -69,8 +69,8 @@ const ChatPage = ({
 
   const mainRef = useRef<HTMLDivElement | null>(null);
 
-  const { user } = useSession();
   const placeholderId = useId();
+  const { open, isMobile } = useSidebar();
 
   useEffect(() => {
     if (!mainRef.current) return;
@@ -108,20 +108,16 @@ const ChatPage = ({
   return (
     <div className="flex flex-col size-full">
       {hasMessages && (
-        <header className="hidden md:flex items-center justify-between border-b border-border px-4 relative h-14">
+        <header className="flex items-center justify-between border-b border-border px-4 relative h-14">
           <div className="flex items-center gap-2">
-            <UserAvatar avatarUrl={user?.user_metadata?.avatar_url} />
-            <span className="font-semibold text-white truncate max-w-[120px] text-sm">
-              {user?.user_metadata?.name?.split(" ")[0] ||
-                user?.user_metadata.email}
-            </span>
+            {(!open || isMobile) && <SidebarTrigger />}
             <span className="text-xs text-muted-foreground whitespace-nowrap flex items-center gap-1">
               <Clock className="size-4" />
               {getRelativeTimeFromNow(createdAt)}
             </span>
           </div>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
-            <p className="font-semibold text-sm truncate md:max-w-[250px] lg:max-w-[450px]">
+            <p className="font-semibold text-sm truncate max-w-[150px] md:max-w-[250px] lg:max-w-[450px]">
               {messages[0].content}
             </p>
           </div>
@@ -140,7 +136,7 @@ const ChatPage = ({
         }}
         ref={mainRef}
       >
-        {hasMessages && (
+        {hasMessages ? (
           <div
             className={cn(
               "w-full max-w-2xl mx-auto px-0 md:px-2 py-4",
@@ -164,6 +160,8 @@ const ChatPage = ({
             })}
             {error && <div className="text-red-500">{error.message}</div>}
           </div>
+        ) : (
+          <div className="p-2">{(!open || isMobile) && <SidebarTrigger />}</div>
         )}
       </motion.main>
       <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[60px]">
