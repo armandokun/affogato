@@ -15,6 +15,7 @@ import {
   getChatById,
   getMessageCountByUserId,
   getMessagesByChatId,
+  getPlanNameByUserId,
   saveChat,
   saveMessage,
 } from "@/lib/db/queries";
@@ -24,7 +25,6 @@ import { ChatVisibility } from "@/constants/chat";
 import { getTrailingMessageId } from "@/lib/utils";
 import { webSearch } from "@/lib/ai/tools";
 import { entitlementsByPlanName, PlanName } from "@/constants/user";
-import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
   const {
@@ -48,42 +48,40 @@ export async function POST(request: Request) {
       });
     }
 
-    const supabase = await createClient();
+    const chatId = id;
 
-    const { data: userSubscriptionData, error: userSubscriptionError } = await supabase
-      .from("subscriptions")
-      .select("plan_name")
-      .eq("user_id", user.id)
-      .single();
-
-    if (userSubscriptionError) {
-      throw new ChatSDKError(
-        "bad_request:database",
-        "Failed to get user subscription"
-      );
-    }
-
-    const planName = userSubscriptionData.plan_name.toLowerCase() as PlanName;
-
-    const messageCount = await getMessageCountByUserId({
+    const planNamePromise = getPlanNameByUserId({ userId: user.id });
+    const messageCountPromise = getMessageCountByUserId({
       id: user.id,
       differenceInHours: 24,
     });
+    const chatPromise = getChatById({ id: chatId });
+    const previousMessagesPromise = getMessagesByChatId({ id: chatId });
 
-    if (messageCount > entitlementsByPlanName[planName].maxMessagesPerDay) {
+    const [
+      planName,
+      messageCount,
+      chat,
+      previousMessages,
+    ] = await Promise.all([
+      planNamePromise,
+      messageCountPromise,
+      chatPromise,
+      previousMessagesPromise,
+    ]);
+
+    const formattedPlanName = planName?.toLowerCase() as PlanName;
+
+    if (messageCount > entitlementsByPlanName[formattedPlanName].maxMessagesPerDay) {
       return new ChatSDKError("rate_limit:chat").toResponse();
     }
-
-    const chatId = id;
-
-    const chat = await getChatById({ id: chatId });
 
     if (!chat) {
       const title = await generateTitleFromUserMessage({
         message,
       });
 
-      await saveChat({
+      saveChat({
         id: chatId,
         title,
         visibility: selectedVisibilityType,
@@ -93,8 +91,6 @@ export async function POST(request: Request) {
         return new ChatSDKError("forbidden:chat").toResponse();
       }
     }
-
-    const previousMessages = await getMessagesByChatId({ id: chatId });
 
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,
@@ -109,7 +105,7 @@ export async function POST(request: Request) {
     const lastSelectedModelCode =
       selectedChatModelCode || LanguageModelCode.OPENAI_CHAT_MODEL_FAST;
 
-    await saveMessage({
+    saveMessage({
       chatId,
       message: {
         id: message.id,
@@ -157,7 +153,7 @@ export async function POST(request: Request) {
                   responseMessages: response.messages,
                 });
 
-                await saveMessage({
+                saveMessage({
                   chatId,
                   message: {
                     id: assistantId,
@@ -171,7 +167,7 @@ export async function POST(request: Request) {
                   },
                 });
               } catch (error) {
-                console.error("Failed to save chat", error);
+                console.error("Failed to save message", error);
               }
             }
           },

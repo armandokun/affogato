@@ -205,3 +205,17 @@ export async function updateUserSubscription(
 
   return data;
 }
+
+export async function getPlanNameByUserId({ userId }: { userId: string }) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+      .from("subscriptions")
+      .select("plan_name")
+      .eq("user_id", userId)
+      .single();
+
+  if (error) throw new ChatSDKError("bad_request:database", "Failed to get plan name by user id");
+
+  return data?.plan_name;
+}
