@@ -56,18 +56,15 @@ export async function POST(request: Request) {
       differenceInHours: 24,
     });
     const chatPromise = getChatById({ id: chatId });
-    const previousMessagesPromise = getMessagesByChatId({ id: chatId });
 
     const [
       planName,
       messageCount,
       chat,
-      previousMessages,
     ] = await Promise.all([
       planNamePromise,
       messageCountPromise,
       chatPromise,
-      previousMessagesPromise,
     ]);
 
     const formattedPlanName = planName?.toLowerCase() as PlanName;
@@ -81,7 +78,7 @@ export async function POST(request: Request) {
         message,
       });
 
-      saveChat({
+      await saveChat({
         id: chatId,
         title,
         visibility: selectedVisibilityType,
@@ -91,6 +88,8 @@ export async function POST(request: Request) {
         return new ChatSDKError("forbidden:chat").toResponse();
       }
     }
+
+    const previousMessages = await getMessagesByChatId({ id: chatId });
 
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,
