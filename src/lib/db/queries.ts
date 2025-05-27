@@ -48,6 +48,16 @@ export async function saveChat({
   }
 }
 
+export async function updateChatTitle({ id, title }: { id: string; title: string }) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase.from("chats").update({ title }).eq("id", id);
+
+  if (error) throw new ChatSDKError("bad_request:database", "Failed to update chat title");
+
+  return data;
+}
+
 export async function saveMessage({
   chatId,
   message,
@@ -114,28 +124,12 @@ export async function getMessageCountByUserId({
       Date.now() - differenceInHours * 60 * 60 * 1000
     ).toISOString();
 
-    const { data: chats, error: chatsError } = await supabase
-      .from("chats")
-      .select("id")
-      .eq("user_id", id);
-
-    if (chatsError) {
-      throw new ChatSDKError(
-        "bad_request:database",
-        "Failed to get chats for user in getMessageCountByUserId"
-      );
-    }
-
-    const chatIds = chats?.map((c: { id: string }) => c.id) || [];
-
-    if (chatIds.length === 0) return 0;
-
     const { count, error: messagesError } = await supabase
       .from("messages")
       .select("id", { count: "exact", head: true })
-      .in("chat_id", chatIds)
       .gte("created_at", since)
-      .eq("role", "user");
+      .eq("role", "user")
+      .eq("user_id", id);
 
     if (messagesError) {
       throw new ChatSDKError(

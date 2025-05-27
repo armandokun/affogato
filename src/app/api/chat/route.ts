@@ -18,6 +18,7 @@ import {
   getPlanNameByUserId,
   saveChat,
   saveMessage,
+  updateChatTitle,
 } from "@/lib/db/queries";
 import { ChatSDKError } from "@/lib/errors";
 import { generateTitleFromUserMessage } from "@/app/dashboard/actions";
@@ -56,15 +57,18 @@ export async function POST(request: Request) {
       differenceInHours: 24,
     });
     const chatPromise = getChatById({ id: chatId });
+    const previousMessagesPromise = getMessagesByChatId({ id: chatId });
 
     const [
       planName,
       messageCount,
       chat,
+      previousMessages,
     ] = await Promise.all([
       planNamePromise,
       messageCountPromise,
       chatPromise,
+      previousMessagesPromise,
     ]);
 
     const formattedPlanName = planName?.toLowerCase() as PlanName;
@@ -74,22 +78,20 @@ export async function POST(request: Request) {
     }
 
     if (!chat) {
-      const title = await generateTitleFromUserMessage({
-        message,
-      });
-
       await saveChat({
         id: chatId,
-        title,
+        title: "New Chat",
         visibility: selectedVisibilityType,
       });
+
+      generateTitleFromUserMessage({ message })
+        .then((title) => updateChatTitle({ id: chatId, title }))
+        .catch(() => new ChatSDKError("bad_request:database", "Failed to generate chat title"));
     } else {
       if (chat.user_id !== user.id) {
         return new ChatSDKError("forbidden:chat").toResponse();
       }
     }
-
-    const previousMessages = await getMessagesByChatId({ id: chatId });
 
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,
@@ -104,7 +106,7 @@ export async function POST(request: Request) {
     const lastSelectedModelCode =
       selectedChatModelCode || LanguageModelCode.OPENAI_CHAT_MODEL_FAST;
 
-    await saveMessage({
+    saveMessage({
       chatId,
       message: {
         id: message.id,
@@ -152,7 +154,7 @@ export async function POST(request: Request) {
                   responseMessages: response.messages,
                 });
 
-                saveMessage({
+                await saveMessage({
                   chatId,
                   message: {
                     id: assistantId,
@@ -160,7 +162,6 @@ export async function POST(request: Request) {
                     parts: assistantMessage.parts,
                     experimental_attachments:
                       assistantMessage.experimental_attachments ?? [],
-                    createdAt: new Date(),
                     content: assistantMessage.content,
                     model_code: lastSelectedModelCode,
                   },
