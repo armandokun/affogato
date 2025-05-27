@@ -192,7 +192,7 @@ function SidebarInset({
     <main
       data-slot="sidebar-inset"
       className={cn(
-        "box-border md:m-2 md:max-h-[calc(100vh-1rem)] bg-background flex w-full flex-col md:flex-row md:rounded-lg border border-sidebar-border",
+        "box-border h-screen md:m-2 md:max-h-[calc(100vh-1rem)] bg-background flex w-full flex-col md:flex-row md:rounded-lg border border-sidebar-border",
         className
       )}
       {...props}

@@ -111,13 +111,13 @@ const ChatPage = ({
         <header className="flex items-center justify-between border-b border-border px-4 relative h-14">
           <div className="flex items-center gap-2">
             {(!open || isMobile) && <SidebarTrigger />}
-            <span className="text-xs text-muted-foreground whitespace-nowrap flex items-center gap-1">
+            <span className="hidden md:flex text-xs text-muted-foreground whitespace-nowrap items-center gap-1">
               <Clock className="size-4" />
               {getRelativeTimeFromNow(createdAt)}
             </span>
           </div>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
-            <p className="font-semibold text-sm truncate max-w-[150px] md:max-w-[250px] lg:max-w-[450px]">
+            <p className="font-semibold text-sm truncate max-w-[200px] md:max-w-[250px] lg:max-w-[450px]">
               {messages[0].content}
             </p>
           </div>
