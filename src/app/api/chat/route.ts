@@ -105,7 +105,7 @@ export async function POST(request: Request) {
     const lastSelectedModelCode =
       selectedChatModelCode || LanguageModelCode.OPENAI_CHAT_MODEL_FAST;
 
-    saveMessage({
+    await saveMessage({
       chatId,
       message: {
         id: message.id,
