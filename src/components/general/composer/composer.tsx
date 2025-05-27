@@ -139,7 +139,7 @@ const Composer = ({
       <GlobalDragDrop onFilesDrop={handleFiles} />
       <form
         onSubmit={submitForm}
-        className="w-full max-w-2xl bg-transparent backdrop-blur-xl border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors z-15"
+        className="w-[90%] max-w-2xl bg-transparent backdrop-blur-xl border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors z-15"
       >
         {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
