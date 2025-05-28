@@ -33,8 +33,8 @@ const MessageReasoning = ({ isLoading, reasoning }: Props) => {
   return (
     <div className="flex flex-col">
       {isLoading ? (
-        <div className="flex flex-row gap-2 items-start">
-          <AnimatedShinyText>Reasoning...</AnimatedShinyText>
+        <div className="flex flex-row gap-2">
+          <AnimatedShinyText className="mx-0">Reasoning...</AnimatedShinyText>
           <button
             data-testid="message-reasoning-toggle"
             type="button"
