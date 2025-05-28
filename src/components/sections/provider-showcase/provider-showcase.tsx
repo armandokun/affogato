@@ -20,6 +20,10 @@ const PROVIDERS = [
     available: true,
   },
   {
+    name: "xAI",
+    available: true,
+  },
+  {
     name: "Meta",
     available: false,
   },
@@ -33,10 +37,6 @@ const PROVIDERS = [
   },
   {
     name: "DeepSeek",
-    available: false,
-  },
-  {
-    name: "Groq",
     available: false,
   },
 ];
