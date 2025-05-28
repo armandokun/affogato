@@ -85,7 +85,7 @@ const ChatPage = ({
     if (!cookie) return;
 
     setSelectedModel(cookie as LanguageModelCode);
-  });
+  }, [selectedModelCode, initialModel]);
 
   useEffect(() => {
     if (!mainRef.current) return;

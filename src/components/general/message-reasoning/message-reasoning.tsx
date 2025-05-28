@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDownIcon, ChevronUpIcon, LoaderIcon } from "lucide-react";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 import Markdown from "@/components/ui/markdown";
 import AnimatedShinyText from "@/components/magicui/animated-shiny-text";
