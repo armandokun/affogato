@@ -1,27 +1,17 @@
 import { FormEvent, useCallback, useRef, useState } from "react";
 import { ArrowUp, Paperclip, Square } from "lucide-react";
-import Image from "next/image";
 import { UseChatHelpers } from "@ai-sdk/react";
 import { Attachment } from "ai";
 
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu/dropdown-menu";
 import Button from "@/components/ui/button";
 import { toast } from "@/components/ui/toast/toast";
-
-import { setCookie } from "@/lib/utils";
 import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
 
 import Icons from "../icons";
 import ComposerInput from "./composer-input";
 import PreviewAttachment from "../preview-attachment";
 import GlobalDragDrop from "./global-drag-drop";
-
-const COOKIE_NAME = "affogato_selected_model";
+import ModelDropdown from "./model-dropdown";
 
 type Props = {
   chatId: string;
@@ -191,71 +181,11 @@ const Composer = ({
           onImagePaste={(file) => handleFiles([file])}
         />
         <div className="flex items-center justify-between gap-2 w-full">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <div className="relative">
-                <button
-                  type="button"
-                  className={
-                    "bg-white/5 backdrop-blur-xl text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer transition-opacity"
-                  }
-                >
-                  {selectedModelCode && (
-                    <Image
-                      src={
-                        modelDropdownOptions.find(
-                          (opt) => opt.value === selectedModelCode
-                        )?.logo || ""
-                      }
-                      alt="Model logo"
-                      width={20}
-                      height={20}
-                      className="inline-block"
-                    />
-                  )}
-                  {
-                    modelDropdownOptions.find(
-                      (opt) => opt.value === selectedModelCode
-                    )?.label
-                  }
-                  <span className="ml-2">&#9662;</span>
-                </button>
-              </div>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent side="top" align="start" className="w-72">
-              {modelDropdownOptions.map((option) => (
-                <DropdownMenuItem
-                  key={option.value}
-                  onSelect={() => {
-                    setSelectedModel(option.value);
-                    setCookie(COOKIE_NAME, option.value);
-                  }}
-                  className="flex items-center gap-4 cursor-pointer mb-1"
-                >
-                  <Image
-                    src={option.logo}
-                    alt={`${option.label} logo`}
-                    width={20}
-                    height={20}
-                    className="inline-block"
-                  />
-                  <div>
-                    <div className="font-semibold flex items-center gap-2">
-                      {option.label}
-                      {option.badge && (
-                        <span className="text-xs bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                          {option.badge}
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      {option.description}
-                    </div>
-                  </div>
-                </DropdownMenuItem>
-              ))}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <ModelDropdown
+            selectedModelCode={selectedModelCode}
+            setSelectedModel={setSelectedModel}
+            modelDropdownOptions={modelDropdownOptions}
+          />
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"

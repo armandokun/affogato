@@ -11,6 +11,7 @@ import AvatarStack from "@/components/ui/avatar-stack";
 import AnimatedShinyText from "@/components/magicui/animated-shiny-text";
 
 import AttachmentStack from "../attachment-stack/attachment-stack";
+import MessageReasoning from "../message-reasoning";
 
 const getModelLogo = (languageModelCode?: string) => {
   if (!languageModelCode) return "/logo.png";
@@ -18,15 +19,17 @@ const getModelLogo = (languageModelCode?: string) => {
   if (languageModelCode.includes("openai")) return "/llm-icons/chatgpt.png";
   if (languageModelCode.includes("anthropic")) return "/llm-icons/claude.png";
   if (languageModelCode.includes("gemini")) return "/llm-icons/gemini.png";
+  if (languageModelCode.includes("xai")) return "/llm-icons/xai.png";
 
   return "/llm-icons/chatgpt.png";
 };
 
 type Props = {
   message: UIMessage;
+  isLoading: boolean;
 };
 
-const Message = ({ message }: Props) => {
+const Message = ({ message, isLoading }: Props) => {
   const isAI = message.role === "assistant";
 
   const modelCode =
@@ -87,6 +90,16 @@ const Message = ({ message }: Props) => {
             {message.parts?.map((part, index) => {
               const { type } = part;
               const key = `message-${message.id}-part-${index}`;
+
+              if (type === "reasoning") {
+                return (
+                  <MessageReasoning
+                    key={key}
+                    isLoading={isLoading}
+                    reasoning={part.reasoning}
+                  />
+                );
+              }
 
               if (type === "text") {
                 if (isAI) {

@@ -11,8 +11,13 @@ import Composer from "@/components/general/composer";
 import { toast } from "@/components/ui/toast/toast";
 import { SidebarTrigger } from "@/components/general/sidebar/sidebar";
 
-import { ChatVisibility } from "@/constants/chat";
-import { cn, fetchWithErrorHandlers, generateUUID } from "@/lib/utils";
+import { ChatVisibility, SELECTED_MODEL_COOKIE } from "@/constants/chat";
+import {
+  cn,
+  fetchWithErrorHandlers,
+  generateUUID,
+  getCookie,
+} from "@/lib/utils";
 import { ChatSDKError } from "@/lib/errors";
 import { LanguageModelCode } from "@/lib/ai/providers";
 import { getRelativeTimeFromNow } from "@/lib/utils/date";
@@ -71,6 +76,16 @@ const ChatPage = ({
 
   const placeholderId = useId();
   const { open, isMobile } = useSidebar();
+
+  useEffect(() => {
+    if (selectedModelCode !== initialModel) return;
+
+    const cookie = getCookie(SELECTED_MODEL_COOKIE);
+
+    if (!cookie) return;
+
+    setSelectedModel(cookie as LanguageModelCode);
+  });
 
   useEffect(() => {
     if (!mainRef.current) return;
@@ -143,8 +158,8 @@ const ChatPage = ({
               hasMessages && "mb-14"
             )}
           >
-            {messages.map((message, id) => {
-              const isLast = id === messages.length - 1;
+            {messages.map((message, index) => {
+              const isLast = index === messages.length - 1;
               const isAI = message.role === "assistant";
 
               return (
@@ -154,7 +169,12 @@ const ChatPage = ({
                     message.role === "user" ? "text-right" : "text-left"
                   }${isLast && isAI ? " min-h-96" : ""}`}
                 >
-                  <Message message={message} />
+                  <Message
+                    message={message}
+                    isLoading={
+                      status === "streaming" && index === messages.length - 1
+                    }
+                  />
                 </div>
               );
             })}

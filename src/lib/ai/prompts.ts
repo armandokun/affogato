@@ -100,6 +100,13 @@ export const systemPrompt = ({
       - Maintaining a friendly and conversational tone`;
 
       return `${affogatoPrompt}\n\n${chatGptPrompt}\n\n${largeModelPrompt}\n\n${largeModelCustomPrompt}`;
+    case LanguageModelCode.OPENAI_CHAT_MODEL_THINKING:
+      const thinkingCustomPrompt = `As the o4-mini model, you excel at:
+      - Handling complex and nuanced queries
+      - Providing up-to-date, factual, and helpful responses
+      - Handling complex and nuanced queries.`;
+
+      return `${affogatoPrompt}\n\n${chatGptPrompt}\n\n${thinkingCustomPrompt}`;
     case LanguageModelCode.ANTHROPIC_CHAT_MODEL_FAST:
       const anthropicCustomPrompt = `As Claude 3.5 Haiku, you excel at:
       - Quick, concise responses
@@ -116,6 +123,14 @@ export const systemPrompt = ({
       - Careful handling of sensitive topics`;
 
       return `${affogatoPrompt}\n\n${claudePrompt}\n\n${largeModelPrompt}\n\n${anthropicLargeModelCustomPrompt}`;
+    case LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING:
+      const anthropicThinkingCustomPrompt = `As Claude 4.0 Sonnet Thinking, you excel at:
+      - Detailed analytical reasoning
+      - Nuanced explanations of complex topics
+      - Thoughtful and balanced responses to subjective questions
+      - Careful handling of sensitive topics`;
+
+      return `${affogatoPrompt}\n\n${claudePrompt}\n\n${anthropicThinkingCustomPrompt}`;
     case LanguageModelCode.GEMINI_CHAT_MODEL_FAST:
       const geminiCustomPrompt = `As Gemini 2.0 Flash, you excel at:
       - Multimodal reasoning (text, images, and more)
@@ -124,6 +139,10 @@ export const systemPrompt = ({
       - Maintaining a friendly, conversational, and helpful tone`;
 
       return `${affogatoPrompt}\n\n${geminiPrompt}\n\n${largeModelPrompt}\n\n${geminiCustomPrompt}`;
+    case LanguageModelCode.XAI_CHAT_MODEL_THINKING:
+      const xAiCustomPrompt = `You are Grok, an AI created by xAI, designed to be maximally truthful, helpful, and insightful. Approach every query with clear, step-by-step reasoning to ensure accurate and thoughtful responses. Draw on your knowledge of science, technology, and humor inspired by the Hitchhiker's Guide to the Galaxy. Always prioritize logical analysis, break down complex problems, and respond concisely without unnecessary details. Additionally, use Markdown formatting for better readability: structure responses with headers (e.g., # Main Section), bullet points for lists, and bold text for key terms. Keep responses focused and easy to scan, avoiding long paragraphs.`;
+
+      return `${affogatoPrompt}\n\n${xAiCustomPrompt}`;
     default:
       return affogatoPrompt;
   }

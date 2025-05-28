@@ -1,7 +1,8 @@
-import { customProvider } from "ai";
+import { customProvider, extractReasoningMiddleware, wrapLanguageModel } from "ai";
 import { createOpenAI } from "@ai-sdk/openai";
 import { createAnthropic } from "@ai-sdk/anthropic";
 import { createGoogleGenerativeAI } from "@ai-sdk/google";
+import { createXai } from "@ai-sdk/xai";
 
 const openai = createOpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,11 +16,18 @@ const google = createGoogleGenerativeAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
+const xai = createXai({
+  apiKey: process.env.XAI_API_KEY,
+});
+
 export enum LanguageModelCode {
   OPENAI_CHAT_MODEL_FAST = "openai-chat-model-fast",
   OPENAI_CHAT_MODEL_LARGE = "openai-chat-model-large",
+  OPENAI_CHAT_MODEL_THINKING = "openai-chat-model-thinking",
+  XAI_CHAT_MODEL_THINKING = "xai-chat-model-thinking",
   ANTHROPIC_CHAT_MODEL_FAST = "anthropic-chat-model-fast",
   ANTHROPIC_CHAT_MODEL_LATEST = "anthropic-chat-model-latest",
+  ANTHROPIC_CHAT_MODEL_THINKING = "anthropic-chat-model-thinking",
   OPENAI_TITLE_MODEL = "openai-title-model",
   GEMINI_CHAT_MODEL_FAST = "gemini-chat-model-fast",
 }
@@ -36,6 +44,18 @@ export const myProvider = customProvider({
     ),
     [LanguageModelCode.OPENAI_TITLE_MODEL]: openai("gpt-4-turbo"),
     [LanguageModelCode.GEMINI_CHAT_MODEL_FAST]: google("gemini-2.0-flash"),
+    [LanguageModelCode.XAI_CHAT_MODEL_THINKING]: wrapLanguageModel({
+      model: xai("grok-3-mini-latest"),
+      middleware: extractReasoningMiddleware({ tagName: "think" }),
+    }),
+    [LanguageModelCode.OPENAI_CHAT_MODEL_THINKING]: wrapLanguageModel({
+      model: openai("o4-mini-2025-04-16"),
+      middleware: extractReasoningMiddleware({ tagName: "think" }),
+    }),
+    [LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING]: wrapLanguageModel({
+      model: anthropic("claude-4-sonnet-20250514"),
+      middleware: extractReasoningMiddleware({ tagName: "think" }),
+    }),
   },
 });
 
@@ -70,5 +90,27 @@ export const modelDropdownOptions = [
     label: "2.0 Flash",
     description: "Google's most reliable and efficient model.",
     logo: "/llm-icons/gemini.png",
+  },
+];
+
+export const thinkingModelDropdownOptions = [
+  {
+    value: LanguageModelCode.XAI_CHAT_MODEL_THINKING,
+    label: "Grok 3 Mini",
+    description: "XAI's chat model with reasoning capabilities.",
+    logo: "/llm-icons/xai.png",
+  },
+  {
+    value: LanguageModelCode.OPENAI_CHAT_MODEL_THINKING,
+    label: "o4-mini",
+    description: "For STEM reasoning that excels in science, math, and coding tasks. Thinks internally before responding.",
+    logo: "/llm-icons/chatgpt.png",
+    badge: "Internal",
+  },
+  {
+    value: LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING,
+    label: "4.0 Sonnet Thinking",
+    description: "For science, math, coding, and reasoning tasks.",
+    logo: "/llm-icons/claude.png",
   },
 ];

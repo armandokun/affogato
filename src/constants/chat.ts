@@ -15,3 +15,5 @@ export type DbMessage = {
   created_at: Date;
   model_code: LanguageModelCode;
 };
+
+export const SELECTED_MODEL_COOKIE = "affogato_selected_model";

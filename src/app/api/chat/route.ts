@@ -20,7 +20,7 @@ import {
   saveMessage,
   updateChatTitle,
 } from "@/lib/db/queries";
-import { ChatSDKError } from "@/lib/errors";
+import { ChatSDKError, errorHandler } from "@/lib/errors";
 import { generateTitleFromUserMessage } from "@/app/dashboard/actions";
 import { ChatVisibility } from "@/constants/chat";
 import { getTrailingMessageId } from "@/lib/utils";
@@ -129,6 +129,19 @@ export async function POST(request: Request) {
           model: myProvider.languageModel(lastSelectedModelCode),
           system: systemPrompt({ selectedChatModel: lastSelectedModelCode }),
           messages,
+          providerOptions: {
+            ...(planName === PlanName.FREE ? {
+              openai: { reasoningEffort: "low" },
+            } : {}),
+            ...(lastSelectedModelCode === LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING ? {
+            anthropic: {
+                thinking: { type: "enabled", budgetTokens: 10000 },
+              },
+            } : {}),
+          },
+          headers: {
+            'anthropic-beta': 'interleaved-thinking-2025-05-14',
+          },
           temperature: 0.5,
           topP: 0.9,
           maxSteps: 5,
@@ -177,6 +190,7 @@ export async function POST(request: Request) {
           sendReasoning: true,
         });
       },
+      onError: errorHandler
     });
   } catch (error) {
     return NextResponse.json({ error }, { status: 400 });

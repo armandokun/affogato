@@ -37,7 +37,7 @@ const components: Partial<Components> = {
     </h6>
   ),
   p: ({ children, ...props }) => (
-    <p className="mb-4 leading-relaxed text-base" {...props}>
+    <p className="mb-4 leading-relaxed text-base text-zinc-200" {...props}>
       {children}
     </p>
   ),
