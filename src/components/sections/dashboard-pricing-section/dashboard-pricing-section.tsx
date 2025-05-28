@@ -4,12 +4,14 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 
 import { createClient } from "@/lib/supabase/client";
+import useSidebar from "@/hooks/use-sidebar";
 import { PricingPrice, PricingProduct } from "@/constants/pricing";
 import { useSession } from "@/containers/SessionProvider";
 import PricingTabs from "@/components/general/pricing-tabs";
 import SectionHeader from "@/components/general/section-header";
 import { toast } from "@/components/ui/toast/toast";
 import PricingCard from "@/components/general/pricing-card";
+import { SidebarTrigger } from "@/components/general/sidebar/sidebar";
 
 import { buildTiersFromStripe } from "../pricing-section/pricing-section";
 
@@ -26,6 +28,7 @@ const DashboardPricingPage = ({
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
   const { user } = useSession();
+  const { open, isMobile } = useSidebar();
 
   const stripeTiers = buildTiersFromStripe(products, prices);
 
@@ -66,6 +69,11 @@ const DashboardPricingPage = ({
       id="pricing"
       className="flex flex-col items-center justify-center gap-10 pb-10 w-full relative"
     >
+      {(!open || isMobile) && (
+        <div className="absolute top-0 left-0 p-2">
+          <SidebarTrigger />
+        </div>
+      )}
       <SectionHeader>
         <Image
           src="/logo.png"
