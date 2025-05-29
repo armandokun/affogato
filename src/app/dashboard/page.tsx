@@ -30,6 +30,7 @@ const DashboardPage = async () => {
   return (
     <ChatPage
       chatId={id}
+      chatTitle="New chat"
       createdAt={new Date().toISOString()}
       initialMessages={[]}
       visibilityType={ChatVisibility.PERMANENT}

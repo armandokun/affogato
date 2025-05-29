@@ -5,7 +5,7 @@ import type { UIMessage } from "ai";
 import { getChatById, getMessagesByChatId } from "@/lib/db/queries";
 import { getServerSession } from "@/lib/auth";
 import { LOGIN } from "@/constants/routes";
-import { ChatVisibility, DbMessage } from "@/constants/chat";
+import { DbMessage } from "@/constants/chat";
 import { LanguageModelCode } from "@/lib/ai/providers";
 
 import ChatPage from "../ChatPage";
@@ -14,19 +14,13 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
 
-  const chat = await getChatById({ id });
+  const [chat, user] = await Promise.all([
+    getChatById({ id }),
+    getServerSession(),
+  ]);
 
   if (!chat) notFound();
-
-  const user = await getServerSession();
-
   if (!user) redirect(LOGIN);
-
-  if (chat.visibility === ChatVisibility.TEMPORARY) {
-    if (!user) return notFound();
-
-    if (user.id !== chat.user_id) return notFound();
-  }
 
   const initialMessages = await getMessagesByChatId({ id });
 
@@ -56,6 +50,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     <>
       <ChatPage
         chatId={id}
+        chatTitle={chat.title}
         createdAt={chat.created_at}
         visibilityType={chat.visibility}
         initialModel={chatModelFromCookie}

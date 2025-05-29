@@ -25,6 +25,7 @@ import useSidebar from "@/hooks/use-sidebar";
 
 type Props = {
   chatId: string;
+  chatTitle: string;
   initialModel: LanguageModelCode;
   initialMessages: Array<UIMessage>;
   visibilityType: ChatVisibility;
@@ -32,6 +33,7 @@ type Props = {
 };
 
 const ChatPage = ({
+  chatTitle,
   visibilityType,
   initialModel,
   initialMessages,
@@ -133,7 +135,7 @@ const ChatPage = ({
           </div>
           <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
             <p className="font-semibold text-sm truncate max-w-[200px] md:max-w-[250px] lg:max-w-[450px]">
-              {messages[0].content}
+              {chatTitle || messages[0].content}
             </p>
           </div>
         </header>
