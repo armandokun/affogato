@@ -5,7 +5,7 @@ export const STRIPE_PRICING_TIERS = [
     id: "pro",
     name: "Pro",
     features: [
-      "100 messages per day",
+      "1,500 messages per month",
       "Access to all available models",
       "Unlimited access to web search, file uploads and more",
     ],
