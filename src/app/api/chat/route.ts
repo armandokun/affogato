@@ -7,6 +7,7 @@ import {
   streamText,
 } from "ai";
 import { NextResponse } from "next/server";
+import { geolocation } from '@vercel/functions';
 
 import { getServerSession } from "@/lib/auth";
 import { LanguageModelCode, myProvider } from "@/lib/ai/providers";
@@ -119,6 +120,15 @@ export async function POST(request: Request) {
       },
     });
 
+    const { longitude, latitude, city, country } = geolocation(request);
+
+    const requestHints = {
+      longitude,
+      latitude,
+      city,
+      country,
+    };
+
     return createDataStreamResponse({
       execute: (dataStream) => {
         dataStream.writeMessageAnnotation({
@@ -127,7 +137,7 @@ export async function POST(request: Request) {
 
         const result = streamText({
           model: myProvider.languageModel(lastSelectedModelCode),
-          system: systemPrompt({ selectedChatModel: lastSelectedModelCode }),
+          system: systemPrompt({ selectedChatModel: lastSelectedModelCode, requestHints }),
           messages,
           providerOptions: {
             ...(planName === PlanName.FREE ? {
