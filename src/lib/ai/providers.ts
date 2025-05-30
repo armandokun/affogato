@@ -43,7 +43,7 @@ export const myProvider = customProvider({
       "claude-4-sonnet-20250514"
     ),
     [LanguageModelCode.OPENAI_TITLE_MODEL]: openai("gpt-4-turbo"),
-    [LanguageModelCode.GEMINI_CHAT_MODEL_FAST]: google("gemini-2.0-flash"),
+    [LanguageModelCode.GEMINI_CHAT_MODEL_FAST]: google("gemini-2.5-flash-preview-04-17"),
     [LanguageModelCode.XAI_CHAT_MODEL_THINKING]: wrapLanguageModel({
       model: xai("grok-3-mini-latest"),
       middleware: extractReasoningMiddleware({ tagName: "think" }),
@@ -87,9 +87,10 @@ export const modelDropdownOptions = [
   },
   {
     value: LanguageModelCode.GEMINI_CHAT_MODEL_FAST,
-    label: "2.0 Flash",
+    label: "2.5 Flash",
     description: "Google's most reliable and efficient model.",
     logo: "/llm-icons/gemini.png",
+    badge: "New",
   },
 ];
 
