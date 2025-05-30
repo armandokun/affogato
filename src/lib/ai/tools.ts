@@ -12,7 +12,7 @@ export const webSearch = tool({
   execute: async ({ query }) => {
     const { results } = await exa.searchAndContents(query, {
       livecrawl: "always",
-      numResults: 6,
+      numResults: 10,
     });
 
     return results.map((result) => ({
