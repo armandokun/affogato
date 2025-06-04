@@ -140,7 +140,7 @@ export async function POST(request: Request) {
           system: systemPrompt({ selectedChatModel: lastSelectedModelCode, requestHints }),
           messages,
           providerOptions: {
-            ...(planName === PlanName.FREE ? {
+            ...(planName === PlanName.FREE && lastSelectedModelCode === LanguageModelCode.OPENAI_CHAT_MODEL_THINKING ? {
               openai: { reasoningEffort: "low" },
             } : {}),
             ...(lastSelectedModelCode === LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING ? {
