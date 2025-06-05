@@ -49,7 +49,7 @@ export const myProvider = customProvider({
       middleware: extractReasoningMiddleware({ tagName: "think" }),
     }),
     [LanguageModelCode.OPENAI_CHAT_MODEL_THINKING]: wrapLanguageModel({
-      model: openai("o4-mini-2025-04-16"),
+      model: openai("o3-2025-04-16"),
       middleware: extractReasoningMiddleware({ tagName: "think" }),
     }),
     [LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING]: wrapLanguageModel({
@@ -103,7 +103,7 @@ export const thinkingModelDropdownOptions = [
   },
   {
     value: LanguageModelCode.OPENAI_CHAT_MODEL_THINKING,
-    label: "o4-mini",
+    label: "o3",
     description: "For STEM reasoning that excels in science, math, and coding tasks. Thinks internally before responding.",
     logo: "/llm-icons/chatgpt.png",
     badge: "Internal",
