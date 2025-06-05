@@ -105,7 +105,7 @@ const Message = ({ message, isLoading }: Props) => {
                 if (isAI) {
                   return (
                     <div key={key} className="flex flex-row gap-2 items-start">
-                      <div className="flex flex-col gap">
+                      <div className="flex flex-col gap w-[90%] max-w-2xl">
                         <Markdown>{part.text}</Markdown>
                       </div>
                     </div>
