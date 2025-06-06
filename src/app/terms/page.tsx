@@ -13,9 +13,10 @@ const TermsPage = () => {
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">Introduction</h2>
         <p className="mb-8">
-          These Terms of Service ("Terms") are a legal agreement between you and
-          Sobeck MB ("Affogato", "we", "us"). By using affogato.chat (the
-          "Site") and our services, you agree to these Terms.
+          These Terms of Service (&quot;Terms&quot;) are a legal agreement
+          between you and Sobeck MB (&quot;Affogato&quot;, &quot;we&quot;,
+          &quot;us&quot;). By using affogato.chat (the &quot;Site&quot;) and our
+          services, you agree to these Terms.
         </p>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">What We Do</h2>
@@ -41,7 +42,7 @@ const TermsPage = () => {
         </p>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">
-          Our Content & Rights
+          Our Content &amp; Rights
         </h2>
         <p className="mb-8">
           We own all rights to our website, branding, code, and platform
@@ -51,14 +52,14 @@ const TermsPage = () => {
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">Acceptable Use</h2>
         <ul className="list-disc list-inside space-y-2 mb-8">
-          <li>Do not break the law or violate anyone's rights.</li>
+          <li>Do not break the law or violate anyone&apos;s rights.</li>
           <li>Do not upload or share illegal, harmful, or abusive content.</li>
           <li>Do not reverse engineer, hack, or abuse the service.</li>
           <li>Do not spam, use bots, or try to disrupt the platform.</li>
         </ul>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">
-          Payments & Subscriptions
+          Payments &amp; Subscriptions
         </h2>
         <ul className="list-disc list-inside space-y-2 mb-8">
           <li>Affogato offers both free and paid subscription plans.</li>
@@ -98,7 +99,7 @@ const TermsPage = () => {
         </p>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">
-          DMCA & Copyright Complaints
+          DMCA &amp; Copyright Complaints
         </h2>
         <p className="mb-8">
           If you believe your copyright has been infringed, please email us at{" "}
@@ -112,7 +113,7 @@ const TermsPage = () => {
         </p>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">
-          Data Retention & Deletion
+          Data Retention &amp; Deletion
         </h2>
         <p className="mb-8">
           We keep your data for 30 days after account closure, then delete or

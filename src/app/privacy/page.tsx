@@ -11,9 +11,10 @@ export default function PrivacyPage() {
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">Introduction</h2>
         <p className="mb-8">
-          This Privacy Policy explains how Sobeck MB ("Affogato", "we", "us")
-          collects, uses, and protects your information when you use
-          affogato.chat (the "Site") and our services.
+          This Privacy Policy explains how Sobeck MB (&quot;Affogato&quot;,
+          &quot;we&quot;, &quot;us&quot;) collects, uses, and protects your
+          information when you use affogato.chat (the &quot;Site&quot;) and our
+          services.
         </p>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">
@@ -63,7 +64,7 @@ export default function PrivacyPage() {
         </ul>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">
-          Cookies & Tracking
+          Cookies &amp; Tracking
         </h2>
         <p className="mb-8">
           We use cookies and similar technologies to operate our site, remember
@@ -72,7 +73,7 @@ export default function PrivacyPage() {
         </p>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">
-          Your Rights & Choices
+          Your Rights &amp; Choices
         </h2>
         <ul className="list-disc list-inside space-y-2 mb-8">
           <li>Access, update, or delete your account information</li>
@@ -97,7 +98,7 @@ export default function PrivacyPage() {
         </p>
 
         <h2 className="text-2xl font-semibold mt-12 mb-2">
-          Children's Privacy
+          Children&apos;s Privacy
         </h2>
         <p className="mb-8">
           Affogato is not intended for children under 16. We do not knowingly
