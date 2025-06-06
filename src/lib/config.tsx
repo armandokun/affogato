@@ -41,11 +41,8 @@ export const siteConfig = {
     "AI Chat Models",
   ],
   links: {
-    email: "armandas@sobeck.app",
-    twitter: "https://twitter.com/affogato_chat",
-    discord: "https://discord.gg/affogato",
-    github: "https://github.com/affogato-chat",
-    instagram: "https://instagram.com/affogato_chat",
+    mail: "armandas@affogato.chat",
+    instagram: "https://instagram.com/affogato.chat",
   },
   nav: {
     links: [{ id: 1, name: "Home", href: "#hero" }],

@@ -8,7 +8,9 @@ type Link = {
 
 const links: Link[] = [
   { text: "Pricing", url: "#" },
-  { text: "Contact", url: "#" },
+  { text: "Contact", url: `mailto:${siteConfig.links.mail}` },
+  { text: "Terms of Service", url: "/terms" },
+  { text: "Privacy Policy", url: "/privacy" },
 ];
 
 export function Footer() {

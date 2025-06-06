@@ -1,10 +1,10 @@
 export const siteConfig = {
   name: "Affogato",
   url: "https://affogato.chat",
-  description: "Your LLMs in one place.",
+  description: "All your LLMs for one subscription price.",
   links: {
-    twitter: "https://x.com/dillionverma",
-    github: "https://github.com/dillionverma",
+    mail: "mailto:armandas@affogato.chat",
+    instagram: "https://www.instagram.com/affogato.chat",
   },
 };
 
