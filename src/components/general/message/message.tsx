@@ -104,8 +104,15 @@ const Message = ({ message, isLoading }: Props) => {
               if (type === "text") {
                 if (isAI) {
                   return (
-                    <div key={key} className="flex flex-row gap-2 items-start">
-                      <div className="flex flex-col gap w-[90%] max-w-2xl">
+                    <div
+                      key={key}
+                      className={"flex flex-row gap-2 items-start"}
+                    >
+                      <div
+                        className={cn(
+                          "flex flex-col gap-4 w-[90%] max-w-2xl [&>*:first-child]:mt-0"
+                        )}
+                      >
                         <Markdown>{part.text}</Markdown>
                       </div>
                     </div>
