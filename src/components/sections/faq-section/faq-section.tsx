@@ -81,8 +81,8 @@ const FaqSection = () => {
         </div>
         <div className="text-center text-sm mt-6">
           Still have questions? <br /> Email us at{" "}
-          <a href={`mailto:${siteConfig.links.email}`} className="underline">
-            {siteConfig.links.email}
+          <a href={`mailto:${siteConfig.links.mail}`} className="underline">
+            {siteConfig.links.mail}
           </a>
         </div>
       </div>
