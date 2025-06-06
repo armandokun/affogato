@@ -17,12 +17,12 @@ const LoginTestimonialSection = () => (
     <div className="relative z-10 flex flex-col items-center w-full h-full justify-center">
       <div className="flex items-center gap-4">
         <TestimonialCard
-          avatarUrl="https://github.com/shadcn.png"
-          name="Ada Lovelace"
-          role="CEO, The First Computer Company"
+          avatarUrl="/testimonial-profile-picture.png"
+          name="Rokas Rudgalvis"
+          role="CTO, Sobeck"
         >
-          &quot;That guy with his lava lamp inspired designs... Where are you
-          going to put them next??&quot;
+          &quot;Paying for all these providers was a pain! Thanks to Affogato, I
+          work more effectively while saving tons of subscription costs!&quot;
         </TestimonialCard>
       </div>
     </div>
