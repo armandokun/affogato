@@ -19,7 +19,7 @@ export function Footer() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           <Icons.logo className="h-5 w-5" />
-          <h2 className="text-lg font-bold text-foreground">
+          <h2 className="text-lg font-semibold text-foreground">
             {siteConfig.name}
           </h2>
         </div>
