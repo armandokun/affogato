@@ -48,11 +48,13 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
-    // Get filename from formData since Blob doesn't have name property
-    const filename = (formData.get("file") as File).name;
+    const fileOriginalName = (formData.get("file") as File).name;
     const fileBuffer = await file.arrayBuffer();
     const userId = session.id;
-    const filePath = `${userId}/${Date.now()}_${filename}`;
+    const ext = fileOriginalName.includes('.') ? fileOriginalName.split('.').pop() : '';
+    const randomId = globalThis.crypto?.randomUUID ? globalThis.crypto.randomUUID() : Math.random().toString(36).substring(2, 15);
+    const safeFilename = ext ? `${randomId}.${ext}` : randomId;
+    const filePath = `${userId}/${safeFilename}`;
 
     try {
       const supabase = await createClient();
@@ -82,7 +84,7 @@ export async function POST(request: Request) {
 
       return NextResponse.json({
         url: signedUrlData.signedUrl,
-        name: filename,
+        name: fileOriginalName,
         contentType: file.type,
       });
     } catch {
