@@ -19,7 +19,17 @@ const MODELS = [
     description:
       "Excels at breaking down complex problems step-by-step. Perfect for research, strategic planning, and tasks requiring deep logical reasoning.",
     available: true,
-    badges: ["Deep-Reasoning", "Multi-step problems"],
+    badges: ["Deep reasoning", "Multi-step problems"],
+  },
+  {
+    icon: "claude",
+    provider: "Anthropic",
+    name: "Claude Sonnet 4.0",
+    oneliner: "For creative and general tasks.",
+    description:
+      "Balances creativity with thoughtful analysis. Best for writing projects, brainstorming, coding assistance, and conversations requiring nuanced understanding.",
+    available: true,
+    badges: ["Natural conversation", "Nuanced writing"],
   },
   {
     icon: "gemini",
@@ -30,26 +40,6 @@ const MODELS = [
       "Processes large amounts of information quickly. Ideal for document summarization, data analysis, and when you need fast insights from lengthy content.",
     available: true,
     badges: ["Document analysis", "Real-time processing"],
-  },
-  {
-    icon: "claude",
-    provider: "Anthropic",
-    name: "4.0 Sonnet",
-    oneliner: "For creative and general tasks.",
-    description:
-      "Balances creativity with thoughtful analysis. Best for writing projects, brainstorming, coding assistance, and conversations requiring nuanced understanding.",
-    available: true,
-    badges: ["Natural conversation", "Nuanced writing"],
-  },
-  {
-    icon: "grok",
-    provider: "xAI",
-    name: "Grok 3 Mini",
-    oneliner: "Quick questions and casual chat.",
-    description:
-      "Fast and lightweight responses for casual conversations and simple tasks. Perfect when you need something quick without the complexity.",
-    available: true,
-    badges: ["Quick", "Casual", "Lightweight"],
   },
   {
     icon: "chatgpt",
@@ -70,6 +60,16 @@ const MODELS = [
       "Transparent problem-solving that walks you through its thinking. Ideal when you need to understand the logic behind complex answers or learn from the process.",
     available: true,
     badges: ["Step-by-step", "Transparent", "Educational"],
+  },
+  {
+    icon: "grok",
+    provider: "xAI",
+    name: "Grok 3 Mini",
+    oneliner: "Quick answers and casual chat.",
+    description:
+      "Fast and lightweight responses for casual conversations and simple tasks. Perfect when you need something quick without the complexity.",
+    available: true,
+    badges: ["Quick", "Casual", "Lightweight"],
   },
 ];
 

@@ -4,7 +4,7 @@ import { getServerSession } from "@/lib/auth";
 import Navbar from "@/components/sections/navbar";
 import HeroSection from "@/components/sections/hero-section";
 import PricingSection from "@/components/sections/pricing-section";
-import ProviderShowcase from "@/components/sections/provider-showcase";
+import LlmShowcase from "@/components/sections/llm-showcase";
 import FeatureSection from "@/components/sections/feature-section";
 import FAQ from "@/components/sections/faq-section";
 import { Footer } from "@/components/sections/footer-section/footer-section";
@@ -30,7 +30,7 @@ const Home = async () => {
         <HeroSection />
         <div className="max-w-7xl mx-auto w-full mt-30">
           <main className="flex flex-col items-center justify-center w-full gap-30 md:gap-50">
-            <ProviderShowcase />
+            <LlmShowcase />
             <FeatureSection />
             <PricingSection prices={prices} products={products} />
             <FAQ />
