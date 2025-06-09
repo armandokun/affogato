@@ -81,7 +81,7 @@ const ProviderShowcase = () => {
           Available AI models
         </h2>
         <p className="text-gray-400 text-center">
-          And that's just the tip of the iceberg.
+          And that&apos;s just the tip of the iceberg.
         </p>
         <div className="relative mt-10 w-full flex justify-center">
           <div className="pointer-events-none absolute inset-y-0 left-0 hidden h-full w-1/5 bg-gradient-to-r from-black md:block z-10"></div>
