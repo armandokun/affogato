@@ -49,8 +49,8 @@ const HeroSection = () => {
                 variants={headingVariants}
               >
                 <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium tracking-tighter text-balance text-center text-primary">
-                  <span>Your AI models,</span>
-                  <span className="block">one subscription price</span>
+                  <span>All AI models, for a lower price</span>
+                  <span className="block">than ChatGPT Premium</span>
                 </h1>
               </motion.div>
               <motion.div
