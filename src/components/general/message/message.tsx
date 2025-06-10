@@ -110,7 +110,7 @@ const Message = ({ message, isLoading }: Props) => {
                     >
                       <div
                         className={cn(
-                          "flex flex-col gap-4 w-[90%] max-w-2xl [&>*:first-child]:mt-0"
+                          "flex flex-col w-[90%] max-w-2xl [&>*:first-child]:mt-0"
                         )}
                       >
                         <Markdown>{part.text}</Markdown>
@@ -121,7 +121,7 @@ const Message = ({ message, isLoading }: Props) => {
 
                 return (
                   <div key={key} className="flex flex-row gap-2 justify-end">
-                    <div className="flex flex-col gap-4 bg-muted text-white px-4 py-2 rounded-xl text-left whitespace-pre-wrap">
+                    <div className="flex flex-col bg-muted text-white px-4 py-2 rounded-xl text-left whitespace-pre-wrap">
                       {part.text}
                     </div>
                   </div>

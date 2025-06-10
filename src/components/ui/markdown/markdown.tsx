@@ -103,7 +103,7 @@ const components: Partial<Components> = {
   a: ({ children, ...props }) => (
     // @ts-expect-error External Link props for Next.js Link
     <Link
-      className="text-blue-500 hover:underline break-all"
+      className="text-blue-500 hover:underline break-words"
       target="_blank"
       rel="noreferrer"
       {...props}

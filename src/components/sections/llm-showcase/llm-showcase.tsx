@@ -6,9 +6,9 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
+  CarouselControls,
 } from "@/components/ui/carousel/carousel";
 import { Card } from "@/components/ui/card";
-import { CarouselControls } from "@/components/ui/carousel";
 
 const MODELS = [
   {
@@ -84,11 +84,11 @@ const ProviderShowcase = () => {
           And that&apos;s just the tip of the iceberg.
         </p>
         <div className="relative mt-10 w-full flex justify-center">
-          <div className="pointer-events-none absolute inset-y-0 left-0 hidden h-full w-1/5 bg-gradient-to-r from-black md:block z-10"></div>
-          <div className="pointer-events-none absolute inset-y-0 right-0 hidden h-full w-1/5 bg-gradient-to-l from-black md:block z-10"></div>
+          <div className="pointer-events-none absolute inset-y-0 left-0 h-full w-1/5 bg-gradient-to-r from-black z-10"></div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 h-full w-1/5 bg-gradient-to-l from-black z-10"></div>
           <Carousel
             opts={{ align: "center", loop: true }}
-            className="w-full max-w-sm md:max-w-max"
+            className="w-full max-w-screen md:max-w-max"
           >
             <CarouselContent className="select-none">
               {MODELS.map((model) => (
