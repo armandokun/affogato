@@ -13,7 +13,6 @@ import CtaSection from "@/components/sections/cta-section";
 import { getStripePrices } from "@/lib/payments/stripe";
 import { getStripeProducts } from "@/lib/payments/stripe";
 import ComparisonSection from "@/components/sections/comparison-section";
-import SavingExplainerSection from "@/components/sections/saving-explainer-section";
 import TestimonialSection from "@/components/sections/testimonial-section";
 
 const Home = async () => {
@@ -35,7 +34,6 @@ const Home = async () => {
           <main className="flex flex-col items-center justify-center w-full gap-30 md:gap-50">
             <LlmShowcase />
             <ComparisonSection />
-            <SavingExplainerSection />
             <FeatureSection />
             <PricingSection prices={prices} products={products} />
             <TestimonialSection />

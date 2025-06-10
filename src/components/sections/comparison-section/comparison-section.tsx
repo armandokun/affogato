@@ -25,8 +25,9 @@ const ComparisonSection = () => {
         <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
           Saving you money, all day, everyday.
         </h2>
-        <p className="text-gray-400 text-center">
-          Compare Affogato to other AI subscriptions.
+        <p className="text-gray-400 text-center w-[80%] mx-auto">
+          We directly access model APIs, which means we pay the actual cost per
+          use, not the subscription markup, and pass those savings to you.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mt-10">
           <Card tilt className="rounded-xl">

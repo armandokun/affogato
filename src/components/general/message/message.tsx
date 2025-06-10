@@ -19,7 +19,7 @@ const getModelLogo = (languageModelCode?: string) => {
   if (languageModelCode.includes("openai")) return "/llm-icons/chatgpt.png";
   if (languageModelCode.includes("anthropic")) return "/llm-icons/claude.png";
   if (languageModelCode.includes("gemini")) return "/llm-icons/gemini.png";
-  if (languageModelCode.includes("xai")) return "/llm-icons/xai.png";
+  if (languageModelCode.includes("xai")) return "/llm-icons/grok.png";
 
   return "/llm-icons/chatgpt.png";
 };

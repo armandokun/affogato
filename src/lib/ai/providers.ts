@@ -99,7 +99,7 @@ export const thinkingModelDropdownOptions = [
     value: LanguageModelCode.XAI_CHAT_MODEL_THINKING,
     label: "Grok 3 Mini",
     description: "XAI's chat model with reasoning capabilities.",
-    logo: "/llm-icons/xai.png",
+    logo: "/llm-icons/grok.png",
   },
   {
     value: LanguageModelCode.OPENAI_CHAT_MODEL_THINKING,
