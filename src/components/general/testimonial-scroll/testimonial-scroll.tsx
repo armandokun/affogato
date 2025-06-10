@@ -3,25 +3,6 @@ import Marquee from "@/components/ui/marquee";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 
-export const Highlight = ({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) => {
-  return (
-    <span
-      className={cn(
-        "bg-cyan-600/20 p-1 py-0.5 font-bold text-cyan-600 dark:bg-cyan-600/20 dark:text-cyan-600",
-        className
-      )}
-    >
-      {children}
-    </span>
-  );
-};
-
 export interface TestimonialCardProps {
   name: string;
   role: string;
@@ -45,7 +26,7 @@ export const TestimonialCard = ({
     )}
     {...props} // Spread the rest of the props here
   >
-    <div className="select-none text-sm font-normal text-neutral-700 dark:text-neutral-400">
+    <div className="select-none text-sm font-normal text-neutral-400">
       {description}
       <div className="flex flex-row py-1">
         <StarFilledIcon className="size-4 text-yellow-500" />
@@ -101,8 +82,8 @@ export function SocialProofTestimonials({
                 </Marquee>
               ))}
           </div>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 w-full bg-gradient-to-t from-white from-20% dark:from-black"></div>
-          <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 w-full bg-gradient-to-b from-white from-20% dark:from-black"></div>
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/4 w-full bg-gradient-to-t from-black from-20%"></div>
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 w-full bg-gradient-to-b from-black from-20%"></div>
         </div>
       </div>
     </section>
