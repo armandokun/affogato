@@ -23,7 +23,8 @@ const ComparisonSection = () => {
     <section id="comparison" className="text-center">
       <div className="container">
         <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
-          Saving you money, all day, everyday.
+          Saving you money, <br />
+          all day, everyday.
         </h2>
         <p className="text-gray-400 text-center w-[80%] mx-auto">
           We directly access model APIs, which means we pay the actual cost per
