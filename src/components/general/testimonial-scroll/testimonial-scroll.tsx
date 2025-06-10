@@ -28,7 +28,6 @@ export interface TestimonialCardProps {
   img?: string;
   description: React.ReactNode;
   className?: string;
-  [key: string]: any;
 }
 
 export const TestimonialCard = ({

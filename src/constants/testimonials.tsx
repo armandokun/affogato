@@ -28,7 +28,7 @@ export const TESTIMONIALS = [
     img: "vykintas.jpg",
     description: (
       <p>
-        Startups move fast - we can't afford downtime switching between AI
+        Startups move fast - we can&apos;t afford downtime switching between AI
         tools. Affogato gives us everything: Claude for architecture decisions,
         GPT for rapid prototyping, Gemini for creative problem-solving. One
         interface, all models, fraction of the cost. Our AI budget dropped 70%.
@@ -58,9 +58,9 @@ export const TESTIMONIALS = [
       <p>
         Okay, so I asked all three models the same brainstorming question and
         got three COMPLETELY different creative directions. Instead of picking
-        one, I combined them all. Best campaign we've ever run came from this
-        happy accident! Sometimes the best discoveries happen when you're not
-        even trying 😄
+        one, I combined them all. Best campaign we&apos;ve ever run came from
+        this happy accident! Sometimes the best discoveries happen when
+        you&apos;re not even trying 😄
       </p>
     ),
   },
@@ -83,9 +83,9 @@ export const TESTIMONIALS = [
     description: (
       <p>
         Have you ever been in a situation where you need to use multiple AI
-        tools to get the job done? I have. It's a pain. Affogato is a great
-        solution for that. It's so easy to use and the results are amazing. I'm
-        so glad I found it!
+        tools to get the job done? I have. It&apos;s a pain. Affogato is a great
+        solution for that. It&apos;s so easy to use and the results are amazing.
+        I&apos;m so glad I found it!
       </p>
     ),
   },
