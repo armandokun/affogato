@@ -8,7 +8,7 @@ import {
   CarouselItem,
   CarouselControls,
 } from "@/components/ui/carousel/carousel";
-import { Card } from "@/components/ui/card";
+import Card from "@/components/ui/card";
 
 const MODELS = [
   {

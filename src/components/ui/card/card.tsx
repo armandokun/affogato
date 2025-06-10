@@ -1,15 +1,25 @@
-import React from "react";
+import { ReactNode } from "react";
+
 import { cn } from "@/lib/utils";
 
-interface CardProps {
-  children?: React.ReactNode;
-  className?: string;
-}
+import Tilt from "./tilt";
 
-export function Card({ children, className }: CardProps) {
+type Card = {
+  children?: ReactNode;
+  className?: string;
+  tilt?: boolean;
+};
+
+const Card = ({ children, className, tilt = false }: Card) => {
+  const CardContent = tilt ? Tilt : "div";
+
   return (
-    <div className={cn("rounded-lg border border-border shadow-sm", className)}>
+    <CardContent
+      className={cn("rounded-lg border border-border shadow-sm", className)}
+    >
       {children}
-    </div>
+    </CardContent>
   );
-}
+};
+
+export default Card;

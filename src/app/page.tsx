@@ -12,6 +12,7 @@ import { DASHBOARD } from "@/constants/routes";
 import CtaSection from "@/components/sections/cta-section";
 import { getStripePrices } from "@/lib/payments/stripe";
 import { getStripeProducts } from "@/lib/payments/stripe";
+import ComparisonSection from "@/components/sections/comparison-section";
 
 const Home = async () => {
   const user = await getServerSession();
@@ -31,6 +32,7 @@ const Home = async () => {
         <div className="max-w-7xl mx-auto w-full mt-30">
           <main className="flex flex-col items-center justify-center w-full gap-30 md:gap-50">
             <LlmShowcase />
+            <ComparisonSection />
             <FeatureSection />
             <PricingSection prices={prices} products={products} />
             <FAQ />
