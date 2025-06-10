@@ -41,11 +41,7 @@ export const TestimonialCard = ({
 }: TestimonialCardProps) => (
   <div
     className={cn(
-      "mb-4 flex w-full cursor-pointer break-inside-avoid flex-col items-center justify-between gap-6 rounded-xl p-4",
-      // light styles
-      " border border-neutral-200 bg-white",
-      // dark styles
-      "dark:bg-black dark:[border:1px_solid_rgba(255,255,255,.1)] dark:[box-shadow:0_-20px_80px_-20px_#ffffff1f_inset]",
+      "mb-4 flex w-full cursor-pointer break-inside-avoid flex-col items-center justify-between gap-6 rounded-xl p-4 border border-border",
       className
     )}
     {...props} // Spread the rest of the props here
@@ -64,7 +60,7 @@ export const TestimonialCard = ({
     <div className="flex w-full select-none items-center justify-start gap-5">
       <Image
         src={`/testimonial-profile-images/${img}`}
-        className="h-10 w-10 rounded-full ring-1 ring-border ring-offset-4 object-cover"
+        className="size-10 rounded-full ring-1 ring-border ring-offset-2 object-cover"
         alt={name}
         width={40}
         height={40}
