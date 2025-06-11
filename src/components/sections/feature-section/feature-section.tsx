@@ -1,70 +1,91 @@
-import { MagicCard } from "@/components/ui/magic-card";
-import { BrainCircuit, Globe, Sparkle } from "lucide-react";
+"use client";
+
+import { useRef, useEffect, VideoHTMLAttributes } from "react";
+
+function VideoOnScroll({
+  src,
+  ...props
+}: VideoHTMLAttributes<HTMLVideoElement>) {
+  const ref = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+
+    const observer = new window.IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play();
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.5 }
+    );
+
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
+
+  return <video ref={ref} src={src} {...props} />;
+}
 
 const FeatureSection = () => {
   return (
     <section id="features" className="text-center">
       <div className="container">
-        <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
-          Features
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-10">
-          <MagicCard className="rounded-xl min-h-[250px] flex items-center justify-center">
-            <div className="p-4 px-6 flex flex-col items-center justify-center">
-              <div
-                className="rounded-xl w-16 h-16 flex items-center justify-center mb-6 mx-auto"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #3D5AFE 0%, #FF80AB 50%, #FF6D00 100%)",
-                }}
-              >
-                <BrainCircuit className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold">Feels familiar.</h3>
-              <p className="text-gray-400">
-                Comes preinstalled with web search, document uploads and
-                reasoning.
-              </p>
-            </div>
-          </MagicCard>
-          <MagicCard className="rounded-xl min-h-[250px] flex items-center justify-center">
-            <div className="p-4 px-6 flex flex-col items-center justify-center">
-              <div
-                className="rounded-xl w-16 h-16 flex items-center justify-center mb-6 mx-auto"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #3D5AFE 0%, #FF80AB 50%, #FF6D00 100%)",
-                }}
-              >
-                <Globe className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold">All you can eat buffet.</h3>
-              <p className="text-gray-400">
-                Choose from a wide range of providers. We support most up to
-                date models.
-              </p>
-            </div>
-          </MagicCard>
-          <MagicCard className="rounded-xl min-h-[250px] flex items-center justify-center">
-            <div className="p-4 px-6 flex flex-col items-center justify-center">
-              <div
-                className="rounded-xl w-16 h-16 flex items-center justify-center mb-6 mx-auto"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #3D5AFE 0%, #FF80AB 50%, #FF6D00 100%)",
-                }}
-              >
-                <Sparkle className="w-10 h-10 text-white" />
-              </div>
-              <h3 className="text-lg font-semibold">
-                And might work not as expected.
-              </h3>
-              <p className="text-gray-400">
-                Use multiple LLMs at once and enable features other models
-                don&apos;t support.
-              </p>
-            </div>
-          </MagicCard>
+        <div className="grid grid-cols-1 gap-24 mt-10 max-w-4xl mx-auto">
+          <div className="flex flex-col items-center justify-center">
+            <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
+              Deep thinking Plus+
+            </h2>
+            <p className="text-gray-400 w-[80%] mx-auto mb-6">
+              AI models take more time to think and can use tools, like Web
+              Search to make better decisions.
+            </p>
+            <VideoOnScroll
+              src="/feature-videos/reasoning-web.mp4"
+              muted
+              loop
+              preload="metadata"
+              className="rounded-xl w-full h-full object-cover"
+              playsInline
+            />
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
+              Images, documents, you name it.
+            </h2>
+            <p className="text-gray-400 w-[80%] mx-auto mb-6">
+              The models can use images and documents to get more context to get
+              the best result.
+            </p>
+            <VideoOnScroll
+              src="/feature-videos/files.mp4"
+              muted
+              loop
+              preload="metadata"
+              className="rounded-xl w-full h-full object-cover"
+              playsInline
+            />
+          </div>
+          <div className="flex flex-col items-center justify-center">
+            <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter">
+              One conversation, multiple AI minds - combined.
+            </h2>
+            <p className="text-gray-400 w-[80%] mx-auto mb-6">
+              Use multiple AI models at once and enable features other models
+              don&apos;t support.
+            </p>
+            <VideoOnScroll
+              src="/feature-videos/multiple-ai.mp4"
+              muted
+              loop
+              preload="metadata"
+              className="rounded-xl w-full h-full object-cover"
+              playsInline
+            />
+          </div>
         </div>
       </div>
     </section>

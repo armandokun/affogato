@@ -52,7 +52,7 @@ const Message = ({ message, isLoading }: Props) => {
       >
         <div
           className={cn("flex gap-4 w-full", {
-            "mr-auto max-w-2xl w-fit": isAI,
+            "mr-auto max-w-2xl": isAI,
             "max-w-[70%] ml-auto": !isAI,
           })}
         >
