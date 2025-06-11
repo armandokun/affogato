@@ -89,4 +89,18 @@ export const TESTIMONIALS = [
       </p>
     ),
   },
+  {
+    name: "Armandas Vaičikauskas",
+    role: "Co-founder, Affogato.chat",
+    img: "armandas.jpg",
+    description: (
+      <p>
+        We primarily built Affogato.chat to use ourselves. Other tools were not
+        up to our expectations. They were slow, lacked taste, and
+        user-friendliness. We wanted to create the opposite, and we&apos;re so
+        glad we did. We personally use it every day. And we can&apos;t wait to
+        see your reaction of what&apos;s coming next!!
+      </p>
+    ),
+  },
 ];

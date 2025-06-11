@@ -26,7 +26,7 @@ export const TestimonialCard = ({
     )}
     {...props} // Spread the rest of the props here
   >
-    <div className="select-none text-sm font-normal text-neutral-400">
+    <div className="select-none text-sm font-normal text-neutral-200">
       {description}
       <div className="flex flex-row py-1">
         <StarFilledIcon className="size-4 text-yellow-500" />
@@ -47,7 +47,7 @@ export const TestimonialCard = ({
       />
 
       <div>
-        <p className="font-medium text-neutral-500">{name}</p>
+        <p className="font-medium text-neutral-300">{name}</p>
         <p className="text-xs font-normal text-neutral-400">{role}</p>
       </div>
     </div>
