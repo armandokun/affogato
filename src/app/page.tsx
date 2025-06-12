@@ -14,6 +14,7 @@ import { getStripePrices } from "@/lib/payments/stripe";
 import { getStripeProducts } from "@/lib/payments/stripe";
 import ComparisonSection from "@/components/sections/comparison-section";
 import TestimonialSection from "@/components/sections/testimonial-section";
+import UspSection from "@/components/sections/usp-section";
 
 const Home = async () => {
   const user = await getServerSession();
@@ -35,6 +36,7 @@ const Home = async () => {
             <LlmShowcase />
             <ComparisonSection />
             <FeatureSection />
+            <UspSection />
             <PricingSection prices={prices} products={products} />
             <TestimonialSection />
             <FAQ />
