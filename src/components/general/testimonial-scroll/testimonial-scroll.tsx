@@ -63,7 +63,7 @@ export function SocialProofTestimonials({
     <section id="testimonials">
       <div className="container mx-auto px-4 md:px-8">
         <div className="relative mt-6 max-h-[650px] overflow-hidden">
-          <div className="gap-4 md:columns-2 xl:columns-3 2xl:columns-4">
+          <div className="gap-4 md:columns-2 xl:columns-3">
             {Array(Math.ceil(testimonials.length / 3))
               .fill(0)
               .map((_, i) => (
