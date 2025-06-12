@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-    fbq: (...args: any[]) => void;
+    fbq: (...args: unknown[]) => void;
   }
 }
 
@@ -11,6 +11,6 @@ export const pageview = () => {
 };
 
 // https://developers.facebook.com/docs/facebook-pixel/advanced/
-export const event = (name: string, options: Record<string, any> = {}) => {
+export const event = (name: string, options: Record<string, string> = {}) => {
   window.fbq("track", name, options);
 };
