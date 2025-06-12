@@ -13,9 +13,9 @@ const UspSection = () => {
         <p className="text-gray-400 text-center">
           We support the latest models, with unique features.
         </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-[1fr_1.5fr] gap-6 mt-10 w-full">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-[1fr_1.5fr] gap-6 mt-10 md:mt-5 w-full">
           {/* Card 1: ChatGPT */}
-          <div className="rounded-3xl p-8 bg-gradient-to-br from-[#3E271F] to-[#1a1412] flex flex-col md:col-span-2 md:flex-row md:items-center gap-8 min-h-[320px]">
+          <div className="rounded-3xl p-8 bg-gradient-to-b from-[#000000] to-[#be00fe] flex flex-col md:col-span-2 md:flex-row md:items-center gap-8 min-h-[320px]">
             <div className="flex-1 flex flex-col items-start justify-center text-left gap-4">
               <h3 className="text-2xl lg:text-3xl text-white tracking-tight">
                 <span className="text-white font-semibold">ChatGPT</span>, plan
@@ -41,13 +41,13 @@ const UspSection = () => {
             </div>
           </div>
           {/* Card 2: Claude */}
-          <div className="rounded-3xl bg-gradient-to-br from-[#ff8c1a] to-[#b85c00] flex flex-col min-h-[320px] items-center justify-between">
+          <div className="rounded-3xl bg-gradient-to-br from-[#FC7010] to-[#ffb300] flex flex-col min-h-[320px] items-center justify-between">
             <div className="flex flex-col items-start justify-center text-left gap-4 w-full p-8">
               <h3 className="text-2xl lg:text-3xl text-white tracking-tight">
-                <span className="text-white font-semibold">Claude</span>,
-                generate similar
+                <span className="text-white font-semibold">Claude</span>, write
+                a creative
                 <br />
-                social media post copy.
+                social media post.
               </h3>
               <p className="text-white/80 text-base lg:text-md max-w-lg tracking-tight">
                 Get smart, tailored writing for scripts, blog posts, brand
@@ -66,7 +66,7 @@ const UspSection = () => {
             </div>
           </div>
           {/* Card 3: Gemini */}
-          <div className="rounded-3xl p-8 bg-gradient-to-br from-[#2a7cff] to-[#1a3a80] flex flex-col min-h-[320px] items-center justify-between">
+          <div className="rounded-3xl p-8 bg-gradient-to-br from-[#2a7cff] to-[#8301e6] flex flex-col min-h-[320px] items-center justify-between">
             <div className="flex flex-col items-start justify-center text-left gap-4 w-full">
               <h3 className="text-2xl lg:text-3xl text-white tracking-tight">
                 <span className="text-white font-semibold">Gemini</span>, make
