@@ -9,6 +9,7 @@ import { siteConfig } from "@/lib/site";
 import { SessionProvider } from "@/containers/SessionProvider";
 
 import "./globals.css";
+import FacebookPixel from "@/components/general/facebook-pixel";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -73,6 +74,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-black min-h-screen`}
       >
+        <FacebookPixel />
         <SessionProvider>
           <TooltipProvider>
             {children}
