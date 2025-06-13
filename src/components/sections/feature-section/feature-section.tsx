@@ -47,6 +47,7 @@ const FeatureSection = () => {
             </div>
             <VideoOnScroll
               src="/feature-videos/reasoning-web.mp4"
+              poster="/feature-videos/reasoning-web.png"
               muted
               loop
               preload="metadata"
@@ -66,6 +67,7 @@ const FeatureSection = () => {
             </div>
             <VideoOnScroll
               src="/feature-videos/files.mp4"
+              poster="/feature-videos/files.png"
               muted
               loop
               preload="metadata"
@@ -85,6 +87,7 @@ const FeatureSection = () => {
             </div>
             <VideoOnScroll
               src="/feature-videos/multiple-ai.mp4"
+              poster="/feature-videos/multiple-ai.png"
               muted
               loop
               preload="metadata"
