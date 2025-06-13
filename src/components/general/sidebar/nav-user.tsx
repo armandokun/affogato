@@ -21,7 +21,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu/dropdown-menu";
 
-import useSidebar from "@/hooks/use-sidebar";
 import { useSubscription } from "@/hooks/use-subscription";
 import { useSession } from "@/containers/SessionProvider";
 import { signOut } from "@/app/login/actions";
@@ -31,7 +30,6 @@ import { siteConfig } from "@/lib/config";
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./sidebar";
 
 export function NavUser() {
-  const { isMobile } = useSidebar();
   const { user } = useSession();
   const router = useRouter();
   const { currentPlan } = useSubscription();
