@@ -6,19 +6,19 @@ import Icons from "@/components/general/icons";
 import { LOGIN } from "@/constants/routes";
 
 const LLM_SUBSCRIPTION_SERVICES = [
-  { icon: "chatgpt", name: "ChatGPT Plus", price: "€23/mo" },
-  { icon: "claude", name: "Claude Pro", price: "€22/mo" },
-  { icon: "gemini", name: "Gemini Advanced", price: "€22/mo" },
-  { icon: "grok", name: "xAI SuperGrok", price: "€30/mo" },
+  { icon: "chatgpt", name: "ChatGPT Plus", price: "23/mo" },
+  { icon: "claude", name: "Claude Pro", price: "22/mo" },
+  { icon: "gemini", name: "Gemini Advanced", price: "22/mo" },
+  { icon: "grok", name: "xAI SuperGrok", price: "30/mo" },
 ];
 
 const total = LLM_SUBSCRIPTION_SERVICES.reduce((sum, s) => {
-  const match = s.price.match(/€(\d+)/);
+  const match = s.price.match(/(\d+)/);
 
   return sum + (match ? parseInt(match[1], 10) : 0);
 }, 0);
 
-const ComparisonSection = () => {
+const ComparisonSection = ({ currency }: { currency: "usd" | "eur" }) => {
   return (
     <section id="comparison" className="text-center">
       <div className="container">
@@ -53,14 +53,20 @@ const ComparisonSection = () => {
                         />
                         {service.name}
                       </span>
-                      <span className="font-medium">{service.price}</span>
+                      <span className="font-medium">
+                        {currency === "eur" ? "€" : "$"}
+                        {service.price}
+                      </span>
                     </li>
                   ))}
                 </ul>
                 <div className="w-full border-t border-gray-200 my-4" />
                 <div className="flex justify-between w-full text-lg font-semibold">
                   <span>Total</span>
-                  <span>€{total}/mo</span>
+                  <span>
+                    {currency === "eur" ? "€" : "$"}
+                    {total}/mo
+                  </span>
                 </div>
               </div>
               <p className="mt-6 text-gray-400 text-sm text-center">
@@ -79,7 +85,7 @@ const ComparisonSection = () => {
               <div className="w-full flex flex-col items-center justify-center">
                 <div className="flex items-end gap-2 mb-2 justify-center">
                   <span className="text-3xl md:text-4xl font-semibold">
-                    €15
+                    {currency === "eur" ? "€" : "$"}15
                   </span>
                   <span className="text-base md:text-lg text-muted-foreground">
                     /mo

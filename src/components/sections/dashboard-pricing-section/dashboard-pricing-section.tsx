@@ -18,9 +18,11 @@ import { buildTiersFromStripe } from "../pricing-section/pricing-section";
 const DashboardPricingPage = ({
   prices,
   products,
+  currency,
 }: {
   prices: Array<PricingPrice>;
   products: Array<PricingProduct>;
+  currency: "usd" | "eur";
 }) => {
   const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
     "monthly"
@@ -30,7 +32,7 @@ const DashboardPricingPage = ({
   const { user } = useSession();
   const { open, isMobile } = useSidebar();
 
-  const stripeTiers = buildTiersFromStripe(products, prices);
+  const stripeTiers = buildTiersFromStripe(products, prices, currency);
 
   const proTier = stripeTiers.find((t) => t.name === "Pro");
   const unlimitedTier = stripeTiers.find((t) => t.name === "Unlimited");

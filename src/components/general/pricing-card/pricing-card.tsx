@@ -77,7 +77,7 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
                 }}
               >
                 <span className="text-4xl font-semibold">
-                  €
+                  {tier.currency === "eur" ? "€" : "$"}
                   {activeTab === "yearly"
                     ? Math.round((tier.yearlyPrice / 12) * 100) / 100
                     : tier.price}
