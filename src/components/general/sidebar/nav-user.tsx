@@ -83,7 +83,7 @@ export function NavUser() {
                 <span className="truncate font-semibold">
                   {user.user_metadata.full_name || user.email}
                 </span>
-                <span className="truncate text-xs">{`${currentPlan} plan`}</span>
+                <span className="truncate text-xs capitalize">{`${currentPlan} plan`}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
