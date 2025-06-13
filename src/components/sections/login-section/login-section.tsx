@@ -4,6 +4,7 @@ import { useState } from "react";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Label, Separator } from "radix-ui";
+import { useSearchParams } from "next/navigation";
 
 import Button from "@/components/ui/button";
 import Icons from "@/components/general/icons";
@@ -12,9 +13,13 @@ import AuthSubmitButton from "@/components/general/auth-submit-button";
 import FormMessage, {
   Message,
 } from "@/components/general/form-message/form-message";
+import { DASHBOARD } from "@/constants/routes";
 
 const LoginSection = ({ formMessage }: { formMessage: Message }) => {
   const [isSignUp, setIsSignUp] = useState(false);
+
+  const searchParams = useSearchParams();
+  const ref = searchParams.get("ref") || DASHBOARD;
 
   return (
     <div className="flex flex-col justify-center mx-auto px-6 py-12 gap-8 max-w-md h-full">
@@ -30,6 +35,7 @@ const LoginSection = ({ formMessage }: { formMessage: Message }) => {
       <div className="flex flex-col gap-3 w-full mt-2">
         <form className="w-full">
           <input type="hidden" name="provider" value="google" />
+          {ref && <input type="hidden" name="ref" value={ref} />}
           <AuthSubmitButton
             title="Continue with Google"
             pendingTitle="Continuing with Google..."
@@ -40,6 +46,7 @@ const LoginSection = ({ formMessage }: { formMessage: Message }) => {
         </form>
         <form className="w-full">
           <input type="hidden" name="provider" value="github" />
+          {ref && <input type="hidden" name="ref" value={ref} />}
           <AuthSubmitButton
             title="Continue with GitHub"
             pendingTitle="Continuing with GitHub..."
@@ -87,6 +94,7 @@ const LoginSection = ({ formMessage }: { formMessage: Message }) => {
             formAction={signInWithEmail}
           />
         )}
+        {ref && <input type="hidden" name="ref" value={ref} />}
         <FormMessage message={formMessage} />
       </form>
       <div className="flex justify-center text-sm text-muted-foreground w-full">
