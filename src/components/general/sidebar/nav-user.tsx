@@ -1,6 +1,12 @@
 "use client";
 
-import { ChevronsUpDown, LogOut, Sparkles } from "lucide-react";
+import {
+  ChevronsUpDown,
+  HeartHandshake,
+  LifeBuoy,
+  LogOut,
+  Sparkles,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -21,6 +27,9 @@ import { signOut } from "@/app/login/actions";
 import { DASHBOARD_PRICING } from "@/constants/routes";
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./sidebar";
+import { ArrowTopRightIcon } from "@radix-ui/react-icons";
+import Link from "next/link";
+import { siteConfig } from "@/lib/config";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
@@ -112,6 +121,21 @@ export function NavUser() {
               <DropdownMenuItem onClick={() => router.push(DASHBOARD_PRICING)}>
                 <Sparkles />
                 View plans
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link href={`mailto:${siteConfig.links.mail}`}>
+                  <HeartHandshake />
+                  Feedback
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href={`mailto:${siteConfig.links.mail}`}>
+                  <LifeBuoy />
+                  Support
+                </Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
