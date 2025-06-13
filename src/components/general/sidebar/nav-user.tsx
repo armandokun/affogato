@@ -52,6 +52,31 @@ export function NavUser() {
 
   if (!user) return null;
 
+  const getInitials = () => {
+    const name = user.user_metadata?.full_name?.trim();
+
+    if (name) {
+      const words = name.split(/\s+/).filter(Boolean);
+      const initials = words
+        .slice(0, 2)
+        .map((word: string) => word[0].toUpperCase())
+        .join("");
+
+      return initials || "?";
+    }
+
+    const email = user.email || "";
+    const username = email.split("@")[0];
+
+    if (username.length >= 2) {
+      return (username[0] + username[1]).toUpperCase();
+    } else if (username.length === 1) {
+      return username[0].toUpperCase();
+    }
+
+    return "?";
+  };
+
   return (
     <SidebarMenu>
       <SidebarMenuItem>
@@ -66,7 +91,9 @@ export function NavUser() {
                   src={user.user_metadata.avatar_url}
                   alt="User avatar"
                 />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {getInitials()}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-semibold">
@@ -90,7 +117,9 @@ export function NavUser() {
                     src={user.user_metadata.avatar_url}
                     alt="User avatar"
                   />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {getInitials()}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-semibold">
