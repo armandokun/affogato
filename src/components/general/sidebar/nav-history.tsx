@@ -4,6 +4,8 @@ import Link from "next/link";
 import useLibraryItems from "@/hooks/use-library-items";
 
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "./sidebar";
+import AnimatedLlmList from "../animated-llm-list";
+import { MessagesSquare } from "lucide-react";
 
 const ChatListItem = ({ chat }: { chat: { id: string; title: string } }) => {
   return (
@@ -68,7 +70,13 @@ const NavHistory = () => {
   });
 
   return (
-    <SidebarMenu>
+    <SidebarMenu
+      className={
+        !loading && chats.length === 0
+          ? "flex flex-1 items-center justify-center"
+          : undefined
+      }
+    >
       {loading ? (
         <SidebarMenuItem>
           <span className="text-xs text-muted-foreground p-2">Loading...</span>
@@ -79,9 +87,13 @@ const NavHistory = () => {
           <ChatSection label="Last 7 days" chats={last7Days} />
           <ChatSection label="Older" chats={last30Days} />
           {chats.length === 0 && (
-            <SidebarMenuItem>
-              <span className="text-xs text-muted-foreground p-2">
-                No chats yet
+            <SidebarMenuItem className="w-full flex flex-col items-center justify-center">
+              <MessagesSquare className="size-8 text-muted-foreground" />
+              <span className="text-md font-medium text-muted-foreground p-2 text-center w-full block">
+                No Chats Yet
+              </span>
+              <span className="text-xs text-muted-foreground">
+                Your chat history will appear here.
               </span>
             </SidebarMenuItem>
           )}
