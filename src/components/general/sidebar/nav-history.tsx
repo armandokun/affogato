@@ -1,11 +1,10 @@
 import React from "react";
 import Link from "next/link";
+import { MessagesSquare } from "lucide-react";
 
 import useLibraryItems from "@/hooks/use-library-items";
 
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "./sidebar";
-import AnimatedLlmList from "../animated-llm-list";
-import { MessagesSquare } from "lucide-react";
 
 const ChatListItem = ({ chat }: { chat: { id: string; title: string } }) => {
   return (
