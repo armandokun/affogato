@@ -67,16 +67,18 @@ const PricingSection = ({
           </h2>
           <p className="text-gray-400">No hidden fees, no surprises.</p>
         </div>
-
         <div className="flex justify-center my-5">
           <PricingTabs activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
-
         <div className="grid min-[650px]:grid-cols-2 gap-4 w-full max-w-6xl mx-auto">
           {tiers.map((tier) => (
             <PricingCard key={tier.id} tier={tier} activeTab={activeTab} />
           ))}
         </div>
+        <p className="text-center text-gray-400 mt-4 w-[80%] mx-auto text-sm">
+          100% risk-free. <br />
+          Cancel anytime within 14 days for a full refund.
+        </p>
       </div>
     </section>
   );

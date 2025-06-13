@@ -63,7 +63,7 @@ const TermsPage = () => {
         </h2>
         <ul className="list-disc list-inside space-y-2 mb-8">
           <li>Affogato offers only paid subscription plans.</li>
-          <li>All payments are refundable within 14 days of purchase.</li>
+          <li>All payments are refundable within 14 days of purchase date.</li>
           <li>Subscriptions renew automatically unless you cancel.</li>
         </ul>
 
