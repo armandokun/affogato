@@ -21,12 +21,8 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
 
   const getFeatureTitle = () => {
     switch (tier.name) {
-      case "Free":
-        return "Plan includes";
       case "Pro":
-        if (user) return "Plan includes";
-
-        return "Everything in Free +";
+        return "Plan includes";
       case "Unlimited":
         return "Everything in Pro +";
     }

@@ -30,7 +30,7 @@ const FAQS = [
   {
     question: "Is there a free trial?",
     answer:
-      "You can use Affogato for 20 messages a day for free, if you need more, feel free to upgrade. If you're not happy with our product, we do offer a generous 30-day money back guarantee. If you give Affogato a genuine test run and haven’t found it useful in the first 30 days, we’ll refund your payment no questions asked.",
+      "No, we do not. However, you can issue a refund within 14 days of purchase by contacting us at armandas@affogato.chat.",
   },
   {
     question: "How often does Affogato update the AI models available?",

@@ -62,8 +62,8 @@ const TermsPage = () => {
           Payments &amp; Subscriptions
         </h2>
         <ul className="list-disc list-inside space-y-2 mb-8">
-          <li>Affogato offers both free and paid subscription plans.</li>
-          <li>All payments are non-refundable.</li>
+          <li>Affogato offers only paid subscription plans.</li>
+          <li>All payments are refundable within 14 days of purchase.</li>
           <li>Subscriptions renew automatically unless you cancel.</li>
         </ul>
 

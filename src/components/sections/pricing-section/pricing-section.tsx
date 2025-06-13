@@ -6,7 +6,6 @@ import {
   STRIPE_PRICING_TIERS,
   PricingPrice,
   PricingProduct,
-  FREE_TIER,
   PricingTier,
 } from "@/constants/pricing";
 import PricingTabs from "@/components/general/pricing-tabs";
@@ -57,9 +56,7 @@ const PricingSection = ({
   const proTier = stripeTiers.find((t) => t.name === "Pro");
   const unlimitedTier = stripeTiers.find((t) => t.name === "Unlimited");
 
-  const tiers = [FREE_TIER, proTier, unlimitedTier].filter(
-    (tier) => tier !== undefined
-  );
+  const tiers = [proTier, unlimitedTier].filter((tier) => tier !== undefined);
 
   return (
     <section id="pricing">
@@ -75,7 +72,7 @@ const PricingSection = ({
           <PricingTabs activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
 
-        <div className="grid min-[650px]:grid-cols-2 min-[900px]:grid-cols-3 gap-4 w-full max-w-6xl mx-auto">
+        <div className="grid min-[650px]:grid-cols-2 gap-4 w-full max-w-6xl mx-auto">
           {tiers.map((tier) => (
             <PricingCard key={tier.id} tier={tier} activeTab={activeTab} />
           ))}

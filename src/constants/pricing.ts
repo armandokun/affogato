@@ -29,22 +29,6 @@ export const STRIPE_PRICING_TIERS = [
   },
 ];
 
-export const FREE_TIER = {
-    id: "free",
-    name: "Free",
-    price: 0,
-    yearlyPrice: 0,
-    features: [
-      "10 messages per day",
-      "Access to main models",
-      "Limited access to web search, file uploads and more",
-    ],
-    description: "Perfect for trying out the app",
-    buttonText: "Start Free",
-    buttonColor: "bg-accent text-primary",
-    isPopular: false,
-} as PricingTier;
-
 export type PricingPrice = {
   id: string,
   productId: string
