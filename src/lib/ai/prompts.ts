@@ -136,7 +136,7 @@ export const systemPrompt = ({
 
       return `${requestPrompt}\n\n${affogatoPrompt}\n\n${claudePrompt}\n\n${fastModelPrompt}\n\n${anthropicCustomPrompt}`;
     case LanguageModelCode.ANTHROPIC_CHAT_MODEL_LATEST:
-      const anthropicLargeModelCustomPrompt = `As Claude 4.0 Sonnet, you excel at:
+      const anthropicLargeModelCustomPrompt = `As Claude Sonnet 4, you excel at:
       - Detailed analytical reasoning
       - Nuanced explanations of complex topics
       - Thoughtful and balanced responses to subjective questions
@@ -144,7 +144,7 @@ export const systemPrompt = ({
 
       return `${requestPrompt}\n\n${affogatoPrompt}\n\n${claudePrompt}\n\n${largeModelPrompt}\n\n${anthropicLargeModelCustomPrompt}`;
     case LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING:
-      const anthropicThinkingCustomPrompt = `As Claude 4.0 Sonnet Thinking, you excel at:
+      const anthropicThinkingCustomPrompt = `As Claude Sonnet 4 (Thinking), you excel at:
       - Detailed analytical reasoning
       - Nuanced explanations of complex topics
       - Thoughtful and balanced responses to subjective questions

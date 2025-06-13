@@ -80,7 +80,7 @@ export const modelDropdownOptions = [
   },
   {
     value: LanguageModelCode.ANTHROPIC_CHAT_MODEL_LATEST,
-    label: "4.0 Sonnet",
+    label: "Sonnet 4",
     description: "High performance matched with creativity of Claude.",
     logo: "/llm-icons/claude.png",
     badge: "New",
@@ -110,7 +110,7 @@ export const thinkingModelDropdownOptions = [
   },
   {
     value: LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING,
-    label: "4.0 Sonnet Thinking",
+    label: "Sonnet 4 (Thinking)",
     description: "For science, math, coding, and reasoning tasks.",
     logo: "/llm-icons/claude.png",
   },

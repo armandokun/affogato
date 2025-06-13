@@ -24,7 +24,7 @@ const MODELS = [
   {
     icon: "claude",
     provider: "Anthropic",
-    name: "Claude Sonnet 4.0",
+    name: "Claude Sonnet 4",
     oneliner: "For creative and general tasks.",
     description:
       "Balances creativity with thoughtful analysis. Best for writing projects, brainstorming, coding assistance, and conversations requiring nuanced understanding.",
