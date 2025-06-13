@@ -8,6 +8,7 @@ import {
   Sparkles,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -25,11 +26,9 @@ import { useSubscription } from "@/hooks/use-subscription";
 import { useSession } from "@/containers/SessionProvider";
 import { signOut } from "@/app/login/actions";
 import { DASHBOARD_PRICING } from "@/constants/routes";
+import { siteConfig } from "@/lib/config";
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./sidebar";
-import { ArrowTopRightIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
-import { siteConfig } from "@/lib/config";
 
 export function NavUser() {
   const { isMobile } = useSidebar();
