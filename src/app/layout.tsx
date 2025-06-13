@@ -70,6 +70,10 @@ export default function RootLayout({
             PageView&noscript=1`}
             />
           </noscript>
+          <meta
+            name="facebook-domain-verification"
+            content="nge0o5s39gpmxaegqsdcjbmv6v81pf"
+          />
         </head>
       )}
       <Analytics />
