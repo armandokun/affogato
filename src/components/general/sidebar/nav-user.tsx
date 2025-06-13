@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ChevronsUpDown, LogOut, Sparkles } from "lucide-react";
 import { useRouter } from "next/navigation";
 
@@ -16,39 +15,18 @@ import {
 } from "@/components/ui/dropdown-menu/dropdown-menu";
 
 import useSidebar from "@/hooks/use-sidebar";
+import { useSubscription } from "@/hooks/use-subscription";
 import { useSession } from "@/containers/SessionProvider";
-import { createClient } from "@/lib/supabase/client";
 import { signOut } from "@/app/login/actions";
 import { DASHBOARD_PRICING } from "@/constants/routes";
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "./sidebar";
 
 export function NavUser() {
-  const [currentPlan, setCurrentPlan] = useState<string | null>(null);
-
   const { isMobile } = useSidebar();
   const { user } = useSession();
   const router = useRouter();
-
-  useEffect(() => {
-    if (!user?.id) return;
-
-    const fetchCurrentPlan = async () => {
-      const supabase = createClient();
-
-      const { data, error } = await supabase
-        .from("subscriptions")
-        .select("plan_name")
-        .eq("user_id", user.id)
-        .single();
-
-      if (error) return;
-
-      setCurrentPlan(data?.plan_name);
-    };
-
-    fetchCurrentPlan();
-  }, [user?.id]);
+  const { currentPlan } = useSubscription();
 
   if (!user) return null;
 
