@@ -118,6 +118,10 @@ const DashboardPricingPage = ({
             );
           })}
         </div>
+        <p className="text-center text-gray-400 mt-4 w-[80%] mx-auto text-sm">
+          100% risk-free. <br />
+          Cancel anytime within 14 days for a full refund.
+        </p>
       </div>
     </section>
   );
