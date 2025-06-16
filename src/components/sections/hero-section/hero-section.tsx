@@ -3,7 +3,6 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 
-import { LOGIN } from "@/constants/routes";
 import AnimatedLlmList from "@/components/general/animated-llm-list";
 import AnimatedGradientBackground from "@/components/general/animated-gradient-background";
 
@@ -27,7 +26,11 @@ const buttonVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.4, delay: 0.5 } },
 };
 
-const HeroSection = () => {
+type Props = {
+  currency: "usd" | "eur";
+};
+
+const HeroSection = ({ currency }: Props) => {
   return (
     <section id="hero" className="flex items-center justify-center mt-4">
       <div className="relative w-full h-[85vh] rounded-3xl overflow-hidden flex items-center justify-center">
@@ -59,8 +62,9 @@ const HeroSection = () => {
                 variants={descriptionVariants}
               >
                 <p className="text-base md:text-lg text-center text-muted-foreground text-balance leading-relaxed tracking-tight">
-                  Skip extra subscriptions. Use the best Large Language Models
-                  in a single, unified chat with Affogato.
+                  Stop paying for multiple subscriptions. <br />
+                  Access all top models for {currency === "usd" ? "$" : "€"}
+                  15/mo.
                 </p>
               </motion.div>
               <motion.div
@@ -70,10 +74,10 @@ const HeroSection = () => {
               >
                 <div className="flex items-center gap-2.5 flex-wrap justify-center">
                   <Link
-                    href={LOGIN}
+                    href="#pricing"
                     className="bg-secondary h-9 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-secondary-foreground w-32 px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-secondary/80 transition-all ease-out active:scale-95"
                   >
-                    Get Started
+                    Buy Now
                   </Link>
                 </div>
               </motion.div>

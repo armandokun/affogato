@@ -36,7 +36,7 @@ const Home = async () => {
     <>
       <div className="flex flex-col p-4 md:max-w-4xl lg:max-w-7xl md:mx-auto">
         <Navbar />
-        <HeroSection />
+        <HeroSection currency={currency} />
         <div className="max-w-7xl mx-auto w-full mt-30">
           <main className="flex flex-col items-center justify-center w-full gap-30 md:gap-50">
             <LlmShowcase />
