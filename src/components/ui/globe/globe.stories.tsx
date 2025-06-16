@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Globe } from "./globe";
+import type { Meta, StoryObj } from '@storybook/react'
+import { Globe } from './globe'
 
 const meta: Meta<typeof Globe> = {
-  title: "UI/Globe",
+  title: 'UI/Globe',
   component: Globe,
-  tags: ["autodocs"],
-};
+  tags: ['autodocs']
+}
 
-export default meta;
-type Story = StoryObj<typeof Globe>;
+export default meta
+type Story = StoryObj<typeof Globe>
 
-export const Default: Story = {};
+export const Default: Story = {}

@@ -1,9 +1,9 @@
-import { ArrowTopRightIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
+import { ArrowTopRightIcon } from '@radix-ui/react-icons'
+import Link from 'next/link'
 
-import Icons from "@/components/general/icons";
-import Button from "@/components/ui/button";
-import { LOGIN } from "@/constants/routes";
+import Icons from '@/components/general/icons'
+import Button from '@/components/ui/button'
+import { LOGIN } from '@/constants/routes'
 
 const CtaSection = () => {
   return (
@@ -26,7 +26,7 @@ const CtaSection = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default CtaSection;
+export default CtaSection

@@ -1,8 +1,8 @@
-import { User } from "lucide-react";
+import { User } from 'lucide-react'
 
 type Props = {
-  avatarUrl: string | undefined;
-};
+  avatarUrl: string | undefined
+}
 
 const UserAvatar = ({ avatarUrl }: Props) => {
   return (
@@ -20,7 +20,7 @@ const UserAvatar = ({ avatarUrl }: Props) => {
         <User className="size-5 text-muted-foreground" />
       )}
     </>
-  );
-};
+  )
+}
 
-export default UserAvatar;
+export default UserAvatar

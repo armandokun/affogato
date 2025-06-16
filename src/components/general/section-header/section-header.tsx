@@ -1,5 +1,5 @@
 interface SectionHeaderProps {
-  children: React.ReactNode;
+  children: React.ReactNode
 }
 
 export function SectionHeader({ children }: SectionHeaderProps) {
@@ -9,7 +9,7 @@ export function SectionHeader({ children }: SectionHeaderProps) {
         {children}
       </div>
     </div>
-  );
+  )
 }
 
-export default SectionHeader;
+export default SectionHeader

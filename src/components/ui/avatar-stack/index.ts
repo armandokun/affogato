@@ -1,1 +1,1 @@
-export { default } from "./avatar-stack";
+export { default } from './avatar-stack'

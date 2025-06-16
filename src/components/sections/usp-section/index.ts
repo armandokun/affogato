@@ -1,1 +1,1 @@
-export { default } from "./usp-section";
+export { default } from './usp-section'

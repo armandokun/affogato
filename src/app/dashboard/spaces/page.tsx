@@ -1,5 +1,5 @@
 const SpacesPage = () => {
-  return <div>Spaces</div>;
-};
+  return <div>Spaces</div>
+}
 
-export default SpacesPage;
+export default SpacesPage

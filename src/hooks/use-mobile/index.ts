@@ -1,1 +1,1 @@
-export { default } from "./use-mobile";
+export { default } from './use-mobile'

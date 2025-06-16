@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import TestimonialSection from "./testimonial-section";
+import type { Meta, StoryObj } from '@storybook/react'
+import TestimonialSection from './testimonial-section'
 
 const meta: Meta<typeof TestimonialSection> = {
-  title: "Sections/TestimonialSection",
+  title: 'Sections/TestimonialSection',
   component: TestimonialSection,
-  tags: ["autodocs"],
-};
+  tags: ['autodocs']
+}
 
-export default meta;
-type Story = StoryObj<typeof TestimonialSection>;
+export default meta
+type Story = StoryObj<typeof TestimonialSection>
 
-export const Default: Story = {};
+export const Default: Story = {}

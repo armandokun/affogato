@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import Link from "next/link";
-import { memo } from "react";
-import ReactMarkdown, { type Components } from "react-markdown";
-import remarkGfm from "remark-gfm";
+import Link from 'next/link'
+import { memo } from 'react'
+import ReactMarkdown, { type Components } from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 
 const components: Partial<Components> = {
   h1: ({ children, ...props }) => (
@@ -42,10 +42,7 @@ const components: Partial<Components> = {
     </p>
   ),
   ol: ({ children, ...props }) => (
-    <ol
-      className="list-decimal list-outside ml-4 mb-4 text-zinc-200"
-      {...props}
-    >
+    <ol className="list-decimal list-outside ml-4 mb-4 text-zinc-200" {...props}>
       {children}
     </ol>
   ),
@@ -62,8 +59,7 @@ const components: Partial<Components> = {
   blockquote: ({ children, ...props }) => (
     <blockquote
       className="border-l-4 border-muted-foreground pl-4 italic text-muted-foreground my-4"
-      {...props}
-    >
+      {...props}>
       {children}
     </blockquote>
   ),
@@ -77,17 +73,16 @@ const components: Partial<Components> = {
             </code>
           </pre>
         </div>
-      );
+      )
     }
 
     return (
       <code
         className="text-sm bg-zinc-100 dark:bg-zinc-800 py-0.5 px-1 rounded-md text-muted-foreground"
-        {...props}
-      >
+        {...props}>
         {children}
       </code>
-    );
+    )
   },
   pre: ({ children }) => <>{children}</>,
   strong: ({ children, ...props }) => (
@@ -106,38 +101,26 @@ const components: Partial<Components> = {
       className="text-blue-500 hover:underline break-words"
       target="_blank"
       rel="noreferrer"
-      {...props}
-    >
+      {...props}>
       {children}
     </Link>
   ),
-  hr: (props) => (
-    <hr className="my-6 border-t border-muted-foreground" {...props} />
-  ),
+  hr: (props) => <hr className="my-6 border-t border-muted-foreground" {...props} />,
   table: ({ children, ...props }) => (
     <div className="relative overflow-x-auto my-4">
-      <table
-        className="w-full text-sm text-left text-zinc-200 rounded-lg"
-        {...props}
-      >
+      <table className="w-full text-sm text-left text-zinc-200 rounded-lg" {...props}>
         {children}
       </table>
     </div>
   ),
   thead: ({ children, ...props }) => (
-    <thead
-      className="text-xs uppercase text-zinc-400 border-b border-zinc-700"
-      {...props}
-    >
+    <thead className="text-xs uppercase text-zinc-400 border-b border-zinc-700" {...props}>
       {children}
     </thead>
   ),
   tbody: ({ children, ...props }) => <tbody {...props}>{children}</tbody>,
   tr: ({ children, ...props }) => (
-    <tr
-      className="border-b border-zinc-700 hover:bg-zinc-800 transition-colors"
-      {...props}
-    >
+    <tr className="border-b border-zinc-700 hover:bg-zinc-800 transition-colors" {...props}>
       {children}
     </tr>
   ),
@@ -145,34 +128,30 @@ const components: Partial<Components> = {
     <th
       scope="col"
       className="px-6 py-3 font-semibold text-white whitespace-nowrap border-0"
-      {...props}
-    >
+      {...props}>
       {children}
     </th>
   ),
   td: ({ children, ...props }) => (
-    <td
-      className="px-6 py-4 text-zinc-100 whitespace-nowrap border-0"
-      {...props}
-    >
+    <td className="px-6 py-4 text-zinc-100 whitespace-nowrap border-0" {...props}>
       {children}
     </td>
-  ),
-};
+  )
+}
 
-const remarkPlugins = [remarkGfm];
+const remarkPlugins = [remarkGfm]
 
 const NonMemoizedMarkdown = ({ children }: { children: string }) => {
   return (
     <ReactMarkdown remarkPlugins={remarkPlugins} components={components}>
       {children}
     </ReactMarkdown>
-  );
-};
+  )
+}
 
 const Markdown = memo(
   NonMemoizedMarkdown,
   (prevProps, nextProps) => prevProps.children === nextProps.children
-);
+)
 
-export default Markdown;
+export default Markdown

@@ -1,89 +1,80 @@
-"use client";
+'use client'
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
 
-import { createClient } from "@/lib/supabase/client";
-import useSidebar from "@/hooks/use-sidebar";
-import { PricingPrice, PricingProduct } from "@/constants/pricing";
-import { useSession } from "@/containers/SessionProvider";
-import PricingTabs from "@/components/general/pricing-tabs";
-import SectionHeader from "@/components/general/section-header";
-import { toast } from "@/components/ui/toast/toast";
-import PricingCard from "@/components/general/pricing-card";
-import { SidebarTrigger } from "@/components/general/sidebar/sidebar";
+import { createClient } from '@/lib/supabase/client'
+import useSidebar from '@/hooks/use-sidebar'
+import { PricingPrice, PricingProduct } from '@/constants/pricing'
+import { useSession } from '@/containers/SessionProvider'
+import PricingTabs from '@/components/general/pricing-tabs'
+import SectionHeader from '@/components/general/section-header'
+import { toast } from '@/components/ui/toast/toast'
+import PricingCard from '@/components/general/pricing-card'
+import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
 
-import { buildTiersFromStripe } from "../pricing-section/pricing-section";
+import { buildTiersFromStripe } from '../pricing-section/pricing-section'
 
 const DashboardPricingPage = ({
   prices,
   products,
-  currency,
+  currency
 }: {
-  prices: Array<PricingPrice>;
-  products: Array<PricingProduct>;
-  currency: "usd" | "eur";
+  prices: Array<PricingPrice>
+  products: Array<PricingProduct>
+  currency: 'usd' | 'eur'
 }) => {
-  const [billingCycle, setBillingCycle] = useState<"monthly" | "yearly">(
-    "monthly"
-  );
-  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
 
-  const { user } = useSession();
-  const { open, isMobile } = useSidebar();
+  const { user } = useSession()
+  const { open, isMobile } = useSidebar()
 
-  const stripeTiers = buildTiersFromStripe(products, prices, currency);
+  const stripeTiers = buildTiersFromStripe(products, prices, currency)
 
-  const proTier = stripeTiers.find((t) => t.name === "Pro");
-  const unlimitedTier = stripeTiers.find((t) => t.name === "Unlimited");
+  const proTier = stripeTiers.find((t) => t.name === 'Pro')
+  const unlimitedTier = stripeTiers.find((t) => t.name === 'Unlimited')
 
-  const tiers = [proTier, unlimitedTier].filter((tier) => tier !== undefined);
+  const tiers = [proTier, unlimitedTier].filter((tier) => tier !== undefined)
 
   useEffect(() => {
     const getSelectedPlan = async () => {
-      if (!user?.id) return;
+      if (!user?.id) return
 
-      const supabase = createClient();
+      const supabase = createClient()
 
       const { data, error } = await supabase
-        .from("subscriptions")
-        .select("stripe_price_id")
-        .eq("user_id", user.id)
-        .single();
+        .from('subscriptions')
+        .select('stripe_price_id')
+        .eq('user_id', user.id)
+        .single()
 
       if (error) {
         toast({
-          type: "error",
-          description: "Failed to get selected plan",
-        });
+          type: 'error',
+          description: 'Failed to get selected plan'
+        })
 
-        return;
+        return
       }
 
-      setSelectedPlanId(data?.stripe_price_id ?? null);
-    };
+      setSelectedPlanId(data?.stripe_price_id ?? null)
+    }
 
-    getSelectedPlan();
-  }, [user?.id]);
+    getSelectedPlan()
+  }, [user?.id])
 
   return (
     <section
       id="pricing"
-      className="flex flex-col items-center justify-center gap-10 pb-10 w-full relative"
-    >
+      className="flex flex-col items-center justify-center gap-10 pb-10 w-full relative">
       {(!open || isMobile) && (
         <div className="absolute top-0 left-0 p-2">
           <SidebarTrigger />
         </div>
       )}
       <SectionHeader>
-        <Image
-          src="/logo.png"
-          alt="Pricing"
-          width={100}
-          height={100}
-          className="size-15"
-        />
+        <Image src="/logo.png" alt="Pricing" width={100} height={100} className="size-15" />
         <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance mt-4">
           Pricing that grows with you
         </h2>
@@ -103,10 +94,8 @@ const DashboardPricingPage = ({
         <div className="grid min-[650px]:grid-cols-2 gap-4 w-full max-w-3xl mx-auto px-6">
           {tiers.map((tier) => {
             const priceId =
-              billingCycle === "yearly"
-                ? tier.stripePriceIdYearly
-                : tier.stripePriceIdMonthly;
-            const isSelected = selectedPlanId === priceId;
+              billingCycle === 'yearly' ? tier.stripePriceIdYearly : tier.stripePriceIdMonthly
+            const isSelected = selectedPlanId === priceId
 
             return (
               <PricingCard
@@ -115,7 +104,7 @@ const DashboardPricingPage = ({
                 isSelected={isSelected}
                 activeTab={billingCycle}
               />
-            );
+            )
           })}
         </div>
         <p className="text-center text-gray-400 mt-4 w-[80%] mx-auto text-sm">
@@ -124,7 +113,7 @@ const DashboardPricingPage = ({
         </p>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default DashboardPricingPage;
+export default DashboardPricingPage

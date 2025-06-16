@@ -1,18 +1,13 @@
-import React from "react";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "./tooltip";
-import Button from "../button";
+import React from 'react'
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './tooltip'
+import Button from '../button'
 
 const meta = {
-  title: "UI/Tooltip",
-  component: Tooltip,
-};
+  title: 'UI/Tooltip',
+  component: Tooltip
+}
 
-export default meta;
+export default meta
 
 export const Basic = () => (
   <TooltipProvider>
@@ -23,7 +18,7 @@ export const Basic = () => (
       <TooltipContent>Tooltip text</TooltipContent>
     </Tooltip>
   </TooltipProvider>
-);
+)
 
 export const CustomContent = () => (
   <TooltipProvider>
@@ -38,4 +33,4 @@ export const CustomContent = () => (
       </TooltipContent>
     </Tooltip>
   </TooltipProvider>
-);
+)

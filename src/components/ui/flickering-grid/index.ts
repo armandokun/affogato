@@ -1,1 +1,1 @@
-export { default } from "./flickering-grid";
+export { default } from './flickering-grid'

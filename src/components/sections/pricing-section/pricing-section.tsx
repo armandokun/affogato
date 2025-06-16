@@ -1,72 +1,64 @@
-"use client";
+'use client'
 
-import { useState } from "react";
+import { useState } from 'react'
 
 import {
   STRIPE_PRICING_TIERS,
   PricingPrice,
   PricingProduct,
-  PricingTier,
-} from "@/constants/pricing";
-import PricingTabs from "@/components/general/pricing-tabs";
-import PricingCard from "@/components/general/pricing-card";
+  PricingTier
+} from '@/constants/pricing'
+import PricingTabs from '@/components/general/pricing-tabs'
+import PricingCard from '@/components/general/pricing-card'
 
 export function buildTiersFromStripe(
   products: Array<PricingProduct>,
   prices: Array<PricingPrice>,
-  currency: "usd" | "eur"
+  currency: 'usd' | 'eur'
 ): Array<PricingTier> {
   return products.map((product) => {
-    const meta = STRIPE_PRICING_TIERS.find(
-      (plan) => plan.name === product.name
-    );
+    const meta = STRIPE_PRICING_TIERS.find((plan) => plan.name === product.name)
     const monthly = prices.find(
-      (p) =>
-        p.productId === product.id &&
-        p.interval === "month" &&
-        p.currency === currency
-    );
+      (p) => p.productId === product.id && p.interval === 'month' && p.currency === currency
+    )
     const yearly = prices.find(
-      (p) =>
-        p.productId === product.id &&
-        p.interval === "year" &&
-        p.currency === currency
-    );
+      (p) => p.productId === product.id && p.interval === 'year' && p.currency === currency
+    )
 
     return {
       id: product.id,
       name: product.name,
       features: meta?.features || [],
-      description: product.description || meta?.description || "",
-      buttonText: meta?.buttonText || "Choose Plan",
-      buttonColor: meta?.buttonColor || "bg-accent text-primary",
+      description: product.description || meta?.description || '',
+      buttonText: meta?.buttonText || 'Choose Plan',
+      buttonColor: meta?.buttonColor || 'bg-accent text-primary',
       isPopular: meta?.isPopular || false,
       price: monthly?.unitAmount ? monthly.unitAmount / 100 : 0,
       currency: currency,
       yearlyPrice: yearly?.unitAmount ? yearly.unitAmount / 100 : 0,
-      stripePriceIdMonthly: monthly?.id || "",
-      stripePriceIdYearly: yearly?.id || "",
-    };
-  });
+      stripePriceIdMonthly: monthly?.id || '',
+      stripePriceIdYearly: yearly?.id || ''
+    }
+  })
 }
 
 const PricingSection = ({
   prices,
   products,
-  currency,
+  currency
 }: {
-  prices: Array<PricingPrice>;
-  products: Array<PricingProduct>;
-  currency: "usd" | "eur";
+  prices: Array<PricingPrice>
+  products: Array<PricingProduct>
+  currency: 'usd' | 'eur'
 }) => {
-  const [activeTab, setActiveTab] = useState<"yearly" | "monthly">("monthly");
+  const [activeTab, setActiveTab] = useState<'yearly' | 'monthly'>('monthly')
 
-  const stripeTiers = buildTiersFromStripe(products, prices, currency);
+  const stripeTiers = buildTiersFromStripe(products, prices, currency)
 
-  const proTier = stripeTiers.find((t) => t.name === "Pro");
-  const unlimitedTier = stripeTiers.find((t) => t.name === "Unlimited");
+  const proTier = stripeTiers.find((t) => t.name === 'Pro')
+  const unlimitedTier = stripeTiers.find((t) => t.name === 'Unlimited')
 
-  const tiers = [proTier, unlimitedTier].filter((tier) => tier !== undefined);
+  const tiers = [proTier, unlimitedTier].filter((tier) => tier !== undefined)
 
   return (
     <section id="pricing">
@@ -91,7 +83,7 @@ const PricingSection = ({
         </p>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default PricingSection;
+export default PricingSection

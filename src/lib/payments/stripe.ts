@@ -1,27 +1,27 @@
-import Stripe from 'stripe';
-import { redirect } from 'next/navigation';
+import Stripe from 'stripe'
+import { redirect } from 'next/navigation'
 
 import {
   getUserByStripeCustomerId,
   updateUserSubscription,
   getUserSubscriptionByUserId
-} from '@/lib/db/queries';
-import { UserSubscription } from '@/constants/user';
+} from '@/lib/db/queries'
+import { UserSubscription } from '@/constants/user'
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-04-30.basil'
-});
+})
 
 export async function createCheckoutSession({
   userId,
-  priceId,
+  priceId
 }: {
-  userId: string;
-  priceId: string;
+  userId: string
+  priceId: string
 }) {
-  const user = await getUserSubscriptionByUserId({ userId });
+  const user = await getUserSubscriptionByUserId({ userId })
 
-  if (!user) return redirect(`/login?redirect=checkout&priceId=${priceId}`);
+  if (!user) return redirect(`/login?redirect=checkout&priceId=${priceId}`)
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ['card'],
@@ -39,35 +39,34 @@ export async function createCheckoutSession({
     allow_promotion_codes: true,
     metadata: {
       user_id: userId,
-      priceId,
-    },
-  });
+      priceId
+    }
+  })
 
-  redirect(session.url!);
+  redirect(session.url!)
 }
 
 export async function createCustomerPortalSession(user: UserSubscription) {
   if (!user.stripe_customer_id || !user.stripe_product_id) {
-    redirect('/dashboard/pricing');
+    redirect('/dashboard/pricing')
   }
 
-  let configuration: Stripe.BillingPortal.Configuration;
-  const configurations = await stripe.billingPortal.configurations.list();
+  let configuration: Stripe.BillingPortal.Configuration
+  const configurations = await stripe.billingPortal.configurations.list()
 
   if (configurations.data.length > 0) {
-    configuration = configurations.data[0];
+    configuration = configurations.data[0]
   } else {
-    const product = await stripe.products.retrieve(user.stripe_product_id);
+    const product = await stripe.products.retrieve(user.stripe_product_id)
 
-    if (!product.active) throw new Error("User's product is not active in Stripe");
+    if (!product.active) throw new Error("User's product is not active in Stripe")
 
     const prices = await stripe.prices.list({
       product: product.id,
       active: true
-    });
+    })
 
-    if (prices.data.length === 0) throw new Error("No active prices found for the user's product");
-
+    if (prices.data.length === 0) throw new Error("No active prices found for the user's product")
 
     configuration = await stripe.billingPortal.configurations.create({
       business_profile: {
@@ -90,46 +89,40 @@ export async function createCustomerPortalSession(user: UserSubscription) {
           mode: 'at_period_end',
           cancellation_reason: {
             enabled: true,
-            options: [
-              'too_expensive',
-              'missing_features',
-              'switched_service',
-              'unused',
-              'other'
-            ]
+            options: ['too_expensive', 'missing_features', 'switched_service', 'unused', 'other']
           }
         },
         payment_method_update: {
           enabled: true
         }
       }
-    });
+    })
   }
 
   return stripe.billingPortal.sessions.create({
     customer: user.stripe_customer_id,
     return_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard`,
     configuration: configuration.id
-  });
+  })
 }
 
-export async function handleSubscriptionChange(
-  subscription: Stripe.Subscription
-) {
-  const customerId = subscription.customer as string;
-  const subscriptionId = subscription.id;
-  const status = subscription.status;
-  const priceId = subscription.items.data[0]?.price?.id;
-  const user = await getUserByStripeCustomerId({ stripeCustomerId: customerId });
+export async function handleSubscriptionChange(subscription: Stripe.Subscription) {
+  const customerId = subscription.customer as string
+  const subscriptionId = subscription.id
+  const status = subscription.status
+  const priceId = subscription.items.data[0]?.price?.id
+  const user = await getUserByStripeCustomerId({
+    stripeCustomerId: customerId
+  })
 
   if (!user) {
-    console.error('User not found for Stripe customer:', customerId);
+    console.error('User not found for Stripe customer:', customerId)
 
-    return;
+    return
   }
 
   if (status === 'active') {
-    const plan = subscription.items.data[0]?.plan;
+    const plan = subscription.items.data[0]?.plan
 
     await updateUserSubscription(user.id, {
       stripeSubscriptionId: subscriptionId,
@@ -137,7 +130,7 @@ export async function handleSubscriptionChange(
       stripePriceId: priceId,
       planName: (plan?.product as Stripe.Product).name,
       subscriptionStatus: status
-    });
+    })
   } else if (status === 'canceled' || status === 'unpaid') {
     await updateUserSubscription(user.id, {
       stripeSubscriptionId: null,
@@ -145,7 +138,7 @@ export async function handleSubscriptionChange(
       stripePriceId: null,
       planName: null,
       subscriptionStatus: status
-    });
+    })
   }
 }
 
@@ -154,32 +147,29 @@ export async function getStripePrices() {
     expand: ['data.product'],
     active: true,
     type: 'recurring'
-  });
+  })
 
   return prices.data.map((price) => ({
     id: price.id,
-    productId:
-      typeof price.product === 'string' ? price.product : price.product.id,
+    productId: typeof price.product === 'string' ? price.product : price.product.id,
     unitAmount: price.unit_amount,
     currency: price.currency,
     interval: price.recurring?.interval,
     trialPeriodDays: price.recurring?.trial_period_days
-  }));
+  }))
 }
 
 export async function getStripeProducts() {
   const products = await stripe.products.list({
     active: true,
     expand: ['data.default_price']
-  });
+  })
 
   return products.data.map((product) => ({
     id: product.id,
     name: product.name,
     description: product.description,
     defaultPriceId:
-      typeof product.default_price === 'string'
-        ? product.default_price
-        : product.default_price?.id
-  }));
+      typeof product.default_price === 'string' ? product.default_price : product.default_price?.id
+  }))
 }

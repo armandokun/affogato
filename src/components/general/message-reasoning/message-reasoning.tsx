@@ -1,34 +1,34 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+import { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react'
 
-import Markdown from "@/components/ui/markdown";
-import AnimatedShinyText from "@/components/magicui/animated-shiny-text";
+import Markdown from '@/components/ui/markdown'
+import AnimatedShinyText from '@/components/magicui/animated-shiny-text'
 
 type Props = {
-  isLoading: boolean;
-  reasoning: string;
-};
+  isLoading: boolean
+  reasoning: string
+}
 
 const MessageReasoning = ({ isLoading, reasoning }: Props) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const variants = {
     collapsed: {
       height: 0,
       opacity: 0,
       marginTop: 0,
-      marginBottom: 0,
+      marginBottom: 0
     },
     expanded: {
-      height: "auto",
+      height: 'auto',
       opacity: 1,
-      marginTop: "1rem",
-      marginBottom: "0.5rem",
-    },
-  };
+      marginTop: '1rem',
+      marginBottom: '0.5rem'
+    }
+  }
 
   return (
     <div className="flex flex-col">
@@ -40,9 +40,8 @@ const MessageReasoning = ({ isLoading, reasoning }: Props) => {
             type="button"
             className="cursor-pointer"
             onClick={() => {
-              setIsExpanded(!isExpanded);
-            }}
-          >
+              setIsExpanded(!isExpanded)
+            }}>
             {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
           </button>
         </div>
@@ -54,9 +53,8 @@ const MessageReasoning = ({ isLoading, reasoning }: Props) => {
             type="button"
             className="cursor-pointer"
             onClick={() => {
-              setIsExpanded(!isExpanded);
-            }}
-          >
+              setIsExpanded(!isExpanded)
+            }}>
             {isExpanded ? <ChevronUpIcon /> : <ChevronDownIcon />}
           </button>
         </div>
@@ -71,16 +69,15 @@ const MessageReasoning = ({ isLoading, reasoning }: Props) => {
             animate="expanded"
             exit="collapsed"
             variants={variants}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
-            style={{ overflow: "hidden" }}
-            className="pl-4 text-zinc-600 dark:text-zinc-400 border-l flex flex-col gap-4"
-          >
+            transition={{ duration: 0.2, ease: 'easeInOut' }}
+            style={{ overflow: 'hidden' }}
+            className="pl-4 text-zinc-600 dark:text-zinc-400 border-l flex flex-col gap-4">
             <Markdown>{reasoning}</Markdown>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
-  );
-};
+  )
+}
 
-export default MessageReasoning;
+export default MessageReasoning

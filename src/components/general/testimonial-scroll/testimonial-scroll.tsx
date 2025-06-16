@@ -1,14 +1,14 @@
-import { cn } from "@/lib/utils";
-import Marquee from "@/components/ui/marquee";
-import { StarFilledIcon } from "@radix-ui/react-icons";
-import Image from "next/image";
+import { cn } from '@/lib/utils'
+import Marquee from '@/components/ui/marquee'
+import { StarFilledIcon } from '@radix-ui/react-icons'
+import Image from 'next/image'
 
 export interface TestimonialCardProps {
-  name: string;
-  role: string;
-  img?: string;
-  description: React.ReactNode;
-  className?: string;
+  name: string
+  role: string
+  img?: string
+  description: React.ReactNode
+  className?: string
 }
 
 export const TestimonialCard = ({
@@ -21,7 +21,7 @@ export const TestimonialCard = ({
 }: TestimonialCardProps) => (
   <div
     className={cn(
-      "mb-4 flex w-full cursor-pointer break-inside-avoid flex-col items-center justify-between gap-6 rounded-xl p-4 border border-border",
+      'mb-4 flex w-full cursor-pointer break-inside-avoid flex-col items-center justify-between gap-6 rounded-xl p-4 border border-border',
       className
     )}
     {...props} // Spread the rest of the props here
@@ -52,12 +52,12 @@ export const TestimonialCard = ({
       </div>
     </div>
   </div>
-);
+)
 
 export function SocialProofTestimonials({
-  testimonials,
+  testimonials
 }: {
-  testimonials: TestimonialCardProps[];
+  testimonials: TestimonialCardProps[]
 }) {
   return (
     <section id="testimonials">
@@ -71,11 +71,10 @@ export function SocialProofTestimonials({
                   vertical
                   key={i}
                   className={cn({
-                    "[--duration:60s]": i === 1,
-                    "[--duration:30s]": i === 2,
-                    "[--duration:70s]": i === 3,
-                  })}
-                >
+                    '[--duration:60s]': i === 1,
+                    '[--duration:30s]': i === 2,
+                    '[--duration:70s]': i === 3
+                  })}>
                   {testimonials.slice(i * 3, (i + 1) * 3).map((card, idx) => (
                     <TestimonialCard {...card} key={idx} />
                   ))}
@@ -87,7 +86,7 @@ export function SocialProofTestimonials({
         </div>
       </div>
     </section>
-  );
+  )
 }
 
-export default SocialProofTestimonials;
+export default SocialProofTestimonials

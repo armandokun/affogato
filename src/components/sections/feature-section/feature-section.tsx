@@ -1,33 +1,30 @@
-"use client";
+'use client'
 
-import { useRef, useEffect, VideoHTMLAttributes } from "react";
+import { useRef, useEffect, VideoHTMLAttributes } from 'react'
 
-function VideoOnScroll({
-  src,
-  ...props
-}: VideoHTMLAttributes<HTMLVideoElement>) {
-  const ref = useRef<HTMLVideoElement>(null);
+function VideoOnScroll({ src, ...props }: VideoHTMLAttributes<HTMLVideoElement>) {
+  const ref = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
-    const video = ref.current;
-    if (!video) return;
+    const video = ref.current
+    if (!video) return
 
     const observer = new window.IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          video.play();
+          video.play()
         } else {
-          video.pause();
+          video.pause()
         }
       },
       { threshold: 0.5 }
-    );
+    )
 
-    observer.observe(video);
-    return () => observer.disconnect();
-  }, []);
+    observer.observe(video)
+    return () => observer.disconnect()
+  }, [])
 
-  return <video ref={ref} src={src} {...props} />;
+  return <video ref={ref} src={src} {...props} />
 }
 
 const FeatureSection = () => {
@@ -41,8 +38,8 @@ const FeatureSection = () => {
                 Deep thinking Plus+
               </h2>
               <p className="text-gray-400">
-                AI models take more time to think and can use tools, like Web
-                Search to make better decisions.
+                AI models take more time to think and can use tools, like Web Search to make better
+                decisions.
               </p>
             </div>
             <VideoOnScroll
@@ -61,8 +58,7 @@ const FeatureSection = () => {
                 Images, documents, you name it.
               </h2>
               <p className="text-gray-400">
-                The models can use images and documents to get more context to
-                get the best result.
+                The models can use images and documents to get more context to get the best result.
               </p>
             </div>
             <VideoOnScroll
@@ -81,8 +77,7 @@ const FeatureSection = () => {
                 One conversation, multiple AI minds.
               </h2>
               <p className="text-gray-400">
-                Use multiple AI models at once and enable features other models
-                don&apos;t support.
+                Use multiple AI models at once and enable features other models don&apos;t support.
               </p>
             </div>
             <VideoOnScroll
@@ -98,7 +93,7 @@ const FeatureSection = () => {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default FeatureSection;
+export default FeatureSection

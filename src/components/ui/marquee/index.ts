@@ -1,1 +1,1 @@
-export { default } from "./marquee";
+export { default } from './marquee'

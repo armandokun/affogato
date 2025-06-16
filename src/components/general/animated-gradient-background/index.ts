@@ -1,1 +1,1 @@
-export { default } from "./animated-gradient-background";
+export { default } from './animated-gradient-background'

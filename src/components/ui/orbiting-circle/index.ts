@@ -1,1 +1,1 @@
-export { default } from "./orbiting-circle";
+export { default } from './orbiting-circle'

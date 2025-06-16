@@ -1,17 +1,17 @@
-import Icons from "@/components/general/icons";
-import { siteConfig } from "@/lib/config";
+import Icons from '@/components/general/icons'
+import { siteConfig } from '@/lib/config'
 
 type Link = {
-  text: string;
-  url: string;
-};
+  text: string
+  url: string
+}
 
 const links: Link[] = [
-  { text: "Pricing", url: "#pricing" },
-  { text: "Contact", url: `mailto:${siteConfig.links.mail}` },
-  { text: "Terms of Service", url: "/terms" },
-  { text: "Privacy Policy", url: "/privacy" },
-];
+  { text: 'Pricing', url: '#pricing' },
+  { text: 'Contact', url: `mailto:${siteConfig.links.mail}` },
+  { text: 'Terms of Service', url: '/terms' },
+  { text: 'Privacy Policy', url: '/privacy' }
+]
 
 export function Footer() {
   return (
@@ -19,9 +19,7 @@ export function Footer() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-x-2">
           <Icons.logo className="h-5 w-5" />
-          <h2 className="text-lg font-semibold text-foreground">
-            {siteConfig.name}
-          </h2>
+          <h2 className="text-lg font-semibold text-foreground">{siteConfig.name}</h2>
         </div>
       </div>
       <div className="flex flex-col justify-between gap-y-5 md:flex-row md:items-center">
@@ -29,8 +27,7 @@ export function Footer() {
           {links.map((link, index) => (
             <li
               key={index}
-              className="text-[15px]/normal font-medium text-muted-foreground transition-all duration-100 ease-linear hover:text-foreground hover:underline hover:underline-offset-4"
-            >
+              className="text-[15px]/normal font-medium text-muted-foreground transition-all duration-100 ease-linear hover:text-foreground hover:underline hover:underline-offset-4">
               <a href={link.url}>{link.text}</a>
             </li>
           ))}
@@ -40,5 +37,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  );
+  )
 }

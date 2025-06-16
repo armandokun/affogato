@@ -1,5 +1,5 @@
-import React from "react";
-import Image from "next/image";
+import React from 'react'
+import Image from 'next/image'
 
 import {
   DropdownMenu,
@@ -9,37 +9,30 @@ import {
   DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubTrigger,
-  DropdownMenuSubContent,
-} from "@/components/ui/dropdown-menu/dropdown-menu";
-import {
-  LanguageModelCode,
-  thinkingModelDropdownOptions,
-} from "@/lib/ai/providers";
-import { setCookie } from "@/lib/utils";
-import { SELECTED_MODEL_COOKIE } from "@/constants/chat";
+  DropdownMenuSubContent
+} from '@/components/ui/dropdown-menu/dropdown-menu'
+import { LanguageModelCode, thinkingModelDropdownOptions } from '@/lib/ai/providers'
+import { setCookie } from '@/lib/utils'
+import { SELECTED_MODEL_COOKIE } from '@/constants/chat'
 
 type ModelOption = {
-  value: string;
-  label: string;
-  logo: string;
-  badge?: string;
-  description?: string;
-};
+  value: string
+  label: string
+  logo: string
+  badge?: string
+  description?: string
+}
 
 type Props = {
-  selectedModelCode: LanguageModelCode;
-  setSelectedModel: (value: LanguageModelCode) => void;
-  modelDropdownOptions: Array<ModelOption>;
-};
+  selectedModelCode: LanguageModelCode
+  setSelectedModel: (value: LanguageModelCode) => void
+  modelDropdownOptions: Array<ModelOption>
+}
 
-const ModelDropdown = ({
-  selectedModelCode,
-  setSelectedModel,
-  modelDropdownOptions,
-}: Props) => {
+const ModelDropdown = ({ selectedModelCode, setSelectedModel, modelDropdownOptions }: Props) => {
   const selectedModel =
     modelDropdownOptions.find((opt) => opt.value === selectedModelCode) ||
-    thinkingModelDropdownOptions.find((opt) => opt.value === selectedModelCode);
+    thinkingModelDropdownOptions.find((opt) => opt.value === selectedModelCode)
 
   return (
     <DropdownMenu>
@@ -48,9 +41,8 @@ const ModelDropdown = ({
           <button
             type="button"
             className={
-              "bg-white/5 backdrop-blur-xl text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer transition-opacity"
-            }
-          >
+              'bg-white/5 backdrop-blur-xl text-white text-sm rounded-full px-4 py-2 outline-none flex items-center gap-2 cursor-pointer transition-opacity'
+            }>
             {selectedModel && (
               <Image
                 src={selectedModel.logo}
@@ -60,43 +52,34 @@ const ModelDropdown = ({
                 className="inline-block"
               />
             )}
-            {selectedModel?.label || "Select Model"}
+            {selectedModel?.label || 'Select Model'}
             <span className="ml-2">&#9662;</span>
           </button>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent
-        side="top"
-        align="start"
-        className="w-72"
-        sideOffset={10}
-      >
+      <DropdownMenuContent side="top" align="start" className="w-72" sideOffset={10}>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <div>
               <div className="font-semibold">Chat Models</div>
-              <div className="text-xs text-muted-foreground">
-                General conversation and Q&A
-              </div>
+              <div className="text-xs text-muted-foreground">General conversation and Q&A</div>
             </div>
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent
             className="w-72"
             style={{
-              maxHeight: "calc(100vh - 40px)",
+              maxHeight: 'calc(100vh - 40px)',
               marginBottom: 20,
-              overflowY: "auto",
-            }}
-          >
+              overflowY: 'auto'
+            }}>
             {modelDropdownOptions.map((option) => (
               <DropdownMenuItem
                 key={option.value}
                 onSelect={() => {
-                  setSelectedModel(option.value as LanguageModelCode);
-                  setCookie(SELECTED_MODEL_COOKIE, option.value);
+                  setSelectedModel(option.value as LanguageModelCode)
+                  setCookie(SELECTED_MODEL_COOKIE, option.value)
                 }}
-                className="flex items-center gap-4 cursor-pointer mb-1"
-              >
+                className="flex items-center gap-4 cursor-pointer mb-1">
                 <Image
                   src={option.logo}
                   alt={`${option.label} logo`}
@@ -113,9 +96,7 @@ const ModelDropdown = ({
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {option.description}
-                  </div>
+                  <div className="text-xs text-muted-foreground">{option.description}</div>
                 </div>
               </DropdownMenuItem>
             ))}
@@ -134,20 +115,18 @@ const ModelDropdown = ({
           <DropdownMenuSubContent
             className="w-72"
             style={{
-              maxHeight: "calc(100vh - 40px)",
+              maxHeight: 'calc(100vh - 40px)',
               marginBottom: 20,
-              overflowY: "auto",
-            }}
-          >
+              overflowY: 'auto'
+            }}>
             {thinkingModelDropdownOptions.map((option) => (
               <DropdownMenuItem
                 key={option.value}
                 onSelect={() => {
-                  setSelectedModel(option.value as LanguageModelCode);
-                  setCookie(SELECTED_MODEL_COOKIE, option.value);
+                  setSelectedModel(option.value as LanguageModelCode)
+                  setCookie(SELECTED_MODEL_COOKIE, option.value)
                 }}
-                className="flex items-center gap-4 cursor-pointer mb-1"
-              >
+                className="flex items-center gap-4 cursor-pointer mb-1">
                 <Image
                   src={option.logo}
                   alt={`${option.label} logo`}
@@ -164,9 +143,7 @@ const ModelDropdown = ({
                       </span>
                     )}
                   </div>
-                  <div className="text-xs text-muted-foreground">
-                    {option.description}
-                  </div>
+                  <div className="text-xs text-muted-foreground">{option.description}</div>
                 </div>
               </DropdownMenuItem>
             ))}
@@ -174,7 +151,7 @@ const ModelDropdown = ({
         </DropdownMenuSub>
       </DropdownMenuContent>
     </DropdownMenu>
-  );
-};
+  )
+}
 
-export default ModelDropdown;
+export default ModelDropdown

@@ -1,43 +1,42 @@
-"use client";
+'use client'
 
-import { AnimatePresence, motion } from "motion/react";
-import { CheckIcon } from "lucide-react";
-import { redirect } from "next/navigation";
+import { AnimatePresence, motion } from 'motion/react'
+import { CheckIcon } from 'lucide-react'
+import { redirect } from 'next/navigation'
 
-import { cn } from "@/lib/utils";
-import { PricingTier } from "@/constants/pricing";
-import { checkoutAction, customerPortalAction } from "@/lib/payments/actions";
-import { useSession } from "@/containers/SessionProvider";
-import { DASHBOARD_PRICING, LOGIN } from "@/constants/routes";
+import { cn } from '@/lib/utils'
+import { PricingTier } from '@/constants/pricing'
+import { checkoutAction, customerPortalAction } from '@/lib/payments/actions'
+import { useSession } from '@/containers/SessionProvider'
+import { DASHBOARD_PRICING, LOGIN } from '@/constants/routes'
 
 type Props = {
-  tier: PricingTier;
-  activeTab: "yearly" | "monthly";
-  isSelected?: boolean;
-};
+  tier: PricingTier
+  activeTab: 'yearly' | 'monthly'
+  isSelected?: boolean
+}
 
 const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
-  const { user } = useSession();
+  const { user } = useSession()
 
   const getFeatureTitle = () => {
     switch (tier.name) {
-      case "Pro":
-        return "Plan includes";
-      case "Unlimited":
-        return "Everything in Pro +";
+      case 'Pro':
+        return 'Plan includes'
+      case 'Unlimited':
+        return 'Everything in Pro +'
     }
-  };
+  }
 
   return (
     <div
       key={tier.name}
       className={cn(
-        "rounded-xl grid grid-rows-[180px_auto_1fr] relative h-fit min-[650px]:h-full min-[900px]:h-fit transition-all",
+        'rounded-xl grid grid-rows-[180px_auto_1fr] relative h-fit min-[650px]:h-full min-[900px]:h-fit transition-all',
         tier.isPopular
-          ? "md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-accent"
-          : "bg-[#F9FAFB]/[0.02] border border-border"
-      )}
-    >
+          ? 'md:shadow-[0px_61px_24px_-10px_rgba(0,0,0,0.01),0px_34px_20px_-8px_rgba(0,0,0,0.05),0px_15px_15px_-6px_rgba(0,0,0,0.09),0px_4px_8px_-2px_rgba(0,0,0,0.10),0px_0px_0px_1px_rgba(0,0,0,0.08)] bg-accent'
+          : 'bg-[#F9FAFB]/[0.02] border border-border'
+      )}>
       <div className="flex flex-col gap-4 p-4">
         <p className="text-sm">
           <span className="font-semibold">{tier.name}</span>
@@ -45,11 +44,9 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
             <span
               className="h-6 inline-flex w-fit items-center justify-center px-2 rounded-full text-sm ml-2 font-semibold shadow-[0px_6px_6px_-3px_rgba(0,0,0,0.08),0px_3px_3px_-1.5px_rgba(0,0,0,0.08),0px_1px_1px_-0.5px_rgba(0,0,0,0.08),0px_0px_0px_1px_rgba(255,255,255,0.12)_inset,0px_1px_0px_0px_rgba(255,255,255,0.12)_inset]"
               style={{
-                background:
-                  "linear-gradient(90deg, #FF8A00 0%, #FF6F91 50%, #4F8CFF 100%)",
-                color: "white",
-              }}
-            >
+                background: 'linear-gradient(90deg, #FF8A00 0%, #FF6F91 50%, #4F8CFF 100%)',
+                color: 'white'
+              }}>
               Popular
             </span>
           )}
@@ -62,23 +59,22 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
                 className="flex items-baseline"
                 initial={{
                   opacity: 0,
-                  x: activeTab === "yearly" ? -10 : 10,
-                  filter: "blur(5px)",
+                  x: activeTab === 'yearly' ? -10 : 10,
+                  filter: 'blur(5px)'
                 }}
-                animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
+                animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
                 exit={{
                   opacity: 0,
-                  x: activeTab === "yearly" ? 10 : -10,
-                  filter: "blur(5px)",
+                  x: activeTab === 'yearly' ? 10 : -10,
+                  filter: 'blur(5px)'
                 }}
                 transition={{
                   duration: 0.15,
-                  ease: [0.4, 0, 0.2, 1],
-                }}
-              >
+                  ease: [0.4, 0, 0.2, 1]
+                }}>
                 <span className="text-4xl font-semibold">
-                  {tier.currency === "eur" ? "€" : "$"}
-                  {activeTab === "yearly"
+                  {tier.currency === 'eur' ? '€' : '$'}
+                  {activeTab === 'yearly'
                     ? Math.round((tier.yearlyPrice / 12) * 100) / 100
                     : tier.price}
                 </span>
@@ -88,11 +84,10 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
           </div>
           <div
             className={
-              activeTab === "yearly"
-                ? "text-xs text-muted-foreground font-normal min-h-[20px] mt-1"
-                : "text-xs text-muted-foreground font-normal min-h-[20px] mt-1 opacity-0 pointer-events-none"
-            }
-          >
+              activeTab === 'yearly'
+                ? 'text-xs text-muted-foreground font-normal min-h-[20px] mt-1'
+                : 'text-xs text-muted-foreground font-normal min-h-[20px] mt-1 opacity-0 pointer-events-none'
+            }>
             Billed as €{tier.yearlyPrice}/year
           </div>
         </div>
@@ -102,38 +97,31 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
       <div className="flex flex-col gap-2 p-4">
         <form
           action={(formData) => {
-            if (!user?.id) return;
+            if (!user?.id) return
 
-            checkoutAction(formData, user.id);
-          }}
-        >
+            checkoutAction(formData, user.id)
+          }}>
           <input
             type="hidden"
             name="priceId"
-            value={
-              activeTab === "yearly"
-                ? tier.stripePriceIdYearly
-                : tier.stripePriceIdMonthly
-            }
+            value={activeTab === 'yearly' ? tier.stripePriceIdYearly : tier.stripePriceIdMonthly}
           />
           <button
             className={cn(
-              "h-10 w-full flex items-center justify-center text-sm font-normal tracking-wide rounded-full px-4 transition-all ease-out mt-2 bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 cursor-pointer",
-              isSelected &&
-                "border-primary border bg-transparent hover:bg-background"
+              'h-10 w-full flex items-center justify-center text-sm font-normal tracking-wide rounded-full px-4 transition-all ease-out mt-2 bg-secondary text-secondary-foreground border border-border hover:bg-secondary/80 cursor-pointer',
+              isSelected && 'border-primary border bg-transparent hover:bg-background'
             )}
             formAction={(formData) => {
-              if (!user?.id) redirect(`${LOGIN}?ref=${DASHBOARD_PRICING}`);
+              if (!user?.id) redirect(`${LOGIN}?ref=${DASHBOARD_PRICING}`)
 
               if (isSelected) {
-                customerPortalAction(user.id);
+                customerPortalAction(user.id)
               } else {
-                checkoutAction(formData, user.id);
+                checkoutAction(formData, user.id)
               }
             }}
-            tabIndex={0}
-          >
-            {isSelected ? "Manage Subscription" : tier.buttonText}
+            tabIndex={0}>
+            {isSelected ? 'Manage Subscription' : tier.buttonText}
           </button>
         </form>
       </div>
@@ -145,10 +133,9 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
             <li key={feature} className="flex items-center gap-2">
               <div
                 className={cn(
-                  "size-5 rounded-full border border-primary/20 flex items-center justify-center",
-                  tier.isPopular && "bg-muted-foreground/40 border-border"
-                )}
-              >
+                  'size-5 rounded-full border border-primary/20 flex items-center justify-center',
+                  tier.isPopular && 'bg-muted-foreground/40 border-border'
+                )}>
                 <div className="size-5 flex items-center justify-center">
                   <CheckIcon className="size-3" />
                 </div>
@@ -159,7 +146,7 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
         </ul>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default PricingCard;
+export default PricingCard

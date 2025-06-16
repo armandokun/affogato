@@ -1,1 +1,1 @@
-export { default } from "./auth-submit-button";
+export { default } from './auth-submit-button'

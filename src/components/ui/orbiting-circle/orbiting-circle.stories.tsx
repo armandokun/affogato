@@ -1,18 +1,18 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import OrbitingCircles from "./orbiting-circle";
+import type { Meta, StoryObj } from '@storybook/react'
+import OrbitingCircles from './orbiting-circle'
 
 const meta: Meta<typeof OrbitingCircles> = {
-  title: "UI/OrbitingCircles",
+  title: 'UI/OrbitingCircles',
   component: OrbitingCircles,
-  tags: ["autodocs"],
-};
+  tags: ['autodocs']
+}
 
-export default meta;
-type Story = StoryObj<typeof OrbitingCircles>;
+export default meta
+type Story = StoryObj<typeof OrbitingCircles>
 
 export const Default: Story = {
   render: () => (
-    <div style={{ position: "relative", width: 400, height: 400 }}>
+    <div style={{ position: 'relative', width: 400, height: 400 }}>
       <OrbitingCircles>
         <span role="img" aria-label="star">
           ⭐️
@@ -28,5 +28,5 @@ export const Default: Story = {
         </span>
       </OrbitingCircles>
     </div>
-  ),
-};
+  )
+}

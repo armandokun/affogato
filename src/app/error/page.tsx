@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import Button from "@/components/ui/button";
+import Button from '@/components/ui/button'
 
 export default function ErrorPage() {
   return (
@@ -14,5 +14,5 @@ export default function ErrorPage() {
         </Link>
       </div>
     </div>
-  );
+  )
 }

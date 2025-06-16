@@ -1,1 +1,1 @@
-export { default } from "./llm-showcase";
+export { default } from './llm-showcase'

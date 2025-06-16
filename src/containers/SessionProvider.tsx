@@ -1,69 +1,57 @@
-"use client";
+'use client'
 
-import {
-  createContext,
-  useEffect,
-  useState,
-  ReactNode,
-  useContext,
-} from "react";
-import { User } from "@supabase/supabase-js";
+import { createContext, useEffect, useState, ReactNode, useContext } from 'react'
+import { User } from '@supabase/supabase-js'
 
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from '@/lib/supabase/client'
 
 export type SessionContextType = {
-  user: User | null;
-  loading: boolean;
-};
+  user: User | null
+  loading: boolean
+}
 
-const SessionContext = createContext<SessionContextType | undefined>(undefined);
+const SessionContext = createContext<SessionContextType | undefined>(undefined)
 
 const SessionProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let mounted = true;
+    let mounted = true
 
     const fetchUser = async () => {
-      const supabase = createClient();
-      const { data } = await supabase.auth.getUser();
+      const supabase = createClient()
+      const { data } = await supabase.auth.getUser()
 
       if (mounted) {
-        setUser(data.user ?? null);
-        setLoading(false);
+        setUser(data.user ?? null)
+        setLoading(false)
       }
 
-      const { data: listener } = supabase.auth.onAuthStateChange(
-        (_event, session) => {
-          setUser(session?.user ?? null);
-        }
-      );
+      const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+        setUser(session?.user ?? null)
+      })
 
       return () => {
-        mounted = false;
-        listener?.subscription.unsubscribe();
-      };
-    };
+        mounted = false
+        listener?.subscription.unsubscribe()
+      }
+    }
 
-    fetchUser();
-  }, []);
+    fetchUser()
+  }, [])
 
-  return (
-    <SessionContext.Provider value={{ user, loading }}>
-      {children}
-    </SessionContext.Provider>
-  );
-};
+  return <SessionContext.Provider value={{ user, loading }}>{children}</SessionContext.Provider>
+}
 
 const useSession = () => {
-  const context = useContext(SessionContext);
+  const context = useContext(SessionContext)
 
   if (!context) {
-    throw new Error("useSession must be used within a SessionProvider");
+    throw new Error('useSession must be used within a SessionProvider')
   }
 
-  return context;
-};
+  return context
+}
 
-export { SessionProvider, useSession };
+export { SessionProvider, useSession }

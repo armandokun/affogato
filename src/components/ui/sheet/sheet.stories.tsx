@@ -1,16 +1,16 @@
-import React, { useState } from "react";
-import { Sheet, SheetContent } from "./sheet";
-import Button from "../button";
+import React, { useState } from 'react'
+import { Sheet, SheetContent } from './sheet'
+import Button from '../button'
 
 const meta = {
-  title: "UI/Sheet",
-  component: Sheet,
-};
+  title: 'UI/Sheet',
+  component: Sheet
+}
 
-export default meta;
+export default meta
 
 export const Basic = () => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(false)
   return (
     <>
       <Button onClick={() => setOpen(true)}>Open Sheet</Button>
@@ -22,5 +22,5 @@ export const Basic = () => {
         </SheetContent>
       </Sheet>
     </>
-  );
-};
+  )
+}

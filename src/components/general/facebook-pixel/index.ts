@@ -1,1 +1,1 @@
-export { default } from "./facebook-pixel";
+export { default } from './facebook-pixel'

@@ -1,36 +1,33 @@
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
+import { redirect } from 'next/navigation'
+import { headers } from 'next/headers'
 
-import { getServerSession } from "@/lib/auth";
-import Navbar from "@/components/sections/navbar";
-import HeroSection from "@/components/sections/hero-section";
-import PricingSection from "@/components/sections/pricing-section";
-import LlmShowcase from "@/components/sections/llm-showcase";
-import FeatureSection from "@/components/sections/feature-section";
-import FAQ from "@/components/sections/faq-section";
-import { Footer } from "@/components/sections/footer-section/footer-section";
-import { DASHBOARD } from "@/constants/routes";
-import CtaSection from "@/components/sections/cta-section";
-import { getStripePrices } from "@/lib/payments/stripe";
-import { getStripeProducts } from "@/lib/payments/stripe";
-import ComparisonSection from "@/components/sections/comparison-section";
-import TestimonialSection from "@/components/sections/testimonial-section";
-import UspSection from "@/components/sections/usp-section";
-import { getCurrencyFromCountry } from "@/lib/payments/currency";
+import { getServerSession } from '@/lib/auth'
+import Navbar from '@/components/sections/navbar'
+import HeroSection from '@/components/sections/hero-section'
+import PricingSection from '@/components/sections/pricing-section'
+import LlmShowcase from '@/components/sections/llm-showcase'
+import FeatureSection from '@/components/sections/feature-section'
+import FAQ from '@/components/sections/faq-section'
+import { Footer } from '@/components/sections/footer-section/footer-section'
+import { DASHBOARD } from '@/constants/routes'
+import CtaSection from '@/components/sections/cta-section'
+import { getStripePrices } from '@/lib/payments/stripe'
+import { getStripeProducts } from '@/lib/payments/stripe'
+import ComparisonSection from '@/components/sections/comparison-section'
+import TestimonialSection from '@/components/sections/testimonial-section'
+import UspSection from '@/components/sections/usp-section'
+import { getCurrencyFromCountry } from '@/lib/payments/currency'
 
 const Home = async () => {
-  const user = await getServerSession();
+  const user = await getServerSession()
 
-  if (user) redirect(DASHBOARD);
+  if (user) redirect(DASHBOARD)
 
-  const [prices, products] = await Promise.all([
-    getStripePrices(),
-    getStripeProducts(),
-  ]);
+  const [prices, products] = await Promise.all([getStripePrices(), getStripeProducts()])
 
-  const headersList = await headers();
-  const countryCode = headersList.get("x-vercel-ip-country") || "US";
-  const currency = getCurrencyFromCountry(countryCode);
+  const headersList = await headers()
+  const countryCode = headersList.get('x-vercel-ip-country') || 'US'
+  const currency = getCurrencyFromCountry(countryCode)
 
   return (
     <>
@@ -43,11 +40,7 @@ const Home = async () => {
             <ComparisonSection currency={currency} />
             <FeatureSection />
             <UspSection />
-            <PricingSection
-              prices={prices}
-              products={products}
-              currency={currency}
-            />
+            <PricingSection prices={prices} products={products} currency={currency} />
             <TestimonialSection />
             <FAQ />
             <CtaSection />
@@ -56,7 +49,7 @@ const Home = async () => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

@@ -1,29 +1,29 @@
-import { FormEvent, useCallback, useRef, useState } from "react";
-import { ArrowUp, Paperclip, Square } from "lucide-react";
-import { UseChatHelpers } from "@ai-sdk/react";
-import { Attachment } from "ai";
+import { FormEvent, useCallback, useRef, useState } from 'react'
+import { ArrowUp, Paperclip, Square } from 'lucide-react'
+import { UseChatHelpers } from '@ai-sdk/react'
+import { Attachment } from 'ai'
 
-import Button from "@/components/ui/button";
-import { toast } from "@/components/ui/toast/toast";
-import { LanguageModelCode, modelDropdownOptions } from "@/lib/ai/providers";
+import Button from '@/components/ui/button'
+import { toast } from '@/components/ui/toast/toast'
+import { LanguageModelCode, modelDropdownOptions } from '@/lib/ai/providers'
 
-import Icons from "../icons";
-import ComposerInput from "./composer-input";
-import PreviewAttachment from "../preview-attachment";
-import GlobalDragDrop from "./global-drag-drop";
-import ModelDropdown from "./model-dropdown";
+import Icons from '../icons'
+import ComposerInput from './composer-input'
+import PreviewAttachment from '../preview-attachment'
+import GlobalDragDrop from './global-drag-drop'
+import ModelDropdown from './model-dropdown'
 
 type Props = {
-  chatId: string;
-  input: UseChatHelpers["input"];
-  setInput: UseChatHelpers["setInput"];
-  handleSubmit: UseChatHelpers["handleSubmit"];
-  status: UseChatHelpers["status"];
-  stop: UseChatHelpers["stop"];
-  hasMessages: boolean;
-  selectedModelCode: LanguageModelCode;
-  setSelectedModel: (modelCode: LanguageModelCode) => void;
-};
+  chatId: string
+  input: UseChatHelpers['input']
+  setInput: UseChatHelpers['setInput']
+  handleSubmit: UseChatHelpers['handleSubmit']
+  status: UseChatHelpers['status']
+  stop: UseChatHelpers['stop']
+  hasMessages: boolean
+  selectedModelCode: LanguageModelCode
+  setSelectedModel: (modelCode: LanguageModelCode) => void
+}
 
 const Composer = ({
   chatId,
@@ -34,108 +34,104 @@ const Composer = ({
   setSelectedModel,
   status,
   handleSubmit,
-  stop,
+  stop
 }: Props) => {
-  const [attachments, setAttachments] = useState<Attachment[]>([]);
-  const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
+  const [attachments, setAttachments] = useState<Attachment[]>([])
+  const [uploadQueue, setUploadQueue] = useState<Array<string>>([])
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const uploadFile = useCallback(async (file: File) => {
-    const formData = new FormData();
-    formData.append("file", file);
+    const formData = new FormData()
+    formData.append('file', file)
 
     try {
-      const response = await fetch("/api/files/upload", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch('/api/files/upload', {
+        method: 'POST',
+        body: formData
+      })
 
       if (response.ok) {
-        const data = await response.json();
-        const { url, name, contentType } = data;
+        const data = await response.json()
+        const { url, name, contentType } = data
 
         return {
           url,
           name,
-          contentType,
-        };
+          contentType
+        }
       }
-      const { error } = await response.json();
+      const { error } = await response.json()
       toast({
-        type: "error",
-        description: error,
-      });
+        type: 'error',
+        description: error
+      })
     } catch {
       toast({
-        type: "error",
-        description: "Failed to upload file, please try again!",
-      });
+        type: 'error',
+        description: 'Failed to upload file, please try again!'
+      })
     }
-  }, []);
+  }, [])
 
   const handleFiles = useCallback(
     async (files: FileList | File[]) => {
-      const fileArray = Array.from(files);
-      setUploadQueue(fileArray.map((file) => file.name));
+      const fileArray = Array.from(files)
+      setUploadQueue(fileArray.map((file) => file.name))
       try {
-        const uploadPromises = fileArray.map((file) => uploadFile(file));
-        const uploadedAttachments = await Promise.all(uploadPromises);
+        const uploadPromises = fileArray.map((file) => uploadFile(file))
+        const uploadedAttachments = await Promise.all(uploadPromises)
         const successfullyUploadedAttachments = uploadedAttachments.filter(
           (attachment) => attachment !== undefined
-        );
+        )
         setAttachments((currentAttachments) => [
           ...currentAttachments,
-          ...successfullyUploadedAttachments,
-        ]);
+          ...successfullyUploadedAttachments
+        ])
       } catch (error) {
-        console.error("Error uploading files!", error);
+        console.error('Error uploading files!', error)
       } finally {
-        setUploadQueue([]);
+        setUploadQueue([])
       }
     },
     [uploadFile]
-  );
+  )
 
   const submitForm = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
+      event.preventDefault()
 
-      if (!input.trim()) return;
+      if (!input.trim()) return
 
-      if (status === "streaming") stop();
+      if (status === 'streaming') stop()
 
-      window.history.replaceState({}, "", `/dashboard/${chatId}`);
+      window.history.replaceState({}, '', `/dashboard/${chatId}`)
 
       handleSubmit(undefined, {
-        experimental_attachments: attachments,
-      });
+        experimental_attachments: attachments
+      })
 
-      setAttachments([]);
+      setAttachments([])
     },
     [input, status, stop, chatId, handleSubmit, attachments]
-  );
+  )
 
   const handleAttachmentRemove = useCallback((attachment: Attachment) => {
     setAttachments((current) =>
-      current.filter(
-        (a) => a.url !== attachment.url || a.name !== attachment.name
-      )
-    );
-  }, []);
+      current.filter((a) => a.url !== attachment.url || a.name !== attachment.name)
+    )
+  }, [])
 
   return (
     <>
       <GlobalDragDrop onFilesDrop={handleFiles} />
       <form
         onSubmit={submitForm}
-        className="w-[90%] max-w-2xl bg-transparent backdrop-blur-xl border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors z-15"
-      >
+        className="w-[90%] max-w-2xl bg-transparent backdrop-blur-xl border border-border focus-within:border-muted-foreground rounded-lg shadow-lg p-4 absolute bottom-6 transition-colors z-15">
         {(attachments.length > 0 || uploadQueue.length > 0) && (
           <div
             data-testid="attachments-preview"
-            className="flex flex-row gap-2 overflow-x-scroll items-end"
-          >
+            className="flex flex-row gap-2 overflow-x-scroll items-end">
             {attachments.map((attachment) => (
               <PreviewAttachment
                 key={attachment.url || attachment.name}
@@ -148,9 +144,9 @@ const Composer = ({
               <PreviewAttachment
                 key={filename}
                 attachment={{
-                  url: "",
+                  url: '',
                   name: filename,
-                  contentType: "",
+                  contentType: ''
                 }}
                 isUploading={true}
               />
@@ -164,7 +160,7 @@ const Composer = ({
           multiple
           onChange={(event) => {
             if (event.target.files) {
-              handleFiles(event.target.files);
+              handleFiles(event.target.files)
             }
           }}
           tabIndex={-1}
@@ -194,26 +190,15 @@ const Composer = ({
               type="button"
               tabIndex={-1}
               onClick={() => fileInputRef.current?.click()}
-              disabled={status !== "ready"}
-            >
+              disabled={status !== 'ready'}>
               <Paperclip className="size-5" />
             </Button>
-            {status === "streaming" || status === "submitted" ? (
-              <Button
-                size="icon"
-                className="rounded-full"
-                type="button"
-                onClick={stop}
-              >
+            {status === 'streaming' || status === 'submitted' ? (
+              <Button size="icon" className="rounded-full" type="button" onClick={stop}>
                 <Square className="size-4" fill="black" />
               </Button>
             ) : (
-              <Button
-                size="icon"
-                className="rounded-full"
-                type="submit"
-                disabled={!input.trim()}
-              >
+              <Button size="icon" className="rounded-full" type="submit" disabled={!input.trim()}>
                 <ArrowUp className="size-5" />
               </Button>
             )}
@@ -221,7 +206,7 @@ const Composer = ({
         </div>
       </form>
     </>
-  );
-};
+  )
+}
 
-export default Composer;
+export default Composer

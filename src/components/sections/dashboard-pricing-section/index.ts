@@ -1,1 +1,1 @@
-export { default } from "./dashboard-pricing-section";
+export { default } from './dashboard-pricing-section'

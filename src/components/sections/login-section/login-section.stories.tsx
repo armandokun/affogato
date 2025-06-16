@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import LoginPage from "./login-section";
+import type { Meta, StoryObj } from '@storybook/react'
+import LoginPage from './login-section'
 
 const meta: Meta<typeof LoginPage> = {
-  title: "Sections/LoginSection",
+  title: 'Sections/LoginSection',
   component: LoginPage,
-  tags: ["autodocs"],
-};
+  tags: ['autodocs']
+}
 
-export default meta;
-type Story = StoryObj<typeof LoginPage>;
+export default meta
+type Story = StoryObj<typeof LoginPage>
 
-export const Default: Story = {};
+export const Default: Story = {}

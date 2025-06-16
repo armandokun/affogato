@@ -1,1 +1,1 @@
-export { default } from "./composer";
+export { default } from './composer'

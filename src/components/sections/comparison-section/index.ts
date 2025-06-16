@@ -1,1 +1,1 @@
-export { default } from "./comparison-section";
+export { default } from './comparison-section'

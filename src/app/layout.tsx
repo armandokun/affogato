@@ -1,47 +1,47 @@
-import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
-import { TooltipProvider } from "@radix-ui/react-tooltip";
-import { Toaster } from "sonner";
-import { Analytics } from "@vercel/analytics/next";
+import type { Metadata, Viewport } from 'next'
+import { Geist, Geist_Mono } from 'next/font/google'
+import Script from 'next/script'
+import { TooltipProvider } from '@radix-ui/react-tooltip'
+import { Toaster } from 'sonner'
+import { Analytics } from '@vercel/analytics/next'
 
-import { siteConfig } from "@/lib/site";
-import { SessionProvider } from "@/containers/SessionProvider";
-import PixelTracker from "@/components/general/facebook-pixel";
+import { siteConfig } from '@/lib/site'
+import { SessionProvider } from '@/containers/SessionProvider'
+import PixelTracker from '@/components/general/facebook-pixel'
 
-import "./globals.css";
+import './globals.css'
 
 const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-sans',
+  subsets: ['latin']
+})
 
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+  variable: '--font-geist-mono',
+  subsets: ['latin']
+})
 
 export const viewport: Viewport = {
-  themeColor: "black",
-};
+  themeColor: 'black'
+}
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
   title: {
     default: siteConfig.name,
-    template: `%s - ${siteConfig.name}`,
+    template: `%s - ${siteConfig.name}`
   },
-  description: siteConfig.description,
-};
+  description: siteConfig.description
+}
 
 export default function RootLayout({
-  children,
+  children
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ReactNode
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {process.env.NODE_ENV === "development" && (
+      {process.env.NODE_ENV === 'development' && (
         <head>
           <Script src="https://unpkg.com/react-scan/dist/auto.global.js" />
           <script
@@ -58,28 +58,24 @@ export default function RootLayout({
               'https://connect.facebook.net/en_US/fbevents.js');
               fbq('init', '${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}');
               fbq('track', 'PageView');
-            `,
+            `
             }}
           />
           <noscript>
             <img
               height="1"
               width="1"
-              style={{ display: "none" }}
+              style={{ display: 'none' }}
               src={`https://www.facebook.com/tr?id=${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}&ev=
             PageView&noscript=1`}
             />
           </noscript>
-          <meta
-            name="facebook-domain-verification"
-            content="nge0o5s39gpmxaegqsdcjbmv6v81pf"
-          />
+          <meta name="facebook-domain-verification" content="nge0o5s39gpmxaegqsdcjbmv6v81pf" />
         </head>
       )}
       <Analytics />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-black min-h-screen`}
-      >
+        className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-black min-h-screen`}>
         <PixelTracker />
         <SessionProvider>
           <TooltipProvider>
@@ -89,5 +85,5 @@ export default function RootLayout({
         </SessionProvider>
       </body>
     </html>
-  );
+  )
 }

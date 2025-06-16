@@ -1,1 +1,1 @@
-export { default } from "./testimonial-scroll";
+export { default } from './testimonial-scroll'

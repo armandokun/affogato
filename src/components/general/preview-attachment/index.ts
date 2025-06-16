@@ -1,1 +1,1 @@
-export { default } from "./preview-attachment";
+export { default } from './preview-attachment'

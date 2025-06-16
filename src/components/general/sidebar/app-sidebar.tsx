@@ -1,12 +1,12 @@
-"use client";
+'use client'
 
-import { ComponentProps } from "react";
-import { LockIcon, SquarePen } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { ComponentProps } from 'react'
+import { LockIcon, SquarePen } from 'lucide-react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
-import { PlanName } from "@/constants/user";
-import { useSubscription } from "@/hooks/use-subscription";
+import { PlanName } from '@/constants/user'
+import { useSubscription } from '@/hooks/use-subscription'
 
 import {
   Sidebar,
@@ -16,17 +16,17 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarTrigger,
-  SidebarMenuButton,
-} from "./sidebar";
-import Icons from "../icons";
-import { NavUser } from "./nav-user";
-import NavHistory from "./nav-history";
+  SidebarMenuButton
+} from './sidebar'
+import Icons from '../icons'
+import { NavUser } from './nav-user'
+import NavHistory from './nav-history'
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
-  const router = useRouter();
-  const { currentPlan } = useSubscription();
+  const router = useRouter()
+  const { currentPlan } = useSubscription()
 
-  const disabled = currentPlan?.toLocaleLowerCase() === PlanName.FREE;
+  const disabled = currentPlan?.toLocaleLowerCase() === PlanName.FREE
 
   return (
     <Sidebar variant="floating" {...props}>
@@ -49,11 +49,10 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton
               className="flex flex-row justify-between"
               onClick={() => {
-                if (disabled) return;
+                if (disabled) return
 
-                router.push("/dashboard");
-              }}
-            >
+                router.push('/dashboard')
+              }}>
               <div className="flex items-center gap-2">
                 <SquarePen className="size-4" />
                 <span className="text-sm font-medium">New Chat</span>
@@ -73,5 +72,5 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         <NavUser />
       </SidebarFooter>
     </Sidebar>
-  );
+  )
 }

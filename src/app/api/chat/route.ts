@@ -4,14 +4,14 @@ import {
   appendResponseMessages,
   createDataStreamResponse,
   smoothStream,
-  streamText,
-} from "ai";
-import { NextResponse } from "next/server";
-import { geolocation } from '@vercel/functions';
+  streamText
+} from 'ai'
+import { NextResponse } from 'next/server'
+import { geolocation } from '@vercel/functions'
 
-import { getServerSession } from "@/lib/auth";
-import { LanguageModelCode, myProvider } from "@/lib/ai/providers";
-import { systemPrompt } from "@/lib/ai/prompts";
+import { getServerSession } from '@/lib/auth'
+import { LanguageModelCode, myProvider } from '@/lib/ai/providers'
+import { systemPrompt } from '@/lib/ai/prompts'
 import {
   getChatById,
   getMessageCountByUserId,
@@ -19,93 +19,87 @@ import {
   getPlanNameByUserId,
   saveChat,
   saveMessage,
-  updateChatTitle,
-} from "@/lib/db/queries";
-import { ChatSDKError, errorHandler } from "@/lib/errors";
-import { generateTitleFromUserMessage } from "@/app/dashboard/actions";
-import { ChatVisibility } from "@/constants/chat";
-import { getTrailingMessageId } from "@/lib/utils";
-import { webSearch } from "@/lib/ai/tools";
-import { entitlementsByPlanName, PlanName } from "@/constants/user";
+  updateChatTitle
+} from '@/lib/db/queries'
+import { ChatSDKError, errorHandler } from '@/lib/errors'
+import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
+import { ChatVisibility } from '@/constants/chat'
+import { getTrailingMessageId } from '@/lib/utils'
+import { webSearch } from '@/lib/ai/tools'
+import { entitlementsByPlanName, PlanName } from '@/constants/user'
 
 export async function POST(request: Request) {
   const {
     id,
     message,
     selectedVisibilityType,
-    selectedChatModelCode,
+    selectedChatModelCode
   }: {
-    id: string;
-    message: UIMessage;
-    selectedChatModelCode: LanguageModelCode;
-    selectedVisibilityType: ChatVisibility;
-  } = await request.json();
+    id: string
+    message: UIMessage
+    selectedChatModelCode: LanguageModelCode
+    selectedVisibilityType: ChatVisibility
+  } = await request.json()
 
   try {
-    const user = await getServerSession();
+    const user = await getServerSession()
 
     if (!user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-      });
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401
+      })
     }
 
-    const chatId = id;
+    const chatId = id
 
-    const planNamePromise = getPlanNameByUserId({ userId: user.id });
+    const planNamePromise = getPlanNameByUserId({ userId: user.id })
     const messageCountPromise = getMessageCountByUserId({
       id: user.id,
-      differenceInHours: 24,
-    });
-    const chatPromise = getChatById({ id: chatId });
-    const previousMessagesPromise = getMessagesByChatId({ id: chatId });
+      differenceInHours: 24
+    })
+    const chatPromise = getChatById({ id: chatId })
+    const previousMessagesPromise = getMessagesByChatId({ id: chatId })
 
-    const [
-      planName,
-      messageCount,
-      chat,
-      previousMessages,
-    ] = await Promise.all([
+    const [planName, messageCount, chat, previousMessages] = await Promise.all([
       planNamePromise,
       messageCountPromise,
       chatPromise,
-      previousMessagesPromise,
-    ]);
+      previousMessagesPromise
+    ])
 
-    const formattedPlanName = planName?.toLowerCase() as PlanName;
+    const formattedPlanName = planName?.toLowerCase() as PlanName
 
     if (messageCount > entitlementsByPlanName[formattedPlanName].maxMessagesPerDay) {
-      return new ChatSDKError("rate_limit:chat").toResponse();
+      return new ChatSDKError('rate_limit:chat').toResponse()
     }
 
     if (!chat) {
       await saveChat({
         id: chatId,
-        title: "New Chat",
-        visibility: selectedVisibilityType,
-      });
+        title: 'New Chat',
+        visibility: selectedVisibilityType
+      })
 
       generateTitleFromUserMessage({ message })
         .then((title) => updateChatTitle({ id: chatId, title }))
-        .catch(() => new ChatSDKError("bad_request:database", "Failed to generate chat title"));
+        .catch(() => new ChatSDKError('bad_request:database', 'Failed to generate chat title'))
     } else {
       if (chat.user_id !== user.id) {
-        return new ChatSDKError("forbidden:chat").toResponse();
+        return new ChatSDKError('forbidden:chat').toResponse()
       }
     }
 
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,
-      experimental_attachments: message.attachments || [],
-    }));
+      experimental_attachments: message.attachments || []
+    }))
 
     const messages = appendClientMessage({
       messages: transformedPreviousMessages,
-      message,
-    });
+      message
+    })
 
-    const lastSelectedModelCode =
-      selectedChatModelCode || LanguageModelCode.OPENAI_CHAT_MODEL_FAST;
+    const lastSelectedModelCode = selectedChatModelCode || LanguageModelCode.OPENAI_CHAT_MODEL_FAST
 
     saveMessage({
       chatId,
@@ -116,63 +110,66 @@ export async function POST(request: Request) {
         experimental_attachments: message.experimental_attachments ?? [],
         createdAt: new Date(),
         content: message.content,
-        model_code: lastSelectedModelCode,
-      },
-    });
+        model_code: lastSelectedModelCode
+      }
+    })
 
-    const { longitude, latitude, city, country } = geolocation(request);
+    const { longitude, latitude, city, country } = geolocation(request)
 
     const requestHints = {
       longitude,
       latitude,
       city,
-      country,
-    };
+      country
+    }
 
     return createDataStreamResponse({
       execute: (dataStream) => {
         dataStream.writeMessageAnnotation({
-          model_code: lastSelectedModelCode,
-        });
+          model_code: lastSelectedModelCode
+        })
 
         const result = streamText({
           model: myProvider.languageModel(lastSelectedModelCode),
-          system: systemPrompt({ selectedChatModel: lastSelectedModelCode, requestHints }),
+          system: systemPrompt({
+            selectedChatModel: lastSelectedModelCode,
+            requestHints
+          }),
           messages,
           providerOptions: {
-            ...(lastSelectedModelCode === LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING ? {
-            anthropic: {
-                thinking: { type: "enabled", budgetTokens: 10000 },
-              },
-            } : {}),
+            ...(lastSelectedModelCode === LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING
+              ? {
+                  anthropic: {
+                    thinking: { type: 'enabled', budgetTokens: 10000 }
+                  }
+                }
+              : {})
           },
           headers: {
-            'anthropic-beta': 'interleaved-thinking-2025-05-14',
+            'anthropic-beta': 'interleaved-thinking-2025-05-14'
           },
           temperature: 0.5,
           topP: 0.9,
           maxSteps: 5,
-          experimental_transform: smoothStream({ chunking: "word" }),
+          experimental_transform: smoothStream({ chunking: 'word' }),
           tools: {
-            webSearch,
+            webSearch
           },
           onFinish: async ({ response }) => {
             if (user.id) {
               try {
                 const assistantId = getTrailingMessageId({
-                  messages: response.messages.filter(
-                    (message) => message.role === "assistant"
-                  ),
-                });
+                  messages: response.messages.filter((message) => message.role === 'assistant')
+                })
 
                 if (!assistantId) {
-                  throw new Error("No assistant message found!");
+                  throw new Error('No assistant message found!')
                 }
 
                 const [, assistantMessage] = appendResponseMessages({
                   messages: [message],
-                  responseMessages: response.messages,
-                });
+                  responseMessages: response.messages
+                })
 
                 await saveMessage({
                   chatId,
@@ -180,26 +177,25 @@ export async function POST(request: Request) {
                     id: assistantId,
                     role: assistantMessage.role,
                     parts: assistantMessage.parts,
-                    experimental_attachments:
-                      assistantMessage.experimental_attachments ?? [],
+                    experimental_attachments: assistantMessage.experimental_attachments ?? [],
                     content: assistantMessage.content,
-                    model_code: lastSelectedModelCode,
-                  },
-                });
+                    model_code: lastSelectedModelCode
+                  }
+                })
               } catch (error) {
-                console.error("Failed to save message", error);
+                console.error('Failed to save message', error)
               }
             }
-          },
-        });
+          }
+        })
 
         result.mergeIntoDataStream(dataStream, {
-          sendReasoning: true,
-        });
+          sendReasoning: true
+        })
       },
       onError: errorHandler
-    });
+    })
   } catch (error) {
-    return NextResponse.json({ error }, { status: 400 });
+    return NextResponse.json({ error }, { status: 400 })
   }
 }

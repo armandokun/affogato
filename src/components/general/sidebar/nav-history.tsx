@@ -1,33 +1,31 @@
-import React from "react";
-import Link from "next/link";
-import { MessagesSquare } from "lucide-react";
+import React from 'react'
+import Link from 'next/link'
+import { MessagesSquare } from 'lucide-react'
 
-import useLibraryItems from "@/hooks/use-library-items";
+import useLibraryItems from '@/hooks/use-library-items'
 
-import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from "./sidebar";
+import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from './sidebar'
 
 const ChatListItem = ({ chat }: { chat: { id: string; title: string } }) => {
   return (
     <SidebarMenuItem key={chat.id}>
       <SidebarMenuButton asChild size="sm">
         <Link href={`/dashboard/${chat.id}`} className="w-full">
-          <span className="truncate text-xs">
-            {chat.title || "Untitled Chat"}
-          </span>
+          <span className="truncate text-xs">{chat.title || 'Untitled Chat'}</span>
         </Link>
       </SidebarMenuButton>
     </SidebarMenuItem>
-  );
-};
+  )
+}
 
 const ChatSection = ({
   label,
-  chats,
+  chats
 }: {
-  label: string;
-  chats: { id: string; title: string }[];
+  label: string
+  chats: { id: string; title: string }[]
 }) => {
-  if (chats.length === 0) return null;
+  if (chats.length === 0) return null
   return (
     <>
       <SidebarMenuItem>
@@ -39,43 +37,40 @@ const ChatSection = ({
         <ChatListItem key={chat.id} chat={chat} />
       ))}
     </>
-  );
-};
+  )
+}
 
 const NavHistory = () => {
-  const { items: chats, loading } = useLibraryItems();
+  const { items: chats, loading } = useLibraryItems()
 
-  const today: typeof chats = [];
-  const last7Days: typeof chats = [];
-  const last30Days: typeof chats = [];
-  const now = new Date();
+  const today: typeof chats = []
+  const last7Days: typeof chats = []
+  const last30Days: typeof chats = []
+  const now = new Date()
 
   chats.forEach((chat) => {
-    const created = new Date(chat.created_at);
-    const diffMs = now.getTime() - created.getTime();
-    const diffDays = diffMs / (1000 * 60 * 60 * 24);
+    const created = new Date(chat.created_at)
+    const diffMs = now.getTime() - created.getTime()
+    const diffDays = diffMs / (1000 * 60 * 60 * 24)
 
     if (
       created.getDate() === now.getDate() &&
       created.getMonth() === now.getMonth() &&
       created.getFullYear() === now.getFullYear()
     ) {
-      today.push(chat);
+      today.push(chat)
     } else if (diffDays <= 7) {
-      last7Days.push(chat);
+      last7Days.push(chat)
     } else if (diffDays <= 30) {
-      last30Days.push(chat);
+      last30Days.push(chat)
     }
-  });
+  })
 
   return (
     <SidebarMenu
       className={
-        !loading && chats.length === 0
-          ? "flex flex-1 items-center justify-center"
-          : undefined
-      }
-    >
+        !loading && chats.length === 0 ? 'flex flex-1 items-center justify-center' : undefined
+      }>
       {loading ? (
         <SidebarMenuItem>
           <span className="text-xs text-muted-foreground p-2">Loading...</span>
@@ -99,7 +94,7 @@ const NavHistory = () => {
         </>
       )}
     </SidebarMenu>
-  );
-};
+  )
+}
 
-export default NavHistory;
+export default NavHistory

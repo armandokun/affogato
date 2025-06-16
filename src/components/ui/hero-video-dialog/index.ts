@@ -1,1 +1,1 @@
-export { default } from "./hero-video-dialog";
+export { default } from './hero-video-dialog'

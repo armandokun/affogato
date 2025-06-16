@@ -1,6 +1,6 @@
-import Link from "next/link";
+import Link from 'next/link'
 
-import Button from "@/components/ui/button";
+import Button from '@/components/ui/button'
 
 const CheckoutSuccessPage = () => {
   return (
@@ -11,8 +11,7 @@ const CheckoutSuccessPage = () => {
           height="64"
           viewBox="0 0 64 64"
           fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
+          xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient
               id="logo-gradient"
@@ -20,8 +19,7 @@ const CheckoutSuccessPage = () => {
               y1="0"
               x2="64"
               y2="64"
-              gradientUnits="userSpaceOnUse"
-            >
+              gradientUnits="userSpaceOnUse">
               <stop stopColor="#FF8A00" />
               <stop offset="0.5" stopColor="#FF6F91" />
               <stop offset="1" stopColor="#4F8CFF" />
@@ -37,18 +35,16 @@ const CheckoutSuccessPage = () => {
           />
         </svg>
       </div>
-      <h1 className="text-2xl font-semibold mb-2 text-center">
-        Thank you for subscribing!
-      </h1>
+      <h1 className="text-2xl font-semibold mb-2 text-center">Thank you for subscribing!</h1>
       <p className="text-muted-foreground mb-6 text-center max-w-md">
-        Your payment was successful and your subscription is now active. You can
-        now enjoy all paid plan features.
+        Your payment was successful and your subscription is now active. You can now enjoy all paid
+        plan features.
       </p>
       <Button asChild className="rounded-full">
         <Link href="/dashboard">Go to Dashboard</Link>
       </Button>
     </div>
-  );
-};
+  )
+}
 
-export default CheckoutSuccessPage;
+export default CheckoutSuccessPage

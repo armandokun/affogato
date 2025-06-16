@@ -1,20 +1,20 @@
-"use client";
+'use client'
 
-import { useEffect } from "react";
+import { useEffect } from 'react'
 
 const PixelTracker = () => {
   useEffect(() => {
-    const pixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID;
+    const pixelId = process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID
 
-    if (!pixelId) return;
+    if (!pixelId) return
 
-    import("react-facebook-pixel").then((ReactPixel) => {
-      ReactPixel.default.init(pixelId);
-      ReactPixel.default.pageView();
-    });
-  }, []);
+    import('react-facebook-pixel').then((ReactPixel) => {
+      ReactPixel.default.init(pixelId)
+      ReactPixel.default.pageView()
+    })
+  }, [])
 
-  return null;
-};
+  return null
+}
 
-export default PixelTracker;
+export default PixelTracker

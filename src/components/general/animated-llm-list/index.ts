@@ -1,1 +1,1 @@
-export { default } from "./animated-llm-list";
+export { default } from './animated-llm-list'

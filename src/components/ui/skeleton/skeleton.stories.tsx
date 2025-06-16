@@ -1,13 +1,13 @@
-import React from "react";
-import Skeleton from "./skeleton";
+import React from 'react'
+import Skeleton from './skeleton'
 
 const meta = {
-  title: "UI/Skeleton",
-  component: Skeleton,
-};
+  title: 'UI/Skeleton',
+  component: Skeleton
+}
 
-export default meta;
+export default meta
 
-export const Basic = () => <Skeleton />;
+export const Basic = () => <Skeleton />
 
-export const CustomSize = () => <Skeleton style={{ width: 200, height: 32 }} />;
+export const CustomSize = () => <Skeleton style={{ width: 200, height: 32 }} />

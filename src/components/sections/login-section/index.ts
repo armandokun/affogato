@@ -1,1 +1,1 @@
-export { default } from "./login-section";
+export { default } from './login-section'

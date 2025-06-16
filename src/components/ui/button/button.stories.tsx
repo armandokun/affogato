@@ -1,59 +1,52 @@
-import type { Meta, StoryObj } from "@storybook/react";
-import { Button } from "./button";
-import React from "react";
+import type { Meta, StoryObj } from '@storybook/react'
+import { Button } from './button'
+import React from 'react'
 
 const meta: Meta<typeof Button> = {
-  title: "UI/Button",
+  title: 'UI/Button',
   component: Button,
-  tags: ["autodocs"],
+  tags: ['autodocs'],
   argTypes: {
     variant: {
-      control: "select",
-      options: [
-        "default",
-        "destructive",
-        "outline",
-        "secondary",
-        "ghost",
-        "link",
-      ],
+      control: 'select',
+      options: ['default', 'destructive', 'outline', 'secondary', 'ghost', 'link']
     },
     size: {
-      control: "select",
-      options: ["default", "sm", "lg", "icon"],
+      control: 'select',
+      options: ['default', 'sm', 'lg', 'icon']
     },
-    children: { control: "text" },
+    children: { control: 'text' }
   },
   args: {
-    children: "Button",
-  },
-};
+    children: 'Button'
+  }
+}
 
-export default meta;
-type Story = StoryObj<typeof Button>;
+export default meta
+type Story = StoryObj<typeof Button>
 
-export const Default: Story = {};
+export const Default: Story = {}
 export const Destructive: Story = {
-  args: { variant: "destructive", children: "Destructive" },
-};
+  args: { variant: 'destructive', children: 'Destructive' }
+}
 export const Outline: Story = {
-  args: { variant: "outline", children: "Outline" },
-};
+  args: { variant: 'outline', children: 'Outline' }
+}
 export const Secondary: Story = {
-  args: { variant: "secondary", children: "Secondary" },
-};
+  args: { variant: 'secondary', children: 'Secondary' }
+}
 export const Ghost: Story = {
-  args: { variant: "ghost", children: "Ghost" },
-};
+  args: { variant: 'ghost', children: 'Ghost' }
+}
 export const Link: Story = {
-  args: { variant: "link", children: "Link" },
-};
+  args: { variant: 'link', children: 'Link' }
+}
 export const Small: Story = {
-  args: { size: "sm", children: "Small" },
-};
+  args: { size: 'sm', children: 'Small' }
+}
 export const Large: Story = {
-  args: { size: "lg", children: "Large" },
-};
+  args: { size: 'lg', children: 'Large' }
+}
 export const Icon: Story = {
-  args: { size: "icon", children: <span>🔔</span> },
-};
+  args: { size: 'icon', children: <span>🔔</span> }
+}

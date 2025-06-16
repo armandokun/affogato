@@ -1,5 +1,5 @@
-const DASHBOARD = "/dashboard";
-const LOGIN = "/login";
-const DASHBOARD_PRICING = "/dashboard/pricing";
+const DASHBOARD = '/dashboard'
+const LOGIN = '/login'
+const DASHBOARD_PRICING = '/dashboard/pricing'
 
-export { DASHBOARD, LOGIN, DASHBOARD_PRICING };
+export { DASHBOARD, LOGIN, DASHBOARD_PRICING }
