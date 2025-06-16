@@ -145,7 +145,7 @@ const ComparisonSection = ({ currency }: { currency: "usd" | "eur" }) => {
 
         <div className="flex items-center justify-center mt-10">
           <Link
-            href={LOGIN}
+            href="#pricing"
             className="bg-secondary h-9 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-secondary-foreground w-fit px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-secondary/80 transition-all ease-out active:scale-95"
           >
             Buy Now
