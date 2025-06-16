@@ -38,7 +38,7 @@ const ComparisonSection = ({ currency }: { currency: "usd" | "eur" }) => {
           use, not the subscription markup, and pass those savings to you.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto mt-10">
-          <Card tilt className="rounded-xl">
+          <Card tilt className="rounded-xl border border-red-500">
             <div className="p-6 flex flex-col h-full w-full justify-between items-center">
               <div className="w-full">
                 <h3 className="text-xl font-medium mb-4 text-center">
@@ -81,7 +81,7 @@ const ComparisonSection = ({ currency }: { currency: "usd" | "eur" }) => {
               </p>
             </div>
           </Card>
-          <Card tilt className="rounded-xl">
+          <Card tilt className="rounded-xl border border-green-500">
             <div className="p-6 flex flex-col h-full w-full justify-between items-center">
               <div className="w-full">
                 <div className="flex items-center flex-row gap-1.5 justify-center mb-4">
