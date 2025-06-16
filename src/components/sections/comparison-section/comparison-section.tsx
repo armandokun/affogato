@@ -76,26 +76,57 @@ const ComparisonSection = ({ currency }: { currency: "usd" | "eur" }) => {
           </Card>
           <Card tilt className="rounded-xl">
             <div className="p-6 flex flex-col h-full w-full justify-between items-center">
-              <div className="flex items-center flex-row gap-1.5 justify-center mb-4">
-                <Icons.logo className="size-7" />
-                <h3 className="text-xl font-semibold text-primary text-center">
-                  Affogato
-                </h3>
-              </div>
-              <div className="w-full flex flex-col items-center justify-center">
-                <div className="flex items-end gap-2 mb-2 justify-center">
-                  <span className="text-3xl md:text-4xl font-semibold">
-                    {currency === "eur" ? "€" : "$"}15
-                  </span>
-                  <span className="text-base md:text-lg text-muted-foreground">
-                    /mo
-                  </span>
+              <div className="w-full">
+                <div className="flex items-center flex-row gap-1.5 justify-center mb-4">
+                  <Icons.logo className="size-7" />
+                  <h3 className="text-xl font-semibold text-primary text-center">
+                    Affogato
+                  </h3>
                 </div>
-                <p className="text-base md:text-lg mb-4 text-balance text-center">
-                  All models, one price.
-                </p>
-                <div className="bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 text-white rounded-full px-4 py-1 text-sm font-semibold mb-2 shadow">
-                  Save up to 85%
+                <ul className="text-left w-full space-y-2 mb-4">
+                  {LLM_SUBSCRIPTION_SERVICES.map((service) => (
+                    <li
+                      key={service.name}
+                      className="flex items-center gap-2 justify-between text-base md:text-lg"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Image
+                          src={`/llm-icons/${service.icon}.png`}
+                          alt={`${service.name} icon`}
+                          width={20}
+                          height={20}
+                          className="size-5 object-contain"
+                        />
+                        {service.name}
+                      </span>
+                      <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-green-500 text-white">
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 20 20"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M5 10.5L9 14.5L15 7.5"
+                            stroke="white"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+                <div className="w-full border-t border-gray-200 my-4" />
+                <div className="flex justify-between w-full text-lg font-semibold items-center">
+                  <span>Total</span>
+                  <span>
+                    <span className="bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent text-xl">
+                      {currency === "eur" ? "€" : "$"}15/mo
+                    </span>
+                  </span>
                 </div>
               </div>
               <p className="mt-6 text-gray-400 text-sm text-center">
@@ -110,7 +141,7 @@ const ComparisonSection = ({ currency }: { currency: "usd" | "eur" }) => {
             href={LOGIN}
             className="bg-secondary h-9 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-secondary-foreground w-fit px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-secondary/80 transition-all ease-out active:scale-95"
           >
-            Start New Chat
+            Buy Now
           </Link>
         </div>
       </div>
