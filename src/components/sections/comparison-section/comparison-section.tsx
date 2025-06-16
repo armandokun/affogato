@@ -3,7 +3,7 @@ import Image from "next/image";
 
 import Card from "@/components/ui/card";
 import Icons from "@/components/general/icons";
-import { LOGIN } from "@/constants/routes";
+``;
 
 const LLM_SUBSCRIPTION_SERVICES = [
   { icon: "chatgpt", name: "ChatGPT Plus", price: "23/mo" },
