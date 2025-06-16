@@ -12,6 +12,13 @@ const LLM_SUBSCRIPTION_SERVICES = [
   { icon: "grok", name: "xAI SuperGrok", price: "30/mo" },
 ];
 
+const INCLUDED_MODELS = [
+  { icon: "chatgpt", name: "ChatGPT" },
+  { icon: "claude", name: "Claude" },
+  { icon: "gemini", name: "Gemini" },
+  { icon: "grok", name: "Grok" },
+];
+
 const total = LLM_SUBSCRIPTION_SERVICES.reduce((sum, s) => {
   const match = s.price.match(/(\d+)/);
 
@@ -84,7 +91,7 @@ const ComparisonSection = ({ currency }: { currency: "usd" | "eur" }) => {
                   </h3>
                 </div>
                 <ul className="text-left w-full space-y-2 mb-4">
-                  {LLM_SUBSCRIPTION_SERVICES.map((service) => (
+                  {INCLUDED_MODELS.map((service) => (
                     <li
                       key={service.name}
                       className="flex items-center gap-2 justify-between text-base md:text-lg"
