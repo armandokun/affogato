@@ -13,8 +13,14 @@ import AuthSubmitButton from '@/components/general/auth-submit-button'
 import FormMessage, { Message } from '@/components/general/form-message/form-message'
 import { DASHBOARD } from '@/constants/routes'
 
-const LoginSection = ({ formMessage }: { formMessage: Message }) => {
-  const [isSignUp, setIsSignUp] = useState(false)
+const LoginSection = ({
+  formMessage,
+  showSignup
+}: {
+  formMessage: Message | undefined
+  showSignup?: boolean
+}) => {
+  const [isSignUp, setIsSignUp] = useState(showSignup || false)
 
   const searchParams = useSearchParams()
   const ref = searchParams.get('ref') || DASHBOARD
@@ -88,7 +94,7 @@ const LoginSection = ({ formMessage }: { formMessage: Message }) => {
           />
         )}
         {ref && <input type="hidden" name="ref" value={ref} />}
-        <FormMessage message={formMessage} />
+        {formMessage && <FormMessage message={formMessage} />}
       </form>
       <div className="flex justify-center text-sm text-muted-foreground w-full">
         {isSignUp ? (

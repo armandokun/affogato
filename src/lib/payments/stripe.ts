@@ -4,9 +4,12 @@ import { redirect } from 'next/navigation'
 import {
   getUserByStripeCustomerId,
   updateUserSubscription,
-  getUserSubscriptionByUserId
+  getUserSubscriptionByUserId,
+  createSubscription
 } from '@/lib/db/queries'
 import { UserSubscription } from '@/constants/user'
+
+import { createClient } from '../supabase/server'
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-04-30.basil'
@@ -137,6 +140,45 @@ export async function handleSubscriptionChange(subscription: Stripe.Subscription
       stripeProductId: null,
       stripePriceId: null,
       planName: null,
+      subscriptionStatus: status
+    })
+  }
+}
+
+export async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
+  const customerId = subscription.customer as string
+  const subscriptionId = subscription.id
+  const status = subscription.status
+  const priceId = subscription.items.data[0]?.price?.id
+  const plan = subscription.items.data[0]?.plan
+
+  const supabase = await createClient()
+
+  const { data, error } = await supabase
+    .from('subscriptions')
+    .select('user_id')
+    .eq('stripe_customer_id', customerId)
+    .single()
+
+  if (error) {
+    console.error('Error getting user by Stripe customer ID:', error)
+  }
+
+  if (!data?.user_id) {
+    await createSubscription({
+      stripeCustomerId: customerId,
+      stripeProductId: plan?.product as string,
+      stripePriceId: priceId,
+      stripeSubscriptionId: subscriptionId,
+      planName: typeof plan?.product === 'string' ? plan.product : (plan?.product as any)?.name ?? '',
+      subscriptionStatus: status
+    })
+  } else {
+    await updateUserSubscription(data.user_id, {
+      stripeSubscriptionId: subscriptionId,
+      stripeProductId: plan?.product as string,
+      stripePriceId: priceId,
+      planName: typeof plan?.product === 'string' ? plan.product : (plan?.product as any)?.name ?? '',
       subscriptionStatus: status
     })
   }

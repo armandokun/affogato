@@ -1,6 +1,7 @@
 import Stripe from 'stripe'
-import { handleSubscriptionChange, stripe } from '@/lib/payments/stripe'
 import { NextRequest, NextResponse } from 'next/server'
+
+import { handleSubscriptionChange, handleSubscriptionCreated, stripe } from '@/lib/payments/stripe'
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!
 
@@ -23,6 +24,11 @@ export async function POST(request: NextRequest) {
     case 'customer.subscription.deleted':
       const subscription = event.data.object as Stripe.Subscription
       await handleSubscriptionChange(subscription)
+
+      break
+    case 'customer.subscription.created':
+      const subscriptionCreated = event.data.object as Stripe.Subscription
+      await handleSubscriptionCreated(subscriptionCreated)
 
       break
     default:

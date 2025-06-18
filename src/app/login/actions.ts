@@ -32,7 +32,9 @@ export const signInWithEmail = async (formData: FormData) => {
 
   if (error) return encodedRedirect('error', LOGIN, error.message)
 
-  return encodedRedirect('success', LOGIN, 'Please check your email for a confirmation link.')
+  return encodedRedirect('success', LOGIN, 'Please check your email for a confirmation link.', {
+    signup: 'true'
+  })
 }
 
 export const signInWithOAuth = async (formData: FormData) => {
