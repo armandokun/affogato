@@ -14,9 +14,10 @@ type Props = {
   tier: PricingTier
   activeTab: 'yearly' | 'monthly'
   isSelected?: boolean
+  onCheckout?: () => void
 }
 
-const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
+const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
   const { user } = useSession()
 
   const getFeatureTitle = () => {
@@ -120,6 +121,7 @@ const PricingCard = ({ tier, activeTab, isSelected }: Props) => {
                 checkoutAction(formData, user.id)
               }
             }}
+            onClick={() => onCheckout?.()}
             tabIndex={0}>
             {isSelected ? 'Manage Subscription' : tier.buttonText}
           </button>
