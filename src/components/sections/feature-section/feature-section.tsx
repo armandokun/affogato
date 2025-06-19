@@ -48,8 +48,8 @@ const FeatureSection = () => {
               muted
               loop
               preload="metadata"
-              className="rounded-xl w-full h-full object-cover"
               playsInline
+              className="rounded-xl w-full h-full object-cover [&::-webkit-media-controls-panel]:hidden [&::-webkit-media-controls]:hidden [&::--webkit-media-controls-play-button]:hidden [&::-webkit-media-controls-start-playback-button]:hidden"
             />
           </div>
           <div className="flex flex-col items-center justify-center">
@@ -67,8 +67,8 @@ const FeatureSection = () => {
               muted
               loop
               preload="metadata"
-              className="rounded-xl w-full h-full object-cover"
               playsInline
+              className="rounded-xl w-full h-full object-cover [&::-webkit-media-controls-panel]:hidden [&::-webkit-media-controls]:hidden [&::--webkit-media-controls-play-button]:hidden [&::-webkit-media-controls-start-playback-button]:hidden"
             />
           </div>
           <div className="flex flex-col items-center justify-center">
@@ -86,8 +86,8 @@ const FeatureSection = () => {
               muted
               loop
               preload="metadata"
-              className="rounded-xl w-full h-full object-cover"
               playsInline
+              className="rounded-xl w-full h-full object-cover [&::-webkit-media-controls-panel]:hidden [&::-webkit-media-controls]:hidden [&::--webkit-media-controls-play-button]:hidden [&::-webkit-media-controls-start-playback-button]:hidden"
             />
           </div>
         </div>
