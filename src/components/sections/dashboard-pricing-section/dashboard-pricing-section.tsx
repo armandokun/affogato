@@ -3,7 +3,6 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
-import { event } from '@/lib/fpixel'
 import { createClient } from '@/lib/supabase/client'
 import useSidebar from '@/hooks/use-sidebar'
 import { PricingPrice, PricingProduct } from '@/constants/pricing'
