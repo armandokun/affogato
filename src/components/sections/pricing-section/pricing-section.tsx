@@ -52,7 +52,7 @@ const PricingSection = ({
   products: Array<PricingProduct>
   currency: 'usd' | 'eur'
 }) => {
-  const [activeTab, setActiveTab] = useState<'yearly' | 'monthly'>('monthly')
+  const [activeTab, setActiveTab] = useState<'yearly' | 'monthly'>('yearly')
 
   const stripeTiers = buildTiersFromStripe(products, prices, currency)
 

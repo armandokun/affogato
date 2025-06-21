@@ -25,7 +25,7 @@ const DashboardPricingPage = ({
   products: Array<PricingProduct>
   currency: 'usd' | 'eur'
 }) => {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('monthly')
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly')
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
 
   const { user } = useSession()
