@@ -3,6 +3,7 @@
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
 
+import { event } from '@/lib/fpixel'
 import { createClient } from '@/lib/supabase/client'
 import useSidebar from '@/hooks/use-sidebar'
 import { PricingPrice, PricingProduct } from '@/constants/pricing'
@@ -64,6 +65,13 @@ const DashboardPricingPage = ({
     getSelectedPlan()
   }, [user?.id])
 
+  const trackPixelPurchase = (currency: 'usd' | 'eur', value: number) => {
+    event('Purchase', {
+      currency: currency.toUpperCase(),
+      value: value.toString()
+    })
+  }
+
   return (
     <section
       id="pricing"
@@ -103,6 +111,7 @@ const DashboardPricingPage = ({
                 tier={tier}
                 isSelected={isSelected}
                 activeTab={billingCycle}
+                onCheckout={() => trackPixelPurchase(currency, tier.price)}
               />
             )
           })}
