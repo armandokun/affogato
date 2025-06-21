@@ -214,3 +214,44 @@ export async function getPlanNameByUserId({ userId }: { userId: string }) {
 
   return data?.plan_name
 }
+
+export async function createSubscription({
+  stripeCustomerId,
+  stripeProductId,
+  stripePriceId,
+  stripeSubscriptionId,
+  planName,
+  subscriptionStatus
+}: {
+  stripeCustomerId: string
+  stripeProductId: string
+  stripePriceId: string
+  stripeSubscriptionId: string
+  planName: string
+  subscriptionStatus: string
+}) {
+  const supabase = await createClient(process.env.SUPABASE_SERVICE_ROLE_KEY)
+
+  const { data: subscription, error: subscriptionError } = await supabase
+    .from('subscriptions')
+    .insert({
+      stripe_customer_id: stripeCustomerId,
+      stripe_product_id: stripeProductId,
+      stripe_price_id: stripePriceId,
+      stripe_subscription_id: stripeSubscriptionId,
+      plan_name: planName,
+      status: subscriptionStatus,
+      created_at: new Date(),
+      updated_at: new Date()
+    })
+    .select()
+    .single()
+
+  if (subscriptionError) {
+    console.error('Failed to create user subscription', subscriptionError)
+
+    return
+  }
+
+  return { subscription }
+}

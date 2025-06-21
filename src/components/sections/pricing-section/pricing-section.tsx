@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { loadStripe } from '@stripe/stripe-js'
 
 import {
   STRIPE_PRICING_TIERS,
@@ -60,6 +61,28 @@ const PricingSection = ({
 
   const tiers = [proTier, unlimitedTier].filter((tier) => tier !== undefined)
 
+  const handlePublicCheckout = async (priceId?: string) => {
+    try {
+      const res = await fetch('/api/stripe/public-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId })
+      })
+      const data = await res.json()
+
+      if (!data.sessionUrl) throw new Error('No session URL returned')
+
+      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+      if (stripe) {
+        window.location.href = data.sessionUrl
+      } else {
+        window.location.href = data.sessionUrl
+      }
+    } catch (err) {
+      alert(`Failed to start checkout. Please try again: ${err}`)
+    }
+  }
+
   return (
     <section id="pricing">
       <div className="container mx-auto">
@@ -74,7 +97,12 @@ const PricingSection = ({
         </div>
         <div className="grid min-[650px]:grid-cols-2 gap-4 w-full max-w-6xl mx-auto">
           {tiers.map((tier) => (
-            <PricingCard key={tier!.id} tier={tier!} activeTab={activeTab} />
+            <PricingCard
+              key={tier!.id}
+              tier={tier!}
+              activeTab={activeTab}
+              onCheckout={handlePublicCheckout}
+            />
           ))}
         </div>
         <p className="text-center text-gray-400 mt-4 w-[80%] mx-auto text-sm">

@@ -2,19 +2,17 @@
 
 import { AnimatePresence, motion } from 'motion/react'
 import { CheckIcon } from 'lucide-react'
-import { redirect } from 'next/navigation'
 
 import { cn } from '@/lib/utils'
 import { PricingTier } from '@/constants/pricing'
 import { checkoutAction, customerPortalAction } from '@/lib/payments/actions'
 import { useSession } from '@/containers/SessionProvider'
-import { DASHBOARD_PRICING, LOGIN } from '@/constants/routes'
 
 type Props = {
   tier: PricingTier
   activeTab: 'yearly' | 'monthly'
   isSelected?: boolean
-  onCheckout?: () => void
+  onCheckout?: (priceId?: string) => void
 }
 
 const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
@@ -100,7 +98,7 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
           action={(formData) => {
             if (!user?.id) return
 
-            checkoutAction(formData, user.id)
+            checkoutAction(formData, user?.id)
           }}>
           <input
             type="hidden"
@@ -113,7 +111,15 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
               isSelected && 'border-primary border bg-transparent hover:bg-background'
             )}
             formAction={(formData) => {
-              if (!user?.id) redirect(`${LOGIN}?ref=${DASHBOARD_PRICING}`)
+              if (!user?.id) {
+                if (onCheckout) {
+                  const priceId =
+                    activeTab === 'yearly' ? tier.stripePriceIdYearly : tier.stripePriceIdMonthly
+                  onCheckout(priceId)
+                }
+
+                return
+              }
 
               if (isSelected) {
                 customerPortalAction(user.id)

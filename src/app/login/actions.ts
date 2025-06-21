@@ -21,18 +21,21 @@ export const signInWithEmail = async (formData: FormData) => {
   const supabase = await createClient()
 
   const email = formData.get('email')?.toString() || ''
-  const ref = formData.get('ref')?.toString() || DASHBOARD
+
+  const redirectToUrl = process.env.NEXT_PUBLIC_SITE_URL
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}${ref}`
+      emailRedirectTo: redirectToUrl
     }
   })
 
   if (error) return encodedRedirect('error', LOGIN, error.message)
 
-  return encodedRedirect('success', LOGIN, 'Please check your email for a confirmation link.')
+  return encodedRedirect('success', LOGIN, 'Please check your email for a confirmation link.', {
+    signup: 'true'
+  })
 }
 
 export const signInWithOAuth = async (formData: FormData) => {
@@ -41,10 +44,12 @@ export const signInWithOAuth = async (formData: FormData) => {
 
   const supabase = await createClient()
 
+  const redirectToUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(ref)}`
+
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
     options: {
-      redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(ref)}`
+      redirectTo: redirectToUrl
     }
   })
 

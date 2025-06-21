@@ -8,7 +8,7 @@ const TestimonialSection = () => {
         Built by AI geeks to unleash its power to all.
       </h2>
       <p className="text-gray-400 text-center">
-        With 100+ customers already using Affogato, we&apos;re confident that you&apos;ll love it
+        With 50,000+ customers already using Affogato, we&apos;re confident that you&apos;ll love it
         too.
       </p>
       <SocialProofTestimonials testimonials={TESTIMONIALS} />
