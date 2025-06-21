@@ -65,13 +65,6 @@ const DashboardPricingPage = ({
     getSelectedPlan()
   }, [user?.id])
 
-  const trackPixelPurchase = (currency: 'usd' | 'eur', value: number) => {
-    event('Purchase', {
-      currency: currency.toUpperCase(),
-      value: value.toString()
-    })
-  }
-
   return (
     <section
       id="pricing"
@@ -111,7 +104,6 @@ const DashboardPricingPage = ({
                 tier={tier}
                 isSelected={isSelected}
                 activeTab={billingCycle}
-                onCheckout={() => trackPixelPurchase(currency, tier.price)}
               />
             )
           })}

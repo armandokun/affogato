@@ -73,6 +73,7 @@ const PricingSection = ({
       if (!data.sessionUrl) throw new Error('No session URL returned')
 
       const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+
       if (stripe) {
         window.location.href = data.sessionUrl
       } else {
