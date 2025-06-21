@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
+import { cookies } from 'next/headers'
 
+import { stripe } from '@/lib/payments/stripe'
 import { createClient } from '@/lib/supabase/server'
 
 export async function GET(request: Request) {
@@ -9,21 +11,46 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createClient()
-    const { error } = await supabase.auth.exchangeCodeForSession(code)
+    const { error, data } = await supabase.auth.exchangeCodeForSession(code)
+
     if (!error) {
-      const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
-      const isLocalEnv = process.env.NODE_ENV === 'development'
-      if (isLocalEnv) {
-        // we can be sure that there is no load balancer in between, so no need to watch for X-Forwarded-Host
-        return NextResponse.redirect(`${origin}${next}`)
-      } else if (forwardedHost) {
-        return NextResponse.redirect(`https://${forwardedHost}${next}`)
-      } else {
-        return NextResponse.redirect(`${origin}${next}`)
+      const cookieStore = await cookies()
+      const sessionId = cookieStore.get('stripe_session_id')?.value
+
+      if (sessionId && data?.user) {
+        try {
+          const session = await stripe.checkout.sessions.retrieve(sessionId)
+
+          if (session.customer) {
+            const adminSupabase = await createClient(process.env.SUPABASE_SERVICE_ROLE_KEY)
+
+            const { error } = await adminSupabase
+              .from('subscriptions')
+              .update({ user_id: data.user.id })
+              .eq('stripe_customer_id', session.customer)
+
+            if (error) {
+              console.error('Error linking Stripe customer:', error)
+
+              return NextResponse.redirect(`${origin}/error`)
+            }
+
+            cookieStore.set('stripe_session_id', '', {
+              httpOnly: true,
+              secure: process.env.NODE_ENV === 'production',
+              sameSite: 'lax',
+              path: '/'
+            })
+          }
+        } catch (error) {
+          console.error('Error linking Stripe customer:', error)
+          return NextResponse.redirect(`${origin}/error`)
+        }
       }
+
+      return NextResponse.redirect(`${origin}${next}`)
     }
   }
 
-  // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/auth-code-error`)
+  return NextResponse.redirect(`${origin}/error`)
 }

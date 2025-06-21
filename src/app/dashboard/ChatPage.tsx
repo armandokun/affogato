@@ -12,8 +12,6 @@ import Composer from '@/components/general/composer'
 import { toast } from '@/components/ui/toast/toast'
 import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
 
-import { PlanName } from '@/constants/user'
-import { DASHBOARD_PRICING } from '@/constants/routes'
 import { ChatVisibility, SELECTED_MODEL_COOKIE } from '@/constants/chat'
 import { cn, fetchWithErrorHandlers, generateUUID, getCookie } from '@/lib/utils'
 import { ChatSDKError } from '@/lib/errors'
@@ -21,6 +19,8 @@ import { LanguageModelCode } from '@/lib/ai/providers'
 import { getRelativeTimeFromNow } from '@/lib/utils/date'
 import useSidebar from '@/hooks/use-sidebar'
 import { useSubscription } from '@/hooks/use-subscription'
+import { PlanName } from '@/constants/user'
+import { DASHBOARD_PRICING } from '@/constants/routes'
 
 type Props = {
   chatId: string

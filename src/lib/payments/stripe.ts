@@ -152,17 +152,13 @@ export async function handleSubscriptionCreated(subscription: Stripe.Subscriptio
   const priceId = subscription.items.data[0]?.price?.id
   const plan = subscription.items.data[0]?.plan
 
-  const supabase = await createClient()
+  const supabase = await createClient(process.env.SUPABASE_SERVICE_ROLE_KEY)
 
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from('subscriptions')
     .select('user_id')
     .eq('stripe_customer_id', customerId)
     .single()
-
-  if (error) {
-    console.error('Error getting user by Stripe customer ID:', error)
-  }
 
   if (!data?.user_id) {
     await createSubscription({
@@ -170,7 +166,7 @@ export async function handleSubscriptionCreated(subscription: Stripe.Subscriptio
       stripeProductId: plan?.product as string,
       stripePriceId: priceId,
       stripeSubscriptionId: subscriptionId,
-      planName: typeof plan?.product === 'string' ? plan.product : (plan?.product as any)?.name ?? '',
+      planName: (plan?.product as Stripe.Product).name,
       subscriptionStatus: status
     })
   } else {
@@ -178,7 +174,7 @@ export async function handleSubscriptionCreated(subscription: Stripe.Subscriptio
       stripeSubscriptionId: subscriptionId,
       stripeProductId: plan?.product as string,
       stripePriceId: priceId,
-      planName: typeof plan?.product === 'string' ? plan.product : (plan?.product as any)?.name ?? '',
+      planName: (plan?.product as Stripe.Product).name,
       subscriptionStatus: status
     })
   }
@@ -214,4 +210,10 @@ export async function getStripeProducts() {
     defaultPriceId:
       typeof product.default_price === 'string' ? product.default_price : product.default_price?.id
   }))
+}
+
+export async function getCustomerByStripeSessionId(sessionId: string) {
+  const session = await stripe.checkout.sessions.retrieve(sessionId)
+
+  return session.customer
 }

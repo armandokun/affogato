@@ -19,20 +19,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Webhook signature verification failed.' }, { status: 400 })
   }
 
+  const subscription = event.data.object as Stripe.Subscription
+
   switch (event.type) {
     case 'customer.subscription.updated':
     case 'customer.subscription.deleted':
-      const subscription = event.data.object as Stripe.Subscription
       await handleSubscriptionChange(subscription)
 
       break
     case 'customer.subscription.created':
-      const subscriptionCreated = event.data.object as Stripe.Subscription
-      await handleSubscriptionCreated(subscriptionCreated)
+      await handleSubscriptionCreated(subscription)
 
       break
     default:
-      console.log(`Unhandled event type ${event.type}`)
+      break
   }
 
   return NextResponse.json({ received: true })

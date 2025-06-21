@@ -230,7 +230,7 @@ export async function createSubscription({
   planName: string
   subscriptionStatus: string
 }) {
-  const supabase = await createClient()
+  const supabase = await createClient(process.env.SUPABASE_SERVICE_ROLE_KEY)
 
   const { data: subscription, error: subscriptionError } = await supabase
     .from('subscriptions')
