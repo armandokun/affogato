@@ -61,7 +61,7 @@ const PricingSection = ({
 
   const tiers = [proTier, unlimitedTier].filter((tier) => tier !== undefined)
 
-  const handlePublicCheckout = async (priceId: string) => {
+  const handlePublicCheckout = async (priceId?: string) => {
     try {
       const res = await fetch('/api/stripe/public-checkout', {
         method: 'POST',
@@ -101,7 +101,7 @@ const PricingSection = ({
               key={tier!.id}
               tier={tier!}
               activeTab={activeTab}
-              onPublicCheckout={handlePublicCheckout}
+              onCheckout={handlePublicCheckout}
             />
           ))}
         </div>
