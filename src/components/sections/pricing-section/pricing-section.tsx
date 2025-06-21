@@ -79,7 +79,7 @@ const PricingSection = ({
         window.location.href = data.sessionUrl
       }
     } catch (err) {
-      alert('Failed to start checkout. Please try again.')
+      alert(`Failed to start checkout. Please try again: ${err}`)
     }
   }
 
