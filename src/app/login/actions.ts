@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 
 import { encodedRedirect } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
-import { LOGIN } from '@/constants/routes'
+import { DASHBOARD, LOGIN } from '@/constants/routes'
 import { toast } from '@/components/ui/toast/toast'
 
 export const signOut = async () => {
@@ -40,10 +40,11 @@ export const signInWithEmail = async (formData: FormData) => {
 
 export const signInWithOAuth = async (formData: FormData) => {
   const provider = formData.get('provider') as 'google' | 'github'
+  const ref = formData.get('ref')?.toString() || DASHBOARD
 
   const supabase = await createClient()
 
-  const redirectToUrl = process.env.NEXT_PUBLIC_SITE_URL
+  const redirectToUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(ref)}`
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
