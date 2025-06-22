@@ -123,13 +123,13 @@ const ComparisonSection = ({ currency }: { currency: 'usd' | 'eur' }) => {
                   <span>Total</span>
                   <span>
                     <span className="bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent text-xl">
-                      {currency === 'eur' ? '€' : '$'}15/mo
+                      from {currency === 'eur' ? '€' : '$'}12.5/mo
                     </span>
                   </span>
                 </div>
               </div>
               <p className="mt-6 text-gray-400 text-sm text-center">
-                Access to all listed models - included in Affogato.
+                All listed models are included in Affogato.
               </p>
             </div>
           </Card>

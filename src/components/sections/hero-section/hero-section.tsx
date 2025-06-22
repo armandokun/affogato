@@ -56,8 +56,8 @@ const HeroSection = ({ currency }: Props) => {
               <motion.div initial="hidden" animate="visible" variants={descriptionVariants}>
                 <p className="text-base md:text-lg text-center text-muted-foreground text-balance leading-relaxed tracking-tight">
                   Stop paying for multiple subscriptions. <br />
-                  Access all top models for {currency === 'usd' ? '$' : '€'}
-                  15/mo.
+                  Access all top models from {currency === 'usd' ? '$' : '€'}
+                  12/mo.
                 </p>
               </motion.div>
               <motion.div initial="hidden" animate="visible" variants={buttonVariants}>
