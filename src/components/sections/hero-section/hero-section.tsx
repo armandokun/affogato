@@ -34,7 +34,7 @@ type Props = {
 
 const HeroSection = ({ currency }: Props) => {
   return (
-    <section id="hero" className="flex items-center justify-center mt-4">
+    <section id="home" className="flex items-center justify-center mt-4">
       <div className="relative w-full h-[85vh] rounded-3xl overflow-hidden flex items-center justify-center">
         <AnimatedGradientBackground containerClassName="size-full" />
         <div className="absolute inset-0 flex items-center justify-center">

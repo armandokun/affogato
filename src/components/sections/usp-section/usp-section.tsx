@@ -2,9 +2,7 @@ import Image from 'next/image'
 
 const UspSection = () => {
   return (
-    <section
-      id="unique-selling-points"
-      className="flex flex-col items-center justify-center w-full">
+    <section id="how-it-works" className="flex flex-col items-center justify-center w-full">
       <div className="container mx-auto max-w-4xl">
         <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter text-center">
           Models, unique in their own way.

@@ -6,6 +6,7 @@ import { motion, useScroll } from 'motion/react'
 
 import { cn } from '@/lib/utils'
 import Icons from '@/components/general/icons'
+import NavMenu from '@/components/general/nav-menu'
 
 const Navbar = () => {
   const [hasScrolled, setHasScrolled] = useState(false)
@@ -28,7 +29,7 @@ const Navbar = () => {
       )}>
       <motion.div
         initial={{ width: '100%' }}
-        animate={{ width: hasScrolled ? '90%' : '100%' }}
+        animate={{ width: hasScrolled ? '95%' : '100%' }}
         transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}>
         <div
           className={cn(
@@ -44,6 +45,8 @@ const Navbar = () => {
               <Icons.logo className="size-7 md:size-8" />
               <p className="text-lg font-semibold text-primary">Affogato</p>
             </Link>
+
+            <NavMenu />
 
             <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
               <div className="flex items-center space-x-6">

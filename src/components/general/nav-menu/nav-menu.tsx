@@ -16,7 +16,7 @@ export function NavMenu() {
   const [left, setLeft] = useState(0)
   const [width, setWidth] = useState(0)
   const [isReady, setIsReady] = useState(false)
-  const [activeSection, setActiveSection] = useState('hero')
+  const [activeSection, setActiveSection] = useState('home')
   const [isManualScroll, setIsManualScroll] = useState(false)
 
   React.useEffect(() => {
