@@ -24,8 +24,8 @@ const Navbar = () => {
   return (
     <header
       className={cn(
-        'sticky z-50 flex justify-center transition-all duration-300',
-        hasScrolled ? 'top-6' : 'top-4 mx-0'
+        'sticky z-50 flex justify-center transition-all duration-300 container mx-auto',
+        hasScrolled ? 'top-6' : 'top-4'
       )}>
       <motion.div
         initial={{ width: '100%' }}
@@ -39,7 +39,7 @@ const Navbar = () => {
           <div
             className={cn(
               'flex h-[56px] items-center justify-between py-4',
-              hasScrolled ? 'px-6' : 'px-0'
+              hasScrolled ? 'px-4' : 'px-0'
             )}>
             <Link href="/" className="flex items-center gap-2">
               <Icons.logo className="size-7 md:size-8" />
