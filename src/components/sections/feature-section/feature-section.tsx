@@ -7,11 +7,15 @@ function VideoOnScroll({ src, ...props }: VideoHTMLAttributes<HTMLVideoElement>)
 
   useEffect(() => {
     const video = ref.current
+
     if (!video) return
 
     const observer = new window.IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          if (video.currentSrc !== src) {
+            video.src = src!
+          }
           video.play()
         } else {
           video.pause()
@@ -21,10 +25,15 @@ function VideoOnScroll({ src, ...props }: VideoHTMLAttributes<HTMLVideoElement>)
     )
 
     observer.observe(video)
-    return () => observer.disconnect()
-  }, [])
 
-  return <video ref={ref} src={src} {...props} />
+    return () => {
+      if (video) {
+        observer.unobserve(video)
+      }
+    }
+  }, [src])
+
+  return <video ref={ref} preload="none" playsInline {...props} />
 }
 
 const FeatureSection = () => {
@@ -43,11 +52,10 @@ const FeatureSection = () => {
               </p>
             </div>
             <VideoOnScroll
-              src="/feature-videos/reasoning-web.mp4"
-              poster="/feature-videos/reasoning-web.png"
+              src="https://julzgytjnjizjjbnjgut.supabase.co/storage/v1/object/public/feature-videos/reasoning-web.mp4"
+              poster="https://julzgytjnjizjjbnjgut.supabase.co/storage/v1/object/public/feature-videos/reasoning-web.png"
               muted
               loop
-              preload="metadata"
               playsInline
               className="rounded-xl w-full h-full object-cover [&::-webkit-media-controls-panel]:hidden [&::-webkit-media-controls]:hidden [&::--webkit-media-controls-play-button]:hidden [&::-webkit-media-controls-start-playback-button]:hidden"
             />
@@ -62,11 +70,10 @@ const FeatureSection = () => {
               </p>
             </div>
             <VideoOnScroll
-              src="/feature-videos/files.mp4"
-              poster="/feature-videos/files.png"
+              src="https://julzgytjnjizjjbnjgut.supabase.co/storage/v1/object/public/feature-videos/files.mp4"
+              poster="https://julzgytjnjizjjbnjgut.supabase.co/storage/v1/object/public/feature-videos/files.png"
               muted
               loop
-              preload="metadata"
               playsInline
               className="rounded-xl w-full h-full object-cover [&::-webkit-media-controls-panel]:hidden [&::-webkit-media-controls]:hidden [&::--webkit-media-controls-play-button]:hidden [&::-webkit-media-controls-start-playback-button]:hidden"
             />
@@ -81,11 +88,10 @@ const FeatureSection = () => {
               </p>
             </div>
             <VideoOnScroll
-              src="/feature-videos/multiple-ai.mp4"
-              poster="/feature-videos/multiple-ai.png"
+              src="https://julzgytjnjizjjbnjgut.supabase.co/storage/v1/object/public/feature-videos/multiple-ai.mp4"
+              poster="https://julzgytjnjizjjbnjgut.supabase.co/storage/v1/object/public/feature-videos/multiple-ai.png"
               muted
               loop
-              preload="metadata"
               playsInline
               className="rounded-xl w-full h-full object-cover [&::-webkit-media-controls-panel]:hidden [&::-webkit-media-controls]:hidden [&::--webkit-media-controls-play-button]:hidden [&::-webkit-media-controls-start-playback-button]:hidden"
             />
