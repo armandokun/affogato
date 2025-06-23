@@ -8,6 +8,11 @@ import { siteConfig } from '@/lib/config'
 
 const FAQS = [
   {
+    question: 'How safe and private are my conversations with Affogato?',
+    answer:
+      'Affogato follows industry-standard encryption protocols and never share or train on your private data. Conversations and its history are only accessible to you.'
+  },
+  {
     question: 'Is Affogato the same as ChatGPT?',
     answer:
       'Almost! Affogato gives you the same easy-to-use chat interface but instead of just ChatGPT, you can chat with the top AI models in the world from ChatGPT, Claude, Gemini, and dozens of others. Give you the ultimate fleet of AI models at your disposal. The only difference is that Affogato only supports messages, with image generation coming soon.'
