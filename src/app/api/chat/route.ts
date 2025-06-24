@@ -3,6 +3,7 @@ import {
   appendClientMessage,
   appendResponseMessages,
   createDataStreamResponse,
+  experimental_createMCPClient,
   smoothStream,
   streamText
 } from 'ai'
@@ -19,7 +20,8 @@ import {
   getPlanNameByUserId,
   saveChat,
   saveMessage,
-  updateChatTitle
+  updateChatTitle,
+  getAsanaTokensByUserId
 } from '@/lib/db/queries'
 import { ChatSDKError, errorHandler } from '@/lib/errors'
 import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
@@ -89,6 +91,34 @@ export async function POST(request: Request) {
       }
     }
 
+    const asanaTokens = await getAsanaTokensByUserId({ userId: user.id });
+
+    if (!asanaTokens) {
+      return new Response(JSON.stringify({
+        error: 'Asana account not connected. Please connect your account first.'
+      }), {
+        status: 403,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const mcpClient = await experimental_createMCPClient({
+      transport: {
+        type: 'sse',
+        url: 'https://mcp.asana.com/sse',
+        headers: {
+          Authorization: `Bearer ${asanaTokens.accessToken}`
+        }
+      },
+      onUncaughtError: (error) => {
+        console.error('Uncaught error', error)
+      }
+    })
+
+    const tools = await mcpClient.tools();
+
+    console.log(tools)
+
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,
       experimental_attachments: message.attachments || []
@@ -153,9 +183,12 @@ export async function POST(request: Request) {
           maxSteps: 5,
           experimental_transform: smoothStream({ chunking: 'word' }),
           tools: {
-            webSearch
+            webSearch,
+            ...tools
           },
           onFinish: async ({ response }) => {
+            await mcpClient.close()
+
             if (user.id) {
               try {
                 const assistantId = getTrailingMessageId({

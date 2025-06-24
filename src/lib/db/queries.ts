@@ -5,6 +5,8 @@ import { ChatVisibility } from '@/constants/chat'
 import { ChatSDKError } from '../errors'
 import { createClient } from '../supabase/server'
 import { LanguageModelCode } from '../ai/providers'
+import { webSearch } from '@/lib/ai/tools'
+import { entitlementsByPlanName, PlanName } from '@/constants/user'
 
 export async function getChatById({ id }: { id: string }) {
   const supabase = await createClient()
@@ -254,4 +256,61 @@ export async function createSubscription({
   }
 
   return { subscription }
+}
+
+// --- ASANA OAUTH TOKEN MANAGEMENT (PLACEHOLDERS) ---
+// TODO: Implement the database logic for these functions.
+// This will likely require a migration to add Asana-related columns to your users table.
+
+/**
+ * Saves Asana OAuth tokens for a user.
+ * This is a placeholder and needs to be implemented with your database.
+ */
+export async function saveAsanaTokens({
+  userId,
+  accessToken,
+  refreshToken,
+  expiresIn,
+}: {
+  userId: string;
+  accessToken: string;
+  refreshToken: string;
+  expiresIn: number;
+}) {
+  console.log('---DATABASE-PLACEHOLDER---');
+  console.log(`Saving Asana tokens for user ${userId}`);
+  console.log(`Access Token: ${accessToken.substring(0, 10)}...`);
+  console.log(`Refresh Token: ${refreshToken.substring(0, 10)}...`);
+  console.log(`Expires In: ${expiresIn} seconds`);
+  // Example implementation:
+  // await db.update(users).set({
+  //   asanaAccessToken: accessToken,
+  //   asanaRefreshToken: refreshToken,
+  //   asanaTokenExpiresAt: new Date(Date.now() + expiresIn * 1000),
+  // }).where(eq(users.id, userId));
+  return Promise.resolve();
+}
+
+/**
+ * Retrieves Asana OAuth tokens for a user.
+ * This is a placeholder and needs to be implemented with your database.
+ */
+export async function getAsanaTokensByUserId({ userId }: { userId: string }): Promise<{ accessToken: string; refreshToken: string } | null> {
+  console.log('---DATABASE-PLACEHOLDER---');
+  console.log(`Fetching Asana tokens for user ${userId}`);
+  // Example implementation:
+  // const user = await db.select().from(users).where(eq(users.id, userId)).get();
+  // if (user && user.asanaAccessToken) {
+  //   // TODO: Add logic to handle token refresh if expired
+  //   return { accessToken: user.asanaAccessToken, refreshToken: user.asanaRefreshToken };
+  // }
+  // For now, returning a hardcoded value for demonstration if you add it to your .env.local
+  if (process.env.ASANA_OAUTH_ACCESS_TOKEN) {
+    return {
+      accessToken: process.env.ASANA_OAUTH_ACCESS_TOKEN,
+      refreshToken: process.env.ASANA_OAUTH_REFRESH_TOKEN || '',
+    };
+  }
+
+  return null;
 }

@@ -11,6 +11,7 @@ import Message from '@/components/general/message'
 import Composer from '@/components/general/composer'
 import { toast } from '@/components/ui/toast/toast'
 import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
+import Button from '@/components/ui/button'
 
 import { ChatVisibility, SELECTED_MODEL_COOKIE } from '@/constants/chat'
 import { cn, fetchWithErrorHandlers, generateUUID, getCookie } from '@/lib/utils'
@@ -135,6 +136,13 @@ const ChatPage = ({
             <p className="font-semibold text-sm truncate max-w-[200px] md:max-w-[250px] lg:max-w-[450px]">
               {chatTitle || messages[0].content}
             </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <form action="/api/auth/asana/connect" method="get">
+              <Button type="submit" variant="outline" size="sm">
+                Connect to Asana
+              </Button>
+            </form>
           </div>
         </header>
       )}
