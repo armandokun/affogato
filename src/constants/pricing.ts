@@ -5,9 +5,10 @@ export const STRIPE_PRICING_TIERS = [
     id: 'pro',
     name: 'Pro',
     features: [
-      '1,500 messages per month',
-      'Access to all available models',
-      'Unlimited access to web search, file uploads and more'
+      'Unlimited messages',
+      'Access to top models, like Sonnet 4, Gemini Flash, and more',
+      'Unlimited access to web search and file uploads',
+      'Cancel anytime'
     ],
     description: 'Perfect for daily use.',
     buttonText: 'Start Pro',
@@ -18,8 +19,8 @@ export const STRIPE_PRICING_TIERS = [
     id: 'unlimited',
     name: 'Unlimited',
     features: [
-      'Unlimited messages',
-      'Unlimited access to web search, file uploads and more',
+      'Access to all available models',
+      'Priority support',
       "Access to new features before they're released"
     ],
     description: 'Perfect for AI prosumers.',
