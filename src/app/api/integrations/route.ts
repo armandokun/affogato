@@ -12,14 +12,13 @@ export async function GET() {
       })
     }
 
-    // Check Linear connection
     const linearTokens = await getOAuthTokens({ userId: user.id, provider: 'linear' })
 
     const integrations = [
       {
         id: 'linear',
         name: 'Linear',
-        icon: '🔗',
+        icon: '/integration-icons/linear.png',
         isConnected: !!linearTokens,
         tools: linearTokens ? [
           'Create Issues',
