@@ -30,6 +30,7 @@ type Props = {
   initialMessages: Array<UIMessage>
   visibilityType: ChatVisibility
   createdAt: string
+  userId: string
 }
 
 const ChatPage = ({
@@ -38,7 +39,8 @@ const ChatPage = ({
   initialModel,
   initialMessages,
   chatId,
-  createdAt
+  createdAt,
+  userId
 }: Props) => {
   const { messages, input, handleSubmit, error, status, stop, setMessages, setInput } = useChat({
     api: '/api/chat',
@@ -137,13 +139,6 @@ const ChatPage = ({
               {chatTitle || messages[0].content}
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <form action="/api/auth/asana/connect" method="get">
-              <Button type="submit" variant="outline" size="sm">
-                Connect to Asana
-              </Button>
-            </form>
-          </div>
         </header>
       )}
       <motion.main
@@ -192,6 +187,7 @@ const ChatPage = ({
           setSelectedModel={setSelectedModel}
           status={status}
           stop={stop}
+          userId={userId}
         />
       </footer>
     </div>

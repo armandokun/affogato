@@ -5,8 +5,6 @@ import { ChatVisibility } from '@/constants/chat'
 import { ChatSDKError } from '../errors'
 import { createClient } from '../supabase/server'
 import { LanguageModelCode } from '../ai/providers'
-import { webSearch } from '@/lib/ai/tools'
-import { entitlementsByPlanName, PlanName } from '@/constants/user'
 
 export async function getChatById({ id }: { id: string }) {
   const supabase = await createClient()
@@ -258,59 +256,91 @@ export async function createSubscription({
   return { subscription }
 }
 
-// --- ASANA OAUTH TOKEN MANAGEMENT (PLACEHOLDERS) ---
-// TODO: Implement the database logic for these functions.
-// This will likely require a migration to add Asana-related columns to your users table.
-
-/**
- * Saves Asana OAuth tokens for a user.
- * This is a placeholder and needs to be implemented with your database.
- */
-export async function saveAsanaTokens({
+export async function saveOAuthTokens({
   userId,
+  provider,
   accessToken,
   refreshToken,
   expiresIn,
 }: {
   userId: string;
+  provider: string;
   accessToken: string;
-  refreshToken: string;
-  expiresIn: number;
+  refreshToken?: string;
+  expiresIn?: number;
 }) {
-  console.log('---DATABASE-PLACEHOLDER---');
-  console.log(`Saving Asana tokens for user ${userId}`);
-  console.log(`Access Token: ${accessToken.substring(0, 10)}...`);
-  console.log(`Refresh Token: ${refreshToken.substring(0, 10)}...`);
-  console.log(`Expires In: ${expiresIn} seconds`);
-  // Example implementation:
-  // await db.update(users).set({
-  //   asanaAccessToken: accessToken,
-  //   asanaRefreshToken: refreshToken,
-  //   asanaTokenExpiresAt: new Date(Date.now() + expiresIn * 1000),
-  // }).where(eq(users.id, userId));
-  return Promise.resolve();
-}
+  const supabase = await createClient();
+  const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 1000).toISOString() : null;
 
-/**
- * Retrieves Asana OAuth tokens for a user.
- * This is a placeholder and needs to be implemented with your database.
- */
-export async function getAsanaTokensByUserId({ userId }: { userId: string }): Promise<{ accessToken: string; refreshToken: string } | null> {
-  console.log('---DATABASE-PLACEHOLDER---');
-  console.log(`Fetching Asana tokens for user ${userId}`);
-  // Example implementation:
-  // const user = await db.select().from(users).where(eq(users.id, userId)).get();
-  // if (user && user.asanaAccessToken) {
-  //   // TODO: Add logic to handle token refresh if expired
-  //   return { accessToken: user.asanaAccessToken, refreshToken: user.asanaRefreshToken };
-  // }
-  // For now, returning a hardcoded value for demonstration if you add it to your .env.local
-  if (process.env.ASANA_OAUTH_ACCESS_TOKEN) {
-    return {
-      accessToken: process.env.ASANA_OAUTH_ACCESS_TOKEN,
-      refreshToken: process.env.ASANA_OAUTH_REFRESH_TOKEN || '',
-    };
+  console.log('Attempting to save OAuth tokens:', {
+    userId,
+    provider,
+    hasAccessToken: !!accessToken,
+    hasRefreshToken: !!refreshToken,
+    expiresAt,
+    expiresIn
+  });
+
+  // First, try to update existing record
+  const { error: updateError } = await supabase
+    .from('user_oauth_accounts')
+    .update({
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      expires_at: expiresAt,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId)
+    .eq('provider', provider);
+
+  if (updateError) {
+    console.error('Update failed, trying insert:', updateError);
+
+    // If update fails, try to insert
+    const { error: insertError } = await supabase
+      .from('user_oauth_accounts')
+      .insert({
+        user_id: userId,
+        provider,
+        access_token: accessToken,
+        refresh_token: refreshToken,
+        expires_at: expiresAt,
+        updated_at: new Date().toISOString(),
+      });
+
+    if (insertError) {
+      console.error('Supabase error details:', {
+        code: insertError.code,
+        message: insertError.message,
+        details: insertError.details,
+        hint: insertError.hint,
+        error: insertError
+      });
+      throw new ChatSDKError('bad_request:database', `Failed to save OAuth tokens for ${provider}: ${insertError.message}`);
+    }
   }
 
-  return null;
+  console.log('OAuth tokens saved successfully');
+  return true;
+}
+
+export async function getOAuthTokens({ userId, provider }: { userId: string; provider: string }): Promise<{ accessToken: string; refreshToken?: string; expiresAt?: string | null } | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('user_oauth_accounts')
+    .select('access_token, refresh_token, expires_at')
+    .eq('user_id', userId)
+    .eq('provider', provider)
+    .single();
+
+  if (error || !data || !data.access_token) {
+    return null;
+  }
+
+  return {
+    accessToken: data.access_token,
+    refreshToken: data.refresh_token,
+    expiresAt: data.expires_at || null,
+  };
 }

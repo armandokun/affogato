@@ -21,7 +21,7 @@ import {
   saveChat,
   saveMessage,
   updateChatTitle,
-  getAsanaTokensByUserId
+  getOAuthTokens
 } from '@/lib/db/queries'
 import { ChatSDKError, errorHandler } from '@/lib/errors'
 import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
@@ -91,33 +91,45 @@ export async function POST(request: Request) {
       }
     }
 
-    const asanaTokens = await getAsanaTokensByUserId({ userId: user.id });
+    const tokens = await getOAuthTokens({ userId: user.id, provider: 'linear' });
 
-    if (!asanaTokens) {
+    if (!tokens) {
       return new Response(JSON.stringify({
-        error: 'Asana account not connected. Please connect your account first.'
+        error: 'Linear account not connected. Please connect your account first.'
       }), {
         status: 403,
         headers: { 'Content-Type': 'application/json' }
       });
     }
 
+    console.log('Creating MCP client with tokens:', {
+      hasAccessToken: !!tokens.accessToken,
+      tokenPrefix: tokens.accessToken?.substring(0, 10) + '...'
+    })
+
     const mcpClient = await experimental_createMCPClient({
       transport: {
         type: 'sse',
-        url: 'https://mcp.asana.com/sse',
+        url: 'https://mcp.linear.app/sse',
         headers: {
-          Authorization: `Bearer ${asanaTokens.accessToken}`
+          Authorization: `Bearer ${tokens.accessToken}`
         }
       },
       onUncaughtError: (error) => {
-        console.error('Uncaught error', error)
+        console.error('MCP client error:', error)
       }
     })
 
-    const tools = await mcpClient.tools();
+    console.log('MCP client created successfully')
 
-    console.log(tools)
+    let mcpTools = {}
+    try {
+      mcpTools = await mcpClient.tools()
+      console.log('Available MCP tools:', Object.keys(mcpTools).length)
+    } catch (error) {
+      console.error('Failed to fetch MCP tools:', error)
+      // Continue anyway - tools might not be immediately available
+    }
 
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,
@@ -184,7 +196,7 @@ export async function POST(request: Request) {
           experimental_transform: smoothStream({ chunking: 'word' }),
           tools: {
             webSearch,
-            ...tools
+            ...mcpTools
           },
           onFinish: async ({ response }) => {
             await mcpClient.close()
