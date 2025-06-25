@@ -1,12 +1,11 @@
 import { FormEvent, useCallback, useRef, useState } from 'react'
-import { ArrowUp, Paperclip, Square, Plug } from 'lucide-react'
+import { ArrowUp, Paperclip, Square } from 'lucide-react'
 import { UseChatHelpers } from '@ai-sdk/react'
 import { Attachment } from 'ai'
 
 import Button from '@/components/ui/button'
 import { toast } from '@/components/ui/toast/toast'
 import { LanguageModelCode, modelDropdownOptions } from '@/lib/ai/providers'
-import { useIntegrations } from '@/hooks/use-integrations'
 
 import Icons from '../icons'
 import ComposerInput from './composer-input'
@@ -24,7 +23,6 @@ type Props = {
   hasMessages: boolean
   selectedModelCode: LanguageModelCode
   setSelectedModel: (modelCode: LanguageModelCode) => void
-  userId?: string
 }
 
 const Composer = ({
@@ -36,12 +34,10 @@ const Composer = ({
   setSelectedModel,
   status,
   handleSubmit,
-  stop,
-  userId
+  stop
 }: Props) => {
   const [attachments, setAttachments] = useState<Attachment[]>([])
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([])
-  const { connectedIntegrations, hasConnectedIntegrations } = useIntegrations(userId)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -187,23 +183,6 @@ const Composer = ({
               setSelectedModel={setSelectedModel}
               modelDropdownOptions={modelDropdownOptions}
             />
-            {hasConnectedIntegrations && (
-              <div className="flex items-center gap-1 px-2 py-1 bg-blue-50 border border-blue-200 rounded-md">
-                <Plug className="size-3 text-blue-600" />
-                <span className="text-xs text-blue-700 font-medium">
-                  {connectedIntegrations.length} integration
-                  {connectedIntegrations.length > 1 ? 's' : ''}
-                </span>
-                <span className="text-xs text-blue-500">
-                  (
-                  {connectedIntegrations.reduce(
-                    (total, integration) => total + integration.tools.length,
-                    0
-                  )}{' '}
-                  tools)
-                </span>
-              </div>
-            )}
           </div>
           <div className="flex items-center gap-2">
             <Button

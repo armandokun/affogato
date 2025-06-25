@@ -11,7 +11,6 @@ import Message from '@/components/general/message'
 import Composer from '@/components/general/composer'
 import { toast } from '@/components/ui/toast/toast'
 import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
-import Button from '@/components/ui/button'
 
 import { ChatVisibility, SELECTED_MODEL_COOKIE } from '@/constants/chat'
 import { cn, fetchWithErrorHandlers, generateUUID, getCookie } from '@/lib/utils'
@@ -30,7 +29,6 @@ type Props = {
   initialMessages: Array<UIMessage>
   visibilityType: ChatVisibility
   createdAt: string
-  userId: string
 }
 
 const ChatPage = ({
@@ -39,8 +37,7 @@ const ChatPage = ({
   initialModel,
   initialMessages,
   chatId,
-  createdAt,
-  userId
+  createdAt
 }: Props) => {
   const { messages, input, handleSubmit, error, status, stop, setMessages, setInput } = useChat({
     api: '/api/chat',
@@ -187,7 +184,6 @@ const ChatPage = ({
           setSelectedModel={setSelectedModel}
           status={status}
           stop={stop}
-          userId={userId}
         />
       </footer>
     </div>
