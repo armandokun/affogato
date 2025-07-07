@@ -50,15 +50,13 @@ const HeroSection = ({ currency }: Props) => {
               <div className="relative z-10 max-w-3xl mx-auto h-full w-full flex flex-col gap-10 items-center justify-center">
                 <motion.div initial="hidden" animate="visible" variants={headingVariants}>
                   <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium tracking-tighter text-balance text-center text-primary">
-                    <span>All AI models, for a lower price</span>
-                    <span className="block">than ChatGPT Plus</span>
+                    <span>All the best AIs,</span> <span className="block">for a lower price.</span>
                   </h1>
                 </motion.div>
                 <motion.div initial="hidden" animate="visible" variants={descriptionVariants}>
                   <p className="text-base md:text-lg text-center text-muted-foreground text-balance leading-relaxed tracking-tight">
-                    Stop paying for multiple subscriptions. <br />
-                    Access all top models from {currency === 'usd' ? '$' : '€'}
-                    12/mo.
+                    ChatGPT, Claude, Gemini and more - no separate accounts, no surprise fees. Pay a
+                    single price for {currency === 'usd' ? '$' : '€'}12/mo.
                   </p>
                 </motion.div>
                 <motion.div initial="hidden" animate="visible" variants={buttonVariants}>
