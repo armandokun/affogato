@@ -117,6 +117,9 @@ const Message = ({ message, isLoading }: Props) => {
                       {toolName === 'webSearch' && (
                         <AnimatedShinyText>Web Search</AnimatedShinyText>
                       )}
+                      {toolName !== 'webSearch' && (
+                        <AnimatedShinyText>Checking with Linear</AnimatedShinyText>
+                      )}
                     </div>
                   )
                 }

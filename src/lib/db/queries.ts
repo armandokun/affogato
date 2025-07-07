@@ -281,50 +281,125 @@ export async function saveOAuthTokens({
     expiresIn
   });
 
-  // First, try to update existing record
-  const { error: updateError } = await supabase
+  // Use upsert to insert or update based on the unique constraint (user_id, provider)
+  const { error } = await supabase
     .from('user_oauth_accounts')
-    .update({
+    .upsert({
+      user_id: userId,
+      provider,
       access_token: accessToken,
       refresh_token: refreshToken,
       expires_at: expiresAt,
       updated_at: new Date().toISOString(),
-    })
-    .eq('user_id', userId)
-    .eq('provider', provider);
+    }, {
+      onConflict: 'user_id,provider'
+    });
 
-  if (updateError) {
-    console.error('Update failed, trying insert:', updateError);
-
-    // If update fails, try to insert
-    const { error: insertError } = await supabase
-      .from('user_oauth_accounts')
-      .insert({
-        user_id: userId,
-        provider,
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        expires_at: expiresAt,
-        updated_at: new Date().toISOString(),
-      });
-
-    if (insertError) {
-      console.error('Supabase error details:', {
-        code: insertError.code,
-        message: insertError.message,
-        details: insertError.details,
-        hint: insertError.hint,
-        error: insertError
-      });
-      throw new ChatSDKError('bad_request:database', `Failed to save OAuth tokens for ${provider}: ${insertError.message}`);
-    }
+  if (error) {
+    console.error('Supabase upsert error:', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      error: error
+    });
+    throw new ChatSDKError('bad_request:database', `Failed to save OAuth tokens for ${provider}: ${error.message}`);
   }
 
   console.log('OAuth tokens saved successfully');
   return true;
 }
 
-export async function getOAuthTokens({ userId, provider }: { userId: string; provider: string }): Promise<{ accessToken: string; refreshToken?: string; expiresAt?: string | null } | null> {
+export async function refreshOAuthToken({
+  userId,
+  provider,
+  refreshToken,
+  clientId,
+  clientSecret,
+}: {
+  userId: string;
+  provider: string;
+  refreshToken: string;
+  clientId: string;
+  clientSecret: string;
+}): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number } | null> {
+  try {
+    // Different MCP providers have different token refresh endpoints
+    const tokenUrls = {
+      linear: 'https://mcp.linear.app/token',
+      notion: 'https://mcp.notion.com/token',
+      asana: 'https://mcp.asana.com/token'
+    };
+
+    const redirectUris = {
+      linear: process.env.NODE_ENV === 'production'
+        ? 'https://affogato.app/api/auth/linear/callback'
+        : 'http://localhost:3000/api/auth/linear/callback',
+      notion: process.env.NODE_ENV === 'production'
+        ? 'https://affogato.app/api/auth/notion/callback'
+        : 'http://localhost:3000/api/auth/notion/callback',
+      asana: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/asana/callback`
+    };
+
+    const tokenUrl = tokenUrls[provider as keyof typeof tokenUrls];
+    const redirectUri = redirectUris[provider as keyof typeof redirectUris];
+
+    if (!tokenUrl) {
+      console.error(`Unsupported provider for token refresh: ${provider}`);
+      return null;
+    }
+
+    console.log(`Attempting to refresh ${provider} token...`);
+
+    const response = await fetch(tokenUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: refreshToken,
+        client_id: clientId,
+        client_secret: clientSecret,
+        redirect_uri: redirectUri,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Failed to refresh ${provider} token:`, {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText
+      });
+      return null;
+    }
+
+    const tokenData = await response.json();
+    console.log(`Successfully refreshed ${provider} token`);
+
+    // Save the new tokens to database
+    await saveOAuthTokens({
+      userId,
+      provider,
+      accessToken: tokenData.access_token,
+      refreshToken: tokenData.refresh_token || refreshToken, // Use new refresh token if provided, otherwise keep existing
+      expiresIn: tokenData.expires_in,
+    });
+
+    return {
+      accessToken: tokenData.access_token,
+      refreshToken: tokenData.refresh_token || refreshToken,
+      expiresIn: tokenData.expires_in,
+    };
+
+  } catch (error) {
+    console.error(`Error refreshing ${provider} token:`, error);
+    return null;
+  }
+}
+
+export async function getOAuthTokensFromProvider({ userId, provider }: { userId: string; provider: string }): Promise<{ accessToken: string; refreshToken?: string; expiresAt?: string | null } | null> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -338,9 +413,78 @@ export async function getOAuthTokens({ userId, provider }: { userId: string; pro
     return null;
   }
 
+  // Check if token is expired
+  if (data.expires_at) {
+    const expirationTime = new Date(data.expires_at).getTime();
+    const currentTime = Date.now();
+    const fiveMinutesInMs = 5 * 60 * 1000; // 5 minutes buffer
+
+    // If token expires within 5 minutes, try to refresh it
+    if (expirationTime <= currentTime + fiveMinutesInMs) {
+      console.log(`${provider} token is expired or expiring soon, attempting refresh...`);
+
+      if (data.refresh_token) {
+        // For MCP providers, we need to get the client credentials from the stored DCR data
+        // Since DCR credentials are ephemeral, we'll need to re-authenticate if refresh fails
+        console.log(`Attempting to refresh ${provider} token with refresh token`);
+
+        // For now, we'll return null to force re-authentication
+        // In a production system, you might want to store DCR credentials more persistently
+        console.log(`${provider} token expired. User needs to re-authenticate.`);
+        return null;
+      } else {
+        console.log(`${provider} token expired and no refresh token available`);
+        return null;
+      }
+    }
+  }
+
   return {
     accessToken: data.access_token,
     refreshToken: data.refresh_token,
     expiresAt: data.expires_at || null,
   };
+}
+
+export async function getAllOAuthTokens({ userId }: { userId: string }) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('user_oauth_accounts')
+    .select('access_token, refresh_token, expires_at, provider')
+    .eq('user_id', userId)
+
+  if (error) {
+    console.error('Error fetching OAuth tokens:', error);
+
+    return null;
+  }
+
+  return data;
+}
+
+export async function deleteOAuthTokens({
+  userId,
+  provider,
+}: {
+  userId: string;
+  provider: string;
+}): Promise<boolean> {
+  const supabase = await createClient();
+
+  console.log(`Deleting OAuth tokens for ${provider} user ${userId}`);
+
+  const { error } = await supabase
+    .from('user_oauth_accounts')
+    .delete()
+    .eq('user_id', userId)
+    .eq('provider', provider);
+
+  if (error) {
+    console.error(`Failed to delete ${provider} tokens:`, error);
+    return false;
+  }
+
+  console.log(`Successfully deleted ${provider} tokens`);
+  return true;
 }

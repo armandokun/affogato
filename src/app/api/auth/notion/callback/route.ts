@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const encodedState = searchParams.get('state');
 
-  console.log('Linear OAuth callback received:', {
+  console.log('Notion OAuth callback received:', {
     hasCode: !!code,
     hasState: !!encodedState,
     codePrefix: code?.substring(0, 10) + '...'
@@ -35,24 +35,28 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log('Attempting token exchange with Linear MCP DCR credentials...');
+    console.log('Attempting token exchange with Notion MCP DCR credentials...');
+
+    const redirectUri = process.env.NODE_ENV === 'production'
+      ? 'https://affogato.app/api/auth/notion/callback'
+      : 'http://localhost:3000/api/auth/notion/callback';
 
     const tokenRequestBody = new URLSearchParams({
       grant_type: 'authorization_code',
       client_id,
       client_secret,
-      redirect_uri: 'http://localhost:3000/api/auth/linear/callback',
+      redirect_uri: redirectUri,
       code,
     });
 
     console.log('Token exchange request details:', {
-      url: 'https://mcp.linear.app/token',
+      url: 'https://mcp.notion.com/token',
       clientIdPrefix: client_id.substring(0, 8) + '...',
       hasClientSecret: !!client_secret,
       hasCode: !!code
     });
 
-    const response = await fetch('https://mcp.linear.app/token', {
+    const response = await fetch('https://mcp.notion.com/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -61,7 +65,7 @@ export async function GET(request: NextRequest) {
     });
 
     const responseText = await response.text();
-    console.log('Linear token exchange response:', {
+    console.log('Notion token exchange response:', {
       status: response.status,
       statusText: response.statusText,
       hasBody: !!responseText,
@@ -69,13 +73,13 @@ export async function GET(request: NextRequest) {
     });
 
     if (!response.ok) {
-      console.error('Linear token exchange failed:', {
+      console.error('Notion token exchange failed:', {
         status: response.status,
         statusText: response.statusText,
         body: responseText
       });
       return new Response(JSON.stringify({
-        error: 'Failed to exchange token with Linear MCP',
+        error: 'Failed to exchange token with Notion',
         details: responseText
       }), {
         status: 500,
@@ -83,38 +87,41 @@ export async function GET(request: NextRequest) {
     }
 
     const tokenData = JSON.parse(responseText);
-    console.log('Linear token exchange successful:', {
+    console.log('Notion token exchange successful:', {
       hasAccessToken: !!tokenData.access_token,
-      hasRefreshToken: !!tokenData.refresh_token,
-      expiresIn: tokenData.expires_in,
-      tokenType: tokenData.token_type
+      tokenType: tokenData.token_type,
+      workspaceId: tokenData.workspace_id,
+      workspaceName: tokenData.workspace_name
     });
 
     // Save the OAuth tokens to the database
     console.log('Attempting to save OAuth tokens:', {
       userId: user_id,
-      provider: 'linear',
+      provider: 'notion',
       hasAccessToken: !!tokenData.access_token,
-      expiresIn: tokenData.expires_in
+      workspaceId: tokenData.workspace_id
     });
 
     try {
-      await saveOAuthTokens({
+      const saveResult = await saveOAuthTokens({
         userId: user_id,
-        provider: 'linear',
+        provider: 'notion',
         accessToken: tokenData.access_token,
-        refreshToken: tokenData.refresh_token || undefined,
-        expiresIn: tokenData.expires_in,
+        // Notion tokens don't expire and don't have refresh tokens
+        refreshToken: undefined,
+        expiresIn: undefined,
       });
-      console.log('Linear tokens saved successfully');
+
+      console.log('saveOAuthTokens returned:', saveResult);
+      console.log('Notion tokens saved successfully');
     } catch (dbError) {
       console.error('Database error details:', {
         error: dbError,
         userId: user_id,
-        provider: 'linear',
+        provider: 'notion',
         hasAccessToken: !!tokenData.access_token,
-        hasRefreshToken: !!tokenData.refresh_token,
-        expiresIn: tokenData.expires_in
+        errorMessage: dbError instanceof Error ? dbError.message : 'Unknown error',
+        errorStack: dbError instanceof Error ? dbError.stack : undefined
       });
       throw dbError;
     }
@@ -123,7 +130,7 @@ export async function GET(request: NextRequest) {
     return Response.redirect(new URL('/dashboard/integrations', request.url));
 
   } catch (error) {
-    console.error('Linear OAuth callback error:', error);
+    console.error('Notion OAuth callback error:', error);
     return new Response(JSON.stringify({
       error: 'OAuth callback failed',
       details: error instanceof Error ? error.message : 'Unknown error'
