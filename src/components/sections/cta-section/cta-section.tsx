@@ -15,11 +15,11 @@ const CtaSection = () => {
           </div>
           <div className="flex flex-col items-center md:items-start md:w-1/2 text-center md:text-left md:order-1">
             <h2 className="text-4xl font-medium mb-4 text-balance max-w-3xl tracking-tighter">
-              Try Affogato Now
+              Ready to ditch multiple subscriptions?
             </h2>
             <Link href={LOGIN}>
               <Button className="bg-secondary text-primary hover:bg-secondary/80">
-                Get Started <ArrowTopRightIcon className="size-4" />
+                Buy now <ArrowTopRightIcon className="size-4" />
               </Button>
             </Link>
           </div>
