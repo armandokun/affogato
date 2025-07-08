@@ -22,7 +22,7 @@ export const signInWithEmail = async (formData: FormData) => {
 
   const email = formData.get('email')?.toString() || ''
 
-  const redirectToUrl = process.env.NEXT_PUBLIC_SITE_URL
+  const redirectToUrl = process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_SITE_URL : 'http://127.0.0.1:3000'
 
   const { error } = await supabase.auth.signInWithOtp({
     email,

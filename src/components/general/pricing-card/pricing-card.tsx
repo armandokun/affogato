@@ -7,13 +7,12 @@ import { cn } from '@/lib/utils'
 import { PricingTier } from '@/constants/pricing'
 import { checkoutAction, customerPortalAction } from '@/lib/payments/actions'
 import { useSession } from '@/containers/SessionProvider'
-import { event } from '@/lib/fpixel'
 
 type Props = {
   tier: PricingTier
   activeTab: 'yearly' | 'monthly'
   isSelected?: boolean
-  onCheckout?: (priceId: string) => void
+  onCheckout?: (price: { currency: string; amount: number }, priceId?: string) => void
 }
 
 const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
@@ -26,13 +25,6 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
       case 'Unlimited':
         return 'Everything in Pro +'
     }
-  }
-
-  const trackPixelPurchase = (currency: 'usd' | 'eur', value: number) => {
-    event('Purchase', {
-      currency: currency.toUpperCase(),
-      value: value.toString()
-    })
   }
 
   return (
@@ -123,7 +115,13 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
                 if (onCheckout) {
                   const priceId =
                     activeTab === 'yearly' ? tier.stripePriceIdYearly : tier.stripePriceIdMonthly
-                  onCheckout(priceId)
+                  onCheckout(
+                    {
+                      currency: tier.currency,
+                      amount: tier.price
+                    },
+                    priceId
+                  )
                 }
 
                 return
@@ -135,7 +133,6 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
                 checkoutAction(formData, user.id)
               }
             }}
-            onClick={() => trackPixelPurchase(tier.currency as 'usd' | 'eur', tier.price)}
             tabIndex={0}>
             {isSelected ? 'Manage Subscription' : tier.buttonText}
           </button>

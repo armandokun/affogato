@@ -11,6 +11,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'node',
+    setupFiles: ['./src/test-setup.ts'],
     include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
     exclude: ['src/**/*.stories.tsx', 'src/**/*.stories.ts'],
     coverage: {

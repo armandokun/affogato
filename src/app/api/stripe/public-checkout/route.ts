@@ -5,7 +5,7 @@ import { stripe } from '@/lib/payments/stripe'
 
 export async function POST(request: Request) {
   try {
-    const { priceId, email } = await request.json()
+    const { priceId, email, price } = await request.json()
 
     if (!priceId) {
       return new NextResponse('Missing priceId', { status: 400 })
@@ -33,6 +33,17 @@ export async function POST(request: Request) {
     const cookieStore = await cookies()
 
     cookieStore.set('stripe_session_id', session.id, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    })
+
+    cookieStore.set('fbp_value', price.amount.toString(), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
+    })
+    cookieStore.set('fbp_currency', price.currency, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax'
