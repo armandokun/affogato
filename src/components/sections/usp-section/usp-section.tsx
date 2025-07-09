@@ -4,7 +4,7 @@ import ExtendedUspSection from './extended-usp-section'
 
 const UspSection = () => {
   return (
-    <section id="how-it-works" className="flex flex-col items-center justify-center w-full">
+    <section id="meet-your-ai-team" className="flex flex-col items-center justify-center w-full">
       <div className="container mx-auto max-w-4xl">
         <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter text-center">
           Meet your AI team.
