@@ -51,7 +51,7 @@ const SignupMockup = () => (
         const x = Math.cos(((angle - 90) * Math.PI) / 180) * radius
         const y = Math.sin(((angle - 90) * Math.PI) / 180) * radius
 
-        const isDarkIcon = icon === 'grok.png'
+        const isDarkIcon = icon === 'grok.png' || icon === 'chatgpt.png'
         const bgClass = isDarkIcon ? 'bg-gray-800' : 'bg-white'
         const borderClass = isDarkIcon ? 'border-gray-600' : 'border-gray-200'
 
