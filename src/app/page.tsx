@@ -39,7 +39,6 @@ const Home = async () => {
           <main className="flex flex-col items-center justify-center w-full gap-30 md:gap-50">
             <UspSection />
             <HowItWorksSection />
-            <FeatureSection />
             <ComparisonSection currency={currency} />
             <PricingSection prices={prices} products={products} currency={currency} />
             <TestimonialSection />
