@@ -51,7 +51,7 @@ const SignupMockup = () => (
         const x = Math.cos(((angle - 90) * Math.PI) / 180) * radius
         const y = Math.sin(((angle - 90) * Math.PI) / 180) * radius
 
-        const isDarkIcon = icon === 'grok.png' || icon === 'chatgpt.png'
+        const isDarkIcon = icon === 'grok.png'
         const bgClass = isDarkIcon ? 'bg-gray-800' : 'bg-white'
         const borderClass = isDarkIcon ? 'border-gray-600' : 'border-gray-200'
 
@@ -64,7 +64,13 @@ const SignupMockup = () => (
               top: '50%',
               transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
             }}>
-            <img src={`/llm-icons/${icon}`} alt="" className="w-full h-full object-contain" />
+            <Image
+              src={`/llm-icons/${icon}`}
+              alt={icon}
+              className="w-full h-full object-contain"
+              width={32}
+              height={32}
+            />
           </div>
         )
       })}
