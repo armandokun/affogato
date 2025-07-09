@@ -29,11 +29,6 @@ const STEPS = [
   }
 ]
 
-const TrashIcon = () => <Trash2 className="w-4 h-4 text-red-400" />
-const CheckIcon = () => <Check className="w-3 h-3 text-green-400" />
-const ChevronDownIcon = () => <ChevronDown className="w-4 h-4 text-gray-400" />
-const SendIcon = () => <Send className="w-3 h-3 text-white" />
-
 const SignupMockup = () => (
   <div className="relative flex items-center justify-center h-full">
     <div className="relative w-40 h-40">
@@ -106,7 +101,7 @@ const ChatMockup = () => (
         <img src="/llm-icons/chatgpt.png" alt="ChatGPT" className="w-5 h-5 object-contain" />
         <span className="text-xs text-gray-300 font-medium">ChatGPT</span>
       </div>
-      <ChevronDownIcon />
+      <ChevronDown className="w-4 h-4 text-gray-400" />
     </div>
 
     {/* Chat Messages Area */}
@@ -134,7 +129,7 @@ const ChatMockup = () => (
     <div className="flex items-center gap-2 p-3 bg-gray-700/50 rounded-xl border border-gray-600">
       <div className="flex-1 bg-gray-600 h-3 rounded-full"></div>
       <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center shadow-sm">
-        <SendIcon />
+        <Send className="w-3 h-3 text-white" />
       </div>
     </div>
   </div>
@@ -150,7 +145,7 @@ const ProviderRow = ({ provider }: { provider: (typeof SUBSCRIPTION_PROVIDERS)[0
       <span className="text-xs text-gray-400">$$</span>
     </div>
     <div className="w-8 h-8 flex items-center justify-center bg-red-500/20 rounded-lg">
-      <TrashIcon />
+      <Trash2 className="w-4 h-4 text-red-400" />
     </div>
   </div>
 )
@@ -179,7 +174,7 @@ const SwitchMockup = () => (
       <div className="flex items-center gap-1">
         <span className="text-xs text-green-400 font-medium">$15</span>
         <div className="w-3 h-3 text-green-400">
-          <CheckIcon />
+          <Check className="w-3 h-3 text-green-400" />
         </div>
       </div>
     </div>
@@ -196,7 +191,7 @@ const BrowserMockup = ({ type }: { type: string | null }) => {
   }[type]
 
   return (
-    <div className="relative size-72">
+    <div className="relative size-72 md:size-80">
       <div className="bg-background rounded-lg shadow-xl overflow-hidden border border-border w-full h-full flex flex-col">
         {/* Browser Header */}
         <div className="bg-accent px-4 py-3 flex items-center gap-2 flex-shrink-0">
@@ -227,7 +222,7 @@ const StepLayout = ({
   }
   return (
     <div className="block md:hidden">
-      <div className="grid grid-cols-[15%_1fr] gap-4">{children}</div>
+      <div className="grid grid-cols-[15%_1fr]">{children}</div>
     </div>
   )
 }
@@ -257,7 +252,7 @@ const HowItWorksSection = () => {
       {isDesktop ? (
         <>
           {/* Title and description */}
-          <div className="flex flex-col mb-10 mr-10">
+          <div className="flex flex-col mb-10 mr-5 md:mr-10">
             <h3 className="font-medium text-white mb-4 text-lg md:text-3xl">{step.title}</h3>
             <p className="text-gray-400 text-base md:text-md">{step.description}</p>
           </div>
