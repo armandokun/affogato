@@ -57,7 +57,7 @@ const HeroSection = ({ currency }: Props) => {
                 <motion.div initial="hidden" animate="visible" variants={descriptionVariants}>
                   <p className="text-base md:text-lg text-center text-muted-foreground text-balance leading-relaxed tracking-tight">
                     ChatGPT, Claude, Gemini and more - no separate accounts, no surprise fees. Pay a
-                    single price for {currency === 'usd' ? '$' : '€'}12/mo.
+                    single price from {currency === 'usd' ? '$' : '€'}12/mo.
                   </p>
                 </motion.div>
                 <motion.div initial="hidden" animate="visible" variants={buttonVariants}>
