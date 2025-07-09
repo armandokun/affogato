@@ -20,7 +20,7 @@ const ExtendedUspSection = () => {
             {companies.map((company, idx) => (
               <div key={idx} className="flex flex-col items-center px-6 py-4 min-w-[120px]">
                 <Image
-                  src={`/provider-icons/${company.name}.png`}
+                  src={`/provider-icons/${company.name.toLowerCase()}.png`}
                   className="h-12 w-30 object-contain brightness-0 invert hover:brightness-100 hover:invert-0 transition-all duration-300 mb-2"
                   alt={company.name}
                   width={100}
