@@ -101,6 +101,7 @@ const PricingSection = ({
             <PricingCard
               key={tier!.id}
               tier={tier!}
+              showOldPrice
               activeTab={activeTab}
               onCheckout={handlePublicCheckout}
             />

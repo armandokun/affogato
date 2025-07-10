@@ -51,11 +51,12 @@ const PromoBanner = () => {
   if (!isVisible) return null
 
   return (
-    <div className="relative w-full bg-[#2979FF] text-white py-2 px-4">
+    <div className="relative w-full bg-gradient-to-r from-[#2979FF] via-[#FF80AB] to-[#FF6D00] text-white py-2 px-4">
       <div className="container mx-auto flex items-center justify-center text-center relative">
         <div className="flex items-center gap-2 text-sm font-medium">
           <span>🎉</span>
-          <span>GET 50% OFF SUBSCRIBING NOW |</span>
+          <span className="hidden md:block">GET 50% OFF SUBSCRIBING NOW |</span>
+          <span className="block md:hidden">GET 50% OFF |</span>
           <span>ENDS IN:</span>
           <div className="flex items-center gap-1 bg-white/20 px-2 py-1 rounded font-mono">
             <span>{timeLeft.hours.toString().padStart(2, '0')}</span>
