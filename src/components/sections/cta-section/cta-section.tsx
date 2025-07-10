@@ -17,8 +17,8 @@ const CtaSection = () => {
             <h2 className="text-4xl font-medium mb-4 text-balance max-w-3xl tracking-tighter">
               Ready to ditch multiple subscriptions?
             </h2>
-            <div className="flex flex-col md:flex-row items-center gap-4 ">
-              <Link href={LOGIN}>
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              <Link href="#pricing">
                 <Button className="bg-secondary text-primary hover:bg-secondary/80">
                   Buy now <ArrowTopRightIcon className="size-4" />
                 </Button>
