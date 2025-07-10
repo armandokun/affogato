@@ -7,6 +7,7 @@ import { StarFilledIcon } from '@radix-ui/react-icons'
 import Icons from '@/components/general/icons'
 import AnimatedLlmList from '@/components/general/animated-llm-list'
 import AnimatedGradientBackground from '@/components/general/animated-gradient-background'
+import { ShieldCheck } from 'lucide-react'
 
 const llmListVariants = {
   hidden: { opacity: 0, y: -24 },
@@ -61,14 +62,21 @@ const HeroSection = ({ currency }: Props) => {
                   </p>
                 </motion.div>
                 <motion.div initial="hidden" animate="visible" variants={buttonVariants}>
-                  <div className="flex items-center gap-2.5 flex-wrap justify-center">
+                  <div className="flex flex-col items-center flex-wrap justify-center">
                     <Link
                       href="#pricing"
                       className="bg-secondary h-9 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-secondary-foreground w-32 px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-secondary/80 transition-all ease-out active:scale-95">
                       Buy Now
                     </Link>
+                    <div className="flex items-center gap-1 mt-2 flex-wrap justify-center">
+                      <p className="text-muted-foreground text-sm font-normal leading-tight flex items-center gap-1 text-center">
+                        <span className="text-muted-foreground text-sm font-normal leading-tight">
+                          14-day money back guarantee. <br /> Cancel anytime.
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center mt-4">
+                  <div className="flex items-center justify-center mt-10">
                     <Icons.leftLaurel className="size-10 invert brightness-0" />
                     <div className="flex flex-col items-center mx-2">
                       <div className="flex items-center gap-1">

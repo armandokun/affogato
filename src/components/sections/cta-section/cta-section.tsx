@@ -17,11 +17,18 @@ const CtaSection = () => {
             <h2 className="text-4xl font-medium mb-4 text-balance max-w-3xl tracking-tighter">
               Ready to ditch multiple subscriptions?
             </h2>
-            <Link href={LOGIN}>
-              <Button className="bg-secondary text-primary hover:bg-secondary/80">
-                Buy now <ArrowTopRightIcon className="size-4" />
-              </Button>
-            </Link>
+            <div className="flex flex-col md:flex-row items-center gap-4 ">
+              <Link href={LOGIN}>
+                <Button className="bg-secondary text-primary hover:bg-secondary/80">
+                  Buy now <ArrowTopRightIcon className="size-4" />
+                </Button>
+              </Link>
+              <p className="text-muted-foreground text-sm font-normal leading-tight flex items-center gap-1">
+                <span className="text-muted-foreground text-sm font-normal leading-tight">
+                  14-day money back guarantee. <br /> Cancel anytime.
+                </span>
+              </p>
+            </div>
           </div>
         </div>
       </div>
