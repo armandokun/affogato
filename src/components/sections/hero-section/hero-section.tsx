@@ -57,7 +57,14 @@ const HeroSection = ({ currency }: Props) => {
                 <motion.div initial="hidden" animate="visible" variants={descriptionVariants}>
                   <p className="text-base md:text-lg text-center text-muted-foreground text-balance leading-relaxed tracking-tight">
                     ChatGPT, Claude, Gemini and more - no separate accounts, no surprise fees. Pay a
-                    single price from {currency === 'usd' ? '$' : '€'}12/mo.
+                    single price from{' '}
+                    <span className="line-through text-gray-500">
+                      {currency === 'usd' ? '$' : '€'}30/mo
+                    </span>{' '}
+                    <span className="font-semibold text-primary">
+                      {currency === 'usd' ? '$' : '€'}15/mo
+                    </span>
+                    .
                   </p>
                 </motion.div>
                 <motion.div initial="hidden" animate="visible" variants={buttonVariants}>

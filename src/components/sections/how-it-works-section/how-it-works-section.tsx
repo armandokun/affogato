@@ -172,6 +172,7 @@ const SwitchMockup = () => (
         <span className="text-xs text-green-400 font-medium">Affogato</span>
       </div>
       <div className="flex items-center gap-1">
+        <span className="text-xs line-through text-gray-500">$30</span>
         <span className="text-xs text-green-400 font-medium">$15</span>
         <div className="w-3 h-3 text-green-400">
           <Check className="w-3 h-3 text-green-400" />

@@ -9,6 +9,7 @@ import { getCurrencyFromCountry } from '@/lib/payments/currency'
 import Navbar from '@/components/sections/navbar'
 import HeroSection from '@/components/sections/hero-section'
 import PricingSection from '@/components/sections/pricing-section'
+import PromoBanner from '@/components/general/promo-banner'
 import FAQ from '@/components/sections/faq-section'
 import { Footer } from '@/components/sections/footer-section/footer-section'
 import { DASHBOARD } from '@/constants/routes'
@@ -31,6 +32,7 @@ const Home = async () => {
 
   return (
     <>
+      <PromoBanner />
       <div className="flex flex-col p-4 md:max-w-4xl lg:max-w-7xl md:mx-auto">
         <Navbar />
         <HeroSection currency={currency} />

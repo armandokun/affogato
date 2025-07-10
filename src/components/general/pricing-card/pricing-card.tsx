@@ -12,11 +12,12 @@ import { event } from '@/lib/fpixel'
 type Props = {
   tier: PricingTier
   activeTab: 'yearly' | 'monthly'
+  showOldPrice?: boolean
   isSelected?: boolean
   onCheckout?: (priceId: string) => void
 }
 
-const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
+const PricingCard = ({ tier, activeTab, isSelected, onCheckout, showOldPrice = false }: Props) => {
   const { user } = useSession()
 
   const getFeatureTitle = () => {
@@ -79,13 +80,25 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
                   duration: 0.15,
                   ease: [0.4, 0, 0.2, 1]
                 }}>
-                <span className="text-4xl font-semibold">
-                  {tier.currency === 'eur' ? '€' : '$'}
-                  {activeTab === 'yearly'
-                    ? Math.round((tier.yearlyPrice / 12) * 100) / 100
-                    : tier.price}
-                </span>
-                <span className="ml-2">/month</span>
+                <div className="flex flex-col">
+                  {showOldPrice && (
+                    <span className="text-lg line-through text-muted-foreground">
+                      {tier.currency === 'eur' ? '€' : '$'}
+                      {activeTab === 'yearly'
+                        ? (Math.round((tier.yearlyPrice / 12) * 100) / 100) * 2
+                        : tier.price * 2}
+                    </span>
+                  )}
+                  <span>
+                    <span className="text-4xl font-semibold">
+                      {tier.currency === 'eur' ? '€' : '$'}
+                      {activeTab === 'yearly'
+                        ? Math.round((tier.yearlyPrice / 12) * 100) / 100
+                        : tier.price}
+                    </span>
+                    <span className="ml-2">/month</span>
+                  </span>
+                </div>
               </motion.span>
             </AnimatePresence>
           </div>
@@ -95,7 +108,7 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
                 ? 'text-xs text-muted-foreground font-normal min-h-[20px] mt-1'
                 : 'text-xs text-muted-foreground font-normal min-h-[20px] mt-1 opacity-0 pointer-events-none'
             }>
-            Billed as €{tier.yearlyPrice}/year
+            Billed as {tier.currency === 'eur' ? '€' : '$'}180/year
           </div>
         </div>
         <p className="text-sm">{tier.description}</p>
@@ -135,7 +148,7 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout }: Props) => {
                 checkoutAction(formData, user.id)
               }
             }}
-            onClick={() => trackPixelPurchase(tier.currency as 'usd' | 'eur', tier.price)}
+            onClick={() => trackPixelPurchase(tier.currency as 'usd' | 'eur', 15)}
             tabIndex={0}>
             {isSelected ? 'Manage Subscription' : tier.buttonText}
           </button>

@@ -121,9 +121,12 @@ const ComparisonSection = ({ currency }: { currency: 'usd' | 'eur' }) => {
                 <div className="w-full border-t border-gray-200 my-4" />
                 <div className="flex justify-between w-full text-lg font-semibold items-center">
                   <span>Total</span>
-                  <span>
+                  <span className="flex items-center gap-2">
+                    <span className="line-through text-gray-500 text-base">
+                      {currency === 'eur' ? '€' : '$'}30/mo
+                    </span>
                     <span className="bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent text-xl">
-                      from {currency === 'eur' ? '€' : '$'}12.5/mo
+                      {currency === 'eur' ? '€' : '$'}15/mo
                     </span>
                   </span>
                 </div>
