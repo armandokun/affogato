@@ -7,7 +7,6 @@ import { StarFilledIcon } from '@radix-ui/react-icons'
 import Icons from '@/components/general/icons'
 import AnimatedLlmList from '@/components/general/animated-llm-list'
 import AnimatedGradientBackground from '@/components/general/animated-gradient-background'
-import { ShieldCheck } from 'lucide-react'
 
 const llmListVariants = {
   hidden: { opacity: 0, y: -24 },

@@ -3,7 +3,6 @@ import Link from 'next/link'
 
 import Icons from '@/components/general/icons'
 import Button from '@/components/ui/button'
-import { LOGIN } from '@/constants/routes'
 
 const CtaSection = () => {
   return (
