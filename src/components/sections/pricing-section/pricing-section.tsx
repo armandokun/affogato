@@ -61,12 +61,15 @@ const PricingSection = ({
 
   const tiers = [proTier, unlimitedTier].filter((tier) => tier !== undefined)
 
-  const handlePublicCheckout = async (priceId?: string) => {
+  const handlePublicCheckout = async (
+    price: { currency: string; amount: number },
+    priceId?: string
+  ) => {
     try {
       const res = await fetch('/api/stripe/public-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ priceId })
+        body: JSON.stringify({ priceId, price })
       })
       const data = await res.json()
 
