@@ -150,7 +150,7 @@ export async function POST(request: Request) {
       }
 
       try {
-        let mcpClient = await createMCPClient(integration.access_token)
+        const mcpClient = await createMCPClient(integration.access_token)
 
         try {
           const tools = await mcpClient.tools()

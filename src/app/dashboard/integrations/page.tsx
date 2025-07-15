@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { ChevronRight, X, Info, RefreshCw, AlertTriangle } from 'lucide-react'
+import { ChevronRight, Info } from 'lucide-react'
 import Image from 'next/image'
 
 import { getServerSession } from '@/lib/auth'
