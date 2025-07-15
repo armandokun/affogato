@@ -255,3 +255,145 @@ export async function createSubscription({
 
   return { subscription }
 }
+
+export async function saveIntegration({
+  userId,
+  provider,
+  clientId,
+  clientSecret,
+  accessToken,
+}: {
+  userId: string;
+  provider: string;
+  clientId: string;
+  clientSecret: string;
+  accessToken?: string;
+}) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from('user_integrations')
+    .upsert({
+      user_id: userId,
+      provider,
+      client_id: clientId,
+      client_secret: clientSecret,
+      access_token: accessToken,
+      updated_at: new Date().toISOString(),
+    }, {
+      onConflict: 'user_id,provider'
+    });
+
+  if (error) {
+    console.error('Supabase upsert error:', {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+      error: error
+    });
+
+    throw new ChatSDKError('bad_request:database', `Failed to save integration for ${provider}: ${error.message}`);
+  }
+
+  return true;
+}
+
+export async function updateAccessToken({
+  userId,
+  provider,
+  accessToken,
+}: {
+  userId: string;
+  provider: string;
+  accessToken: string | null;
+}) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from('user_integrations')
+    .update({
+      access_token: accessToken,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId)
+    .eq('provider', provider);
+
+  if (error) {
+    console.error('Failed to update access token:', error);
+    throw new ChatSDKError('bad_request:database', `Failed to update access token for ${provider}: ${error.message}`);
+  }
+
+  return true;
+}
+
+export async function getOAuthTokensFromProvider({ userId, provider }: { userId: string; provider: string }): Promise<{ accessToken: string, clientId: string, clientSecret: string } | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('user_integrations')
+    .select('access_token, client_id, client_secret')
+    .eq('user_id', userId)
+    .eq('provider', provider)
+    .single();
+
+  if (error) {
+    if (error.code === 'PGRST116') return null;
+
+    console.error(`Error fetching integration for ${provider} user ${userId}`, error);
+
+    return null;
+  }
+
+  if (!data) {
+    console.error(`No integration found for ${provider} user ${userId}`);
+
+    return null;
+  }
+
+  return {
+    accessToken: data.access_token,
+    clientId: data.client_id,
+    clientSecret: data.client_secret,
+  }
+}
+
+export async function getAllIntegrations({ userId }: { userId: string }) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('user_integrations')
+    .select('access_token, provider, client_id, client_secret')
+    .eq('user_id', userId)
+
+  if (error) {
+    console.error('Error fetching integrations:', error);
+
+    return null;
+  }
+
+  return data;
+}
+
+export async function deleteIntegration({
+  userId,
+  provider,
+}: {
+  userId: string;
+  provider: string;
+}): Promise<boolean> {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from('user_integrations')
+    .delete()
+    .eq('user_id', userId)
+    .eq('provider', provider);
+
+  if (error) {
+    console.error(`Failed to delete ${provider} integration:`, error);
+    return false;
+  }
+
+  return true;
+}

@@ -1,7 +1,7 @@
 'use client'
 
 import { ComponentProps } from 'react'
-import { LockIcon, SquarePen } from 'lucide-react'
+import { LockIcon, SquarePen, Plug } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
@@ -64,6 +64,19 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                 Unlock chat creation by upgrading a plan.
               </p>
             )}
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href="/dashboard/integrations">
+                <div className="flex items-center gap-2">
+                  <Plug className="size-4" />
+                  <span className="text-sm font-medium">Integrations</span>
+                  <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium text-white rounded-md ml-auto bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500">
+                    New
+                  </span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
         <NavHistory />

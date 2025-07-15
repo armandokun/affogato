@@ -24,6 +24,60 @@ const getModelLogo = (languageModelCode?: string) => {
   return '/llm-icons/chatgpt.png'
 }
 
+const getToolProvider = (toolName: string) => {
+  if (toolName === 'webSearch') return 'Web Search'
+  if (
+    toolName.toLowerCase().includes('linear') ||
+    toolName.includes('issue') ||
+    toolName.includes('comment')
+  )
+    return 'Linear'
+  if (
+    toolName.toLowerCase().includes('notion') ||
+    toolName.includes('page') ||
+    toolName.includes('database')
+  )
+    return 'Notion'
+  if (
+    toolName.toLowerCase().includes('asana') ||
+    toolName.includes('task') ||
+    toolName.includes('project')
+  )
+    return 'Asana'
+  return 'External Tool'
+}
+
+const getProviderIcon = (provider: string) => {
+  switch (provider) {
+    case 'Linear':
+      return '/integration-icons/linear.png'
+    case 'Notion':
+      return '/integration-icons/notion.png'
+    case 'Asana':
+      return '/integration-icons/asana.png'
+    default:
+      return '/logo.png'
+  }
+}
+
+const formatToolParameters = (args: unknown) => {
+  if (!args || typeof args !== 'object') return null
+
+  const entries = Object.entries(args)
+  if (entries.length === 0) return null
+
+  return entries
+    .map(([key, value]) => {
+      const displayValue =
+        typeof value === 'string' && value.length > 50
+          ? `${value.substring(0, 50)}...`
+          : String(value)
+
+      return `${key}: ${displayValue}`
+    })
+    .join(', ')
+}
+
 type Props = {
   message: UIMessage
   isLoading: boolean
@@ -112,10 +166,30 @@ const Message = ({ message, isLoading }: Props) => {
                 const { toolName, toolCallId, state } = toolInvocation
 
                 if (state === 'call') {
+                  const provider = getToolProvider(toolName)
+                  const providerIcon = getProviderIcon(provider)
+                  const parameters = formatToolParameters(toolInvocation.args)
+
                   return (
-                    <div key={toolCallId}>
-                      {toolName === 'webSearch' && (
-                        <AnimatedShinyText>Web Search</AnimatedShinyText>
+                    <div
+                      key={toolCallId}
+                      className="flex flex-col gap-2 p-3 bg-muted/30 rounded-lg border border-border/50">
+                      <div className="flex items-center gap-2">
+                        <Image
+                          src={providerIcon}
+                          alt={provider}
+                          width={16}
+                          height={16}
+                          className="rounded-sm"
+                        />
+                        <AnimatedShinyText className="text-sm">
+                          {provider}: {toolName}
+                        </AnimatedShinyText>
+                      </div>
+                      {parameters && (
+                        <div className="text-xs text-muted-foreground font-mono bg-muted/50 p-2 rounded border">
+                          {parameters}
+                        </div>
                       )}
                     </div>
                   )
@@ -143,6 +217,24 @@ const Message = ({ message, isLoading }: Props) => {
                       </div>
                     )
                   }
+
+                  const provider = getToolProvider(toolName)
+                  const providerIcon = getProviderIcon(provider)
+
+                  return (
+                    <div
+                      key={`${toolCallId}-result`}
+                      className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Image
+                        src={providerIcon}
+                        alt={provider}
+                        width={14}
+                        height={14}
+                        className="rounded-sm"
+                      />
+                      <span>✓ {toolName} completed</span>
+                    </div>
+                  )
                 }
               }
             })}
