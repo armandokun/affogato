@@ -6,12 +6,6 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const encodedState = searchParams.get('state');
 
-  console.log('Notion OAuth callback received:', {
-    hasCode: !!code,
-    hasState: !!encodedState,
-    codePrefix: code?.substring(0, 10) + '...'
-  });
-
   if (!code || !encodedState) {
     console.error('Missing required parameters:', { code: !!code, state: !!encodedState });
     return new Response(JSON.stringify({ error: 'Invalid request: missing code or state' }), {
@@ -20,7 +14,6 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Decode client credentials from state
     const clientCredentials = JSON.parse(Buffer.from(encodedState, 'base64').toString());
     const { client_id, client_secret, user_id } = clientCredentials;
 
@@ -35,8 +28,6 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    console.log('Attempting token exchange with Notion MCP DCR credentials...');
-
     const redirectUri = process.env.NODE_ENV === 'production'
       ? 'https://affogato.app/api/auth/notion/callback'
       : 'http://localhost:3000/api/auth/notion/callback';
@@ -49,13 +40,6 @@ export async function GET(request: NextRequest) {
       code,
     });
 
-    console.log('Token exchange request details:', {
-      url: 'https://mcp.notion.com/token',
-      clientIdPrefix: client_id.substring(0, 8) + '...',
-      hasClientSecret: !!client_secret,
-      hasCode: !!code
-    });
-
     const response = await fetch('https://mcp.notion.com/token', {
       method: 'POST',
       headers: {
@@ -65,12 +49,6 @@ export async function GET(request: NextRequest) {
     });
 
     const responseText = await response.text();
-    console.log('Notion token exchange response:', {
-      status: response.status,
-      statusText: response.statusText,
-      hasBody: !!responseText,
-      bodyLength: responseText.length
-    });
 
     if (!response.ok) {
       console.error('Notion token exchange failed:', {
@@ -87,32 +65,15 @@ export async function GET(request: NextRequest) {
     }
 
     const tokenData = JSON.parse(responseText);
-    console.log('Notion token exchange successful:', {
-      hasAccessToken: !!tokenData.access_token,
-      tokenType: tokenData.token_type,
-      workspaceId: tokenData.workspace_id,
-      workspaceName: tokenData.workspace_name
-    });
-
-    // Save the OAuth tokens to the database
-    console.log('Attempting to save OAuth tokens:', {
-      userId: user_id,
-      provider: 'notion',
-      hasAccessToken: !!tokenData.access_token,
-      workspaceId: tokenData.workspace_id
-    });
 
     try {
-      const saveResult = await saveIntegration({
+      await saveIntegration({
         userId: user_id,
         provider: 'notion',
         clientId: client_id,
         clientSecret: client_secret,
         accessToken: tokenData.access_token,
       });
-
-      console.log('saveIntegration returned:', saveResult);
-      console.log('Notion integration saved successfully');
     } catch (dbError) {
       console.error('Database error details:', {
         error: dbError,
@@ -127,7 +88,6 @@ export async function GET(request: NextRequest) {
       throw dbError;
     }
 
-    // Redirect back to the dashboard
     return Response.redirect(new URL('/dashboard/integrations', request.url));
 
   } catch (error) {

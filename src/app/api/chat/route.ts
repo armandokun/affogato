@@ -112,8 +112,6 @@ export async function POST(request: Request) {
       integration => mcpConfigs[integration.provider as keyof typeof mcpConfigs]
     ) || []
 
-    console.log('Available integrations:', availableIntegrations.map(i => i.provider))
-
     const mcpClients: Array<{ close(): Promise<void> }> = []
     let mcpTools = {}
 
@@ -125,8 +123,6 @@ export async function POST(request: Request) {
 
         continue
       }
-
-      console.log(`Creating ${config.name} MCP client`)
 
       const createMCPClient = async (accessToken: string) => {
         return await experimental_createMCPClient({
@@ -144,7 +140,7 @@ export async function POST(request: Request) {
       }
 
       if (!integration.access_token) {
-        console.log(`${config.name} has no access token - skipping`)
+        console.error(`${config.name} has no access token`)
 
         continue
       }
@@ -157,8 +153,6 @@ export async function POST(request: Request) {
 
           mcpTools = { ...mcpTools, ...tools }
           mcpClients.push(mcpClient)
-
-          console.log(`${config.name} MCP tools loaded:`, Object.keys(tools).length)
         } catch (error) {
           console.error(`Failed to fetch ${config.name} MCP tools:`, error)
         }
@@ -167,23 +161,18 @@ export async function POST(request: Request) {
 
         const errorMessage = error instanceof Error ? error.message : String(error)
         if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
-          console.log(`${config.name} returned 401 - clearing invalid access token`)
-
           try {
             await updateAccessToken({
               userId: user.id,
               provider: integration.provider,
               accessToken: null
             })
-            console.log(`${config.name} access token cleared - user needs to reconnect`)
           } catch (clearError) {
             console.error(`Failed to clear ${config.name} access token:`, clearError)
           }
         }
       }
     }
-
-    console.log('Total MCP tools available:', Object.keys(mcpTools).length)
 
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,

@@ -12,9 +12,6 @@ export async function GET() {
   }
 
   try {
-    console.log('Starting Linear MCP Dynamic Client Registration...');
-
-    // Step 1: Dynamic Client Registration
     const registrationResponse = await fetch('https://mcp.linear.app/register', {
       method: 'POST',
       headers: {
@@ -44,12 +41,7 @@ export async function GET() {
     }
 
     const registrationData = await registrationResponse.json();
-    console.log('Linear DCR successful:', {
-      hasClientId: !!registrationData.client_id,
-      hasClientSecret: !!registrationData.client_secret
-    });
 
-    // Step 2: Save integration to database for automatic reauthorization
     try {
       await saveIntegration({
         userId: user.id,
@@ -57,29 +49,22 @@ export async function GET() {
         clientId: registrationData.client_id,
         clientSecret: registrationData.client_secret,
       });
-      console.log('Linear integration saved successfully');
     } catch (error) {
       console.error('Failed to save Linear integration:', error);
-      // Continue with the flow even if saving fails
     }
 
-    // Step 3: Prepare client credentials for state parameter (fallback)
     const clientCredentials = {
       client_id: registrationData.client_id,
       client_secret: registrationData.client_secret,
       user_id: user.id
     };
 
-    // Step 4: Redirect to authorization endpoint with DCR client credentials
     const linearAuthUrl = new URL('https://mcp.linear.app/authorize');
     linearAuthUrl.searchParams.set('client_id', registrationData.client_id);
     linearAuthUrl.searchParams.set('redirect_uri', 'http://localhost:3000/api/auth/linear/callback');
     linearAuthUrl.searchParams.set('response_type', 'code');
     linearAuthUrl.searchParams.set('scope', 'read,write');
-    // Encode client credentials in state (fallback for callback)
     linearAuthUrl.searchParams.set('state', Buffer.from(JSON.stringify(clientCredentials)).toString('base64'));
-
-    console.log('Redirecting to Linear authorization:', linearAuthUrl.toString());
 
     return NextResponse.redirect(linearAuthUrl.toString());
 

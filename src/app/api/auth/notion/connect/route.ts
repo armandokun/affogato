@@ -12,13 +12,10 @@ export async function GET() {
   }
 
   try {
-    console.log('Starting Notion MCP Dynamic Client Registration...');
-
     const redirectUri = process.env.NODE_ENV === 'production'
       ? 'https://affogato.app/api/auth/notion/callback'
       : 'http://localhost:3000/api/auth/notion/callback';
 
-    // Step 1: Dynamic Client Registration
     const registrationResponse = await fetch('https://mcp.notion.com/register', {
       method: 'POST',
       headers: {
@@ -48,12 +45,7 @@ export async function GET() {
     }
 
     const registrationData = await registrationResponse.json();
-    console.log('Notion MCP DCR successful:', {
-      hasClientId: !!registrationData.client_id,
-      hasClientSecret: !!registrationData.client_secret
-    });
 
-    // Step 2: Save integration to database for automatic reauthorization
     try {
       await saveIntegration({
         userId: user.id,
@@ -61,28 +53,21 @@ export async function GET() {
         clientId: registrationData.client_id,
         clientSecret: registrationData.client_secret,
       });
-      console.log('Notion integration saved successfully');
     } catch (error) {
       console.error('Failed to save Notion integration:', error);
-      // Continue with the flow even if saving fails
     }
 
-    // Step 3: Prepare client credentials for state parameter (fallback)
     const clientCredentials = {
       client_id: registrationData.client_id,
       client_secret: registrationData.client_secret,
       user_id: user.id
     };
 
-    // Step 4: Redirect to authorization endpoint with DCR client credentials
     const notionAuthUrl = new URL('https://mcp.notion.com/authorize');
     notionAuthUrl.searchParams.set('client_id', registrationData.client_id);
     notionAuthUrl.searchParams.set('redirect_uri', redirectUri);
     notionAuthUrl.searchParams.set('response_type', 'code');
-    // Encode client credentials in state (fallback for callback)
     notionAuthUrl.searchParams.set('state', Buffer.from(JSON.stringify(clientCredentials)).toString('base64'));
-
-    console.log('Redirecting to Notion MCP authorization:', notionAuthUrl.toString());
 
     return NextResponse.redirect(notionAuthUrl.toString());
 

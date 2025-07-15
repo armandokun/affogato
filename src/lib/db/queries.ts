@@ -271,15 +271,6 @@ export async function saveIntegration({
 }) {
   const supabase = await createClient();
 
-  console.log('Attempting to save integration:', {
-    userId,
-    provider,
-    hasClientId: !!clientId,
-    hasClientSecret: !!clientSecret,
-    hasAccessToken: !!accessToken,
-  });
-
-  // Use upsert to insert or update based on the unique constraint (user_id, provider)
   const { error } = await supabase
     .from('user_integrations')
     .upsert({
@@ -305,7 +296,6 @@ export async function saveIntegration({
     throw new ChatSDKError('bad_request:database', `Failed to save integration for ${provider}: ${error.message}`);
   }
 
-  console.log('Integration saved successfully');
   return true;
 }
 
@@ -319,12 +309,6 @@ export async function updateAccessToken({
   accessToken: string | null;
 }) {
   const supabase = await createClient();
-
-  console.log('Attempting to update access token:', {
-    userId,
-    provider,
-    hasAccessToken: !!accessToken,
-  });
 
   const { error } = await supabase
     .from('user_integrations')
@@ -340,7 +324,6 @@ export async function updateAccessToken({
     throw new ChatSDKError('bad_request:database', `Failed to update access token for ${provider}: ${error.message}`);
   }
 
-  console.log('Access token updated successfully');
   return true;
 }
 
@@ -401,8 +384,6 @@ export async function deleteIntegration({
 }): Promise<boolean> {
   const supabase = await createClient();
 
-  console.log(`Deleting integration for ${provider} user ${userId}`);
-
   const { error } = await supabase
     .from('user_integrations')
     .delete()
@@ -414,230 +395,5 @@ export async function deleteIntegration({
     return false;
   }
 
-  console.log(`Successfully deleted ${provider} integration`);
   return true;
-}
-
-export async function getDCRCredentials({
-  userId,
-  provider,
-}: {
-  userId: string;
-  provider: string;
-}): Promise<{ clientId: string; clientSecret: string } | null> {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase
-    .from('user_integrations')
-    .select('client_id, client_secret')
-    .eq('user_id', userId)
-    .eq('provider', provider)
-    .single();
-
-  if (error || !data || !data.client_id || !data.client_secret) {
-    console.log(`No DCR credentials found for ${provider} user ${userId}`);
-    return null;
-  }
-
-  return {
-    clientId: data.client_id,
-    clientSecret: data.client_secret,
-  };
-}
-
-// === Automatic Reauthorization ===
-
-export async function performAutomaticReauthorization({
-  userId,
-  provider,
-}: {
-  userId: string;
-  provider: string;
-}): Promise<{ accessToken: string } | null> {
-  console.log(`Starting automatic reauthorization for ${provider} user ${userId}`);
-
-  try {
-    // First, try to get existing DCR credentials
-    let dcrCredentials = await getDCRCredentials({ userId, provider });
-
-    // If no DCR credentials exist, perform DCR
-    if (!dcrCredentials) {
-      console.log(`No DCR credentials found for ${provider}, performing DCR...`);
-      dcrCredentials = await performDCR({ userId, provider });
-
-      if (!dcrCredentials) {
-        console.error(`Failed to perform DCR for ${provider}`);
-        return null;
-      }
-    }
-
-    // Perform device authorization flow or implicit grant
-    // For MCP providers, we can use the client credentials directly
-    const tokenData = await exchangeClientCredentialsForToken({
-      provider,
-      clientId: dcrCredentials.clientId,
-      clientSecret: dcrCredentials.clientSecret,
-    });
-
-    if (!tokenData) {
-      console.error(`Failed to exchange client credentials for token: ${provider}`);
-      return null;
-    }
-
-    // Save the new access token to the same record
-    await updateAccessToken({
-      userId,
-      provider,
-      accessToken: tokenData.accessToken,
-    });
-
-    console.log(`Successfully completed automatic reauthorization for ${provider}`);
-    return tokenData;
-
-  } catch (error) {
-    console.error(`Error during automatic reauthorization for ${provider}:`, error);
-    return null;
-  }
-}
-
-async function performDCR({
-  userId,
-  provider,
-}: {
-  userId: string;
-  provider: string;
-}): Promise<{ clientId: string; clientSecret: string } | null> {
-  const registrationUrls = {
-    linear: 'https://mcp.linear.app/register',
-    notion: 'https://mcp.notion.com/register',
-    asana: 'https://mcp.asana.com/register',
-  };
-
-  const redirectUris = {
-    linear: process.env.NODE_ENV === 'production'
-      ? 'https://affogato.app/api/auth/linear/callback'
-      : 'http://localhost:3000/api/auth/linear/callback',
-    notion: process.env.NODE_ENV === 'production'
-      ? 'https://affogato.app/api/auth/notion/callback'
-      : 'http://localhost:3000/api/auth/notion/callback',
-    asana: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/asana/callback`,
-  };
-
-  const registrationUrl = registrationUrls[provider as keyof typeof registrationUrls];
-  const redirectUri = redirectUris[provider as keyof typeof redirectUris];
-
-  if (!registrationUrl) {
-    console.error(`Unsupported provider for DCR: ${provider}`);
-    return null;
-  }
-
-  try {
-    console.log(`Performing DCR for ${provider}...`);
-
-    const response = await fetch(registrationUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        client_name: 'affogato.chat',
-        redirect_uris: [redirectUri],
-        grant_types: ['authorization_code', 'client_credentials'],
-        response_types: ['code'],
-        token_endpoint_auth_method: 'client_secret_post',
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`DCR failed for ${provider}:`, {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText,
-      });
-      return null;
-    }
-
-    const registrationData = await response.json();
-    console.log(`DCR successful for ${provider}`);
-
-    // Save DCR credentials to the integrations table
-    await saveIntegration({
-      userId,
-      provider,
-      clientId: registrationData.client_id,
-      clientSecret: registrationData.client_secret,
-    });
-
-    return {
-      clientId: registrationData.client_id,
-      clientSecret: registrationData.client_secret,
-    };
-
-  } catch (error) {
-    console.error(`Error during DCR for ${provider}:`, error);
-    return null;
-  }
-}
-
-async function exchangeClientCredentialsForToken({
-  provider,
-  clientId,
-  clientSecret,
-}: {
-  provider: string;
-  clientId: string;
-  clientSecret: string;
-}): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number } | null> {
-  const tokenUrls = {
-    linear: 'https://mcp.linear.app/token',
-    notion: 'https://mcp.notion.com/token',
-    asana: 'https://mcp.asana.com/token',
-  };
-
-  const tokenUrl = tokenUrls[provider as keyof typeof tokenUrls];
-
-  if (!tokenUrl) {
-    console.error(`Unsupported provider for token exchange: ${provider}`);
-    return null;
-  }
-
-  try {
-    console.log(`Exchanging client credentials for token: ${provider}`);
-
-    const response = await fetch(tokenUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'client_credentials',
-        client_id: clientId,
-        client_secret: clientSecret,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Token exchange failed for ${provider}:`, {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText,
-      });
-      return null;
-    }
-
-    const tokenData = await response.json();
-    console.log(`Token exchange successful for ${provider}`);
-
-    return {
-      accessToken: tokenData.access_token,
-      refreshToken: tokenData.refresh_token,
-      expiresIn: tokenData.expires_in,
-    };
-
-  } catch (error) {
-    console.error(`Error during token exchange for ${provider}:`, error);
-    return null;
-  }
 }

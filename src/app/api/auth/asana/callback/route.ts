@@ -45,7 +45,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // Exchange authorization code for tokens using Asana MCP endpoint
     const tokenResponse = await fetch('https://mcp.asana.com/token', {
       method: 'POST',
       headers: {
@@ -73,7 +72,6 @@ export async function GET(request: NextRequest) {
     }
 
     const tokens = await tokenResponse.json()
-    console.log('Asana tokens received successfully')
 
     await saveIntegration({
       userId: user.id,
@@ -82,8 +80,6 @@ export async function GET(request: NextRequest) {
       clientSecret: client_secret,
       accessToken: tokens.access_token,
     })
-
-    console.log('Asana tokens saved successfully')
     return NextResponse.redirect(
       new URL('/dashboard/integrations?success=asana_connected', request.url)
     )

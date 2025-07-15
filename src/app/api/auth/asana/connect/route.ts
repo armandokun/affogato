@@ -6,7 +6,6 @@ export async function GET(request: NextRequest) {
   const supabase = await createClient()
 
   try {
-    // Check if user is authenticated
     const { data: { user }, error: userError } = await supabase.auth.getUser()
 
     if (userError || !user) {
@@ -14,7 +13,6 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // Dynamic Client Registration with Asana MCP
     const registrationResponse = await fetch('https://mcp.asana.com/register', {
       method: 'POST',
       headers: {
@@ -37,9 +35,7 @@ export async function GET(request: NextRequest) {
     }
 
     const clientCredentials = await registrationResponse.json()
-    console.log('Asana client registered successfully:', { client_id: clientCredentials.client_id })
 
-    // Save integration to database for automatic reauthorization
     try {
       await saveIntegration({
         userId: user.id,
@@ -47,13 +43,10 @@ export async function GET(request: NextRequest) {
         clientId: clientCredentials.client_id,
         clientSecret: clientCredentials.client_secret,
       });
-      console.log('Asana integration saved successfully');
     } catch (error) {
       console.error('Failed to save Asana integration:', error);
-      // Continue with the flow even if saving fails
     }
 
-    // Encode client credentials in state parameter (fallback for callback)
     const stateData = {
       user_id: user.id,
       client_id: clientCredentials.client_id,
@@ -61,7 +54,6 @@ export async function GET(request: NextRequest) {
     }
     const state = Buffer.from(JSON.stringify(stateData)).toString('base64')
 
-    // Build authorization URL
     const authUrl = new URL('https://mcp.asana.com/authorize')
     authUrl.searchParams.set('client_id', clientCredentials.client_id)
     authUrl.searchParams.set('redirect_uri', `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/asana/callback`)
@@ -69,7 +61,6 @@ export async function GET(request: NextRequest) {
     authUrl.searchParams.set('state', state)
     authUrl.searchParams.set('scope', 'default')
 
-    console.log('Redirecting to Asana authorization:', authUrl.toString())
     return NextResponse.redirect(authUrl.toString())
 
   } catch (error) {
