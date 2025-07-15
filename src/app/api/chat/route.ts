@@ -156,7 +156,7 @@ export async function POST(request: Request) {
             const prefixedName = `${integration.provider}_${toolName}`
             acc[prefixedName] = toolConfig
             return acc
-          }, {} as Record<string, any>)
+          }, {} as Record<string, unknown>)
 
           mcpTools = { ...mcpTools, ...prefixedTools }
           mcpClients.push(mcpClient)
