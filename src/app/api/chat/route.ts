@@ -3,6 +3,7 @@ import {
   appendClientMessage,
   appendResponseMessages,
   createDataStreamResponse,
+  experimental_createMCPClient,
   smoothStream,
   streamText
 } from 'ai'
@@ -19,7 +20,9 @@ import {
   getPlanNameByUserId,
   saveChat,
   saveMessage,
-  updateChatTitle
+  updateChatTitle,
+  getAllIntegrations,
+  updateAccessToken
 } from '@/lib/db/queries'
 import { ChatSDKError, errorHandler } from '@/lib/errors'
 import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
@@ -89,6 +92,88 @@ export async function POST(request: Request) {
       }
     }
 
+    const mcpConfigs = {
+      linear: {
+        name: 'Linear',
+        url: 'https://mcp.linear.app/sse'
+      },
+      notion: {
+        name: 'Notion',
+        url: 'https://mcp.notion.com/sse'
+      },
+      asana: {
+        name: 'Asana',
+        url: 'https://mcp.asana.com/sse'
+      }
+    }
+
+    const userIntegrations = await getAllIntegrations({ userId: user.id })
+    const availableIntegrations = userIntegrations?.filter(
+      integration => mcpConfigs[integration.provider as keyof typeof mcpConfigs]
+    ) || []
+
+    const mcpClients: Array<{ close(): Promise<void> }> = []
+    let mcpTools = {}
+
+    for (const integration of availableIntegrations) {
+      const config = mcpConfigs[integration.provider as keyof typeof mcpConfigs]
+
+      if (!config) {
+        console.warn(`No MCP configuration found for provider: ${integration.provider}`)
+
+        continue
+      }
+
+      const createMCPClient = async (accessToken: string) => {
+        return await experimental_createMCPClient({
+          transport: {
+            type: 'sse',
+            url: config.url,
+            headers: {
+              Authorization: `Bearer ${accessToken}`
+            }
+          },
+          onUncaughtError: (error) => {
+            console.error(`${config.name} MCP client error:`, error)
+          }
+        })
+      }
+
+      if (!integration.access_token) {
+        console.error(`${config.name} has no access token`)
+
+        continue
+      }
+
+      try {
+        const mcpClient = await createMCPClient(integration.access_token)
+
+        try {
+          const tools = await mcpClient.tools()
+
+          mcpTools = { ...mcpTools, ...tools }
+          mcpClients.push(mcpClient)
+        } catch (error) {
+          console.error(`Failed to fetch ${config.name} MCP tools:`, error)
+        }
+      } catch (error) {
+        console.error(`Failed to create ${config.name} MCP client:`, error)
+
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+          try {
+            await updateAccessToken({
+              userId: user.id,
+              provider: integration.provider,
+              accessToken: null
+            })
+          } catch (clearError) {
+            console.error(`Failed to clear ${config.name} access token:`, clearError)
+          }
+        }
+      }
+    }
+
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,
       experimental_attachments: message.attachments || []
@@ -153,9 +238,19 @@ export async function POST(request: Request) {
           maxSteps: 5,
           experimental_transform: smoothStream({ chunking: 'word' }),
           tools: {
-            webSearch
+            webSearch,
+            ...mcpTools
           },
           onFinish: async ({ response }) => {
+            // Close all MCP clients
+            for (const client of mcpClients) {
+              try {
+                await client.close()
+              } catch (error) {
+                console.error('Error closing MCP client:', error)
+              }
+            }
+
             if (user.id) {
               try {
                 const assistantId = getTrailingMessageId({

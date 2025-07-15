@@ -177,11 +177,13 @@ const Composer = ({
           onImagePaste={(file) => handleFiles([file])}
         />
         <div className="flex items-center justify-between gap-2 w-full">
-          <ModelDropdown
-            selectedModelCode={selectedModelCode}
-            setSelectedModel={setSelectedModel}
-            modelDropdownOptions={modelDropdownOptions}
-          />
+          <div className="flex items-center gap-2">
+            <ModelDropdown
+              selectedModelCode={selectedModelCode}
+              setSelectedModel={setSelectedModel}
+              modelDropdownOptions={modelDropdownOptions}
+            />
+          </div>
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
