@@ -60,7 +60,7 @@ const getProviderIcon = (provider: string) => {
   }
 }
 
-const formatToolParameters = (args: any) => {
+const formatToolParameters = (args: unknown) => {
   if (!args || typeof args !== 'object') return null
 
   const entries = Object.entries(args)
