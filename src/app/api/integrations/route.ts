@@ -15,10 +15,9 @@ export async function GET() {
 
     const userIntegrations = await getAllIntegrations({ userId: user.id })
 
-    const linearTokens = userIntegrations?.find((integration) => integration.provider === 'linear')
-    const notionTokens = userIntegrations?.find((integration) => integration.provider === 'notion')
-    const asanaTokens = userIntegrations?.find((integration) => integration.provider === 'asana')
-
+    const linearTokens = userIntegrations?.find((integration) => integration.provider === 'linear')?.access_token
+    const notionTokens = userIntegrations?.find((integration) => integration.provider === 'notion')?.access_token
+    const asanaTokens = userIntegrations?.find((integration) => integration.provider === 'asana')?.access_token
 
     const integrations = [
       {

@@ -12,8 +12,7 @@ import {
   SheetDescription,
   SheetHeader,
   SheetTitle,
-  SheetTrigger,
-  SheetClose
+  SheetTrigger
 } from '@/components/ui/sheet/sheet'
 import { AVAILABLE_INTEGRATIONS, Integration, IntegrationTool } from '@/constants/integrations'
 
@@ -110,41 +109,6 @@ function ToolsModal({ integration }: { integration: Integration }) {
   )
 }
 
-// Client component for handling token removal
-function RemoveTokenButton({ provider }: { provider: string }) {
-  const handleRemoveToken = async () => {
-    try {
-      const response = await fetch('/api/integrations', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ provider })
-      })
-
-      if (response.ok) {
-        // Refresh the page to update the UI
-        window.location.reload()
-      } else {
-        console.error('Failed to remove token')
-      }
-    } catch (error) {
-      console.error('Error removing token:', error)
-    }
-  }
-
-  return (
-    <Button
-      variant="outline"
-      size="sm"
-      onClick={handleRemoveToken}
-      className="text-red-600 border-red-200 hover:bg-red-50 hover:border-red-300">
-      <RefreshCw className="w-4 h-4 mr-2" />
-      Re-authenticate
-    </Button>
-  )
-}
-
 async function IntegrationStatus({
   userId,
   integration
@@ -154,13 +118,7 @@ async function IntegrationStatus({
 }) {
   const tokens = await getOAuthTokensFromProvider({ userId, provider: integration.id })
   const isConnected = !!tokens
-
-  // Check if token is expired
-  let isExpired = false
-  if (tokens?.expiresAt) {
-    const expirationTime = new Date(tokens.expiresAt).getTime()
-    isExpired = expirationTime <= Date.now()
-  }
+  const isExpired = isConnected && !tokens?.accessToken
 
   return (
     <div className="flex items-center justify-between p-4 border border-border rounded-lg hover:border-accent transition-colors bg-background">
@@ -174,7 +132,7 @@ async function IntegrationStatus({
         />
         <div className="flex-1">
           <div className="flex items-center gap-3">
-            {isConnected && !isExpired ? (
+            {isConnected ? (
               <a
                 href={integration.externalUrl}
                 target="_blank"
@@ -185,14 +143,9 @@ async function IntegrationStatus({
             ) : (
               <h3 className="text-lg font-semibold text-foreground">{integration.name}</h3>
             )}
-            {isConnected && !isExpired ? (
+            {isConnected ? (
               <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-500/20 text-green-400 rounded-full border border-green-500/30">
                 Connected
-              </span>
-            ) : isConnected && isExpired ? (
-              <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-yellow-500/20 text-yellow-400 rounded-full border border-yellow-500/30">
-                <AlertTriangle className="w-3 h-3 mr-1" />
-                Token Expired
               </span>
             ) : (
               <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-full">
@@ -201,25 +154,26 @@ async function IntegrationStatus({
             )}
           </div>
           <p className="text-sm text-muted-foreground mt-1">{integration.description}</p>
-          {isConnected && isExpired && (
+          {isExpired && (
             <p className="text-sm text-yellow-600 mt-1">
               Your {integration.name} token has expired. Re-authenticate to restore access to your
               tools.
             </p>
           )}
-          {integration.tools.length > 0 && isConnected && !isExpired && (
-            <ToolsModal integration={integration} />
-          )}
+          {integration.tools.length > 0 && isConnected && <ToolsModal integration={integration} />}
         </div>
       </div>
       <div className="flex items-center gap-2">
-        {!isConnected ? (
+        {!isConnected && (
           <Button asChild>
             <a href={integration.connectUrl}>Connect</a>
           </Button>
-        ) : isExpired ? (
-          <RemoveTokenButton provider={integration.id} />
-        ) : null}
+        )}
+        {isExpired && (
+          <Button asChild>
+            <a href={integration.connectUrl}>Re-authenticate</a>
+          </Button>
+        )}
       </div>
     </div>
   )

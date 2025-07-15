@@ -316,7 +316,7 @@ export async function updateAccessToken({
 }: {
   userId: string;
   provider: string;
-  accessToken: string;
+  accessToken: string | null;
 }) {
   const supabase = await createClient();
 
@@ -344,7 +344,7 @@ export async function updateAccessToken({
   return true;
 }
 
-export async function getOAuthTokensFromProvider({ userId, provider }: { userId: string; provider: string }): Promise<{ accessToken: string } | null> {
+export async function getOAuthTokensFromProvider({ userId, provider }: { userId: string; provider: string }): Promise<{ accessToken: string, clientId: string, clientSecret: string } | null> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
@@ -354,40 +354,25 @@ export async function getOAuthTokensFromProvider({ userId, provider }: { userId:
     .eq('provider', provider)
     .single();
 
-  if (error || !data) {
-    console.log(`No integration found for ${provider} user ${userId}`);
+  if (error) {
+    if (error.code === 'PGRST116') return null;
+
+    console.error(`Error fetching integration for ${provider} user ${userId}`, error);
+
     return null;
   }
 
-  // If we have an access token, return it
-  if (data.access_token) {
-    return {
-      accessToken: data.access_token,
-    };
+  if (!data) {
+    console.error(`No integration found for ${provider} user ${userId}`);
+
+    return null;
   }
 
-  // If we don't have an access token but have DCR credentials, try to get one
-  if (data.client_id && data.client_secret) {
-    console.log(`No access token found for ${provider}, attempting automatic reauthorization...`);
-
-    const reauthorizationResult = await performAutomaticReauthorization({
-      userId,
-      provider,
-    });
-
-    if (reauthorizationResult) {
-      console.log(`${provider} token successfully reauthorized automatically`);
-      return {
-        accessToken: reauthorizationResult.accessToken,
-      };
-    } else {
-      console.log(`${provider} automatic reauthorization failed. User needs to re-authenticate.`);
-      return null;
-    }
+  return {
+    accessToken: data.access_token,
+    clientId: data.client_id,
+    clientSecret: data.client_secret,
   }
-
-  console.log(`No access token or DCR credentials found for ${provider} user ${userId}`);
-  return null;
 }
 
 export async function getAllIntegrations({ userId }: { userId: string }) {
@@ -468,7 +453,7 @@ export async function performAutomaticReauthorization({
 }: {
   userId: string;
   provider: string;
-}): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number } | null> {
+}): Promise<{ accessToken: string } | null> {
   console.log(`Starting automatic reauthorization for ${provider} user ${userId}`);
 
   try {

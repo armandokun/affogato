@@ -22,7 +22,7 @@ import {
   saveMessage,
   updateChatTitle,
   getAllIntegrations,
-  getOAuthTokensFromProvider
+  updateAccessToken
 } from '@/lib/db/queries'
 import { ChatSDKError, errorHandler } from '@/lib/errors'
 import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
@@ -114,12 +114,10 @@ export async function POST(request: Request) {
 
     console.log('Available integrations:', availableIntegrations.map(i => i.provider))
 
-    const connectedIntegrations = availableIntegrations.filter(integration => integration.access_token)
-
     const mcpClients: Array<{ close(): Promise<void> }> = []
     let mcpTools = {}
 
-    for (const integration of connectedIntegrations) {
+    for (const integration of availableIntegrations) {
       const config = mcpConfigs[integration.provider as keyof typeof mcpConfigs]
 
       if (!config) {
@@ -145,6 +143,12 @@ export async function POST(request: Request) {
         })
       }
 
+      if (!integration.access_token) {
+        console.log(`${config.name} has no access token - skipping`)
+
+        continue
+      }
+
       try {
         let mcpClient = await createMCPClient(integration.access_token)
 
@@ -163,33 +167,17 @@ export async function POST(request: Request) {
 
         const errorMessage = error instanceof Error ? error.message : String(error)
         if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
-          console.log(`${config.name} returned 401 - attempting automatic reauthorization...`)
+          console.log(`${config.name} returned 401 - clearing invalid access token`)
 
           try {
-            const tokenData = await getOAuthTokensFromProvider({
+            await updateAccessToken({
               userId: user.id,
-              provider: integration.provider
+              provider: integration.provider,
+              accessToken: null
             })
-
-            if (tokenData) {
-              console.log(`${config.name} reauthorization successful, retrying MCP client creation...`)
-
-              // Retry MCP client creation with new token
-              const mcpClient = await createMCPClient(tokenData.accessToken)
-
-              try {
-                const tools = await mcpClient.tools()
-                mcpTools = { ...mcpTools, ...tools }
-                mcpClients.push(mcpClient)
-                console.log(`${config.name} MCP tools loaded after reauthorization:`, Object.keys(tools).length)
-              } catch (toolsError) {
-                console.error(`Failed to fetch ${config.name} MCP tools after reauthorization:`, toolsError)
-              }
-            } else {
-              console.log(`${config.name} reauthorization failed - user needs to reconnect`)
-            }
-          } catch (reauthorizationError) {
-            console.error(`${config.name} reauthorization error:`, reauthorizationError)
+            console.log(`${config.name} access token cleared - user needs to reconnect`)
+          } catch (clearError) {
+            console.error(`Failed to clear ${config.name} access token:`, clearError)
           }
         }
       }
