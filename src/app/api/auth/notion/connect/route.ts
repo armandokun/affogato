@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from '@/lib/auth';
+import { saveIntegration } from '@/lib/db/queries';
 
 export async function GET() {
   const user = await getServerSession();
@@ -52,19 +53,33 @@ export async function GET() {
       hasClientSecret: !!registrationData.client_secret
     });
 
-    // Step 2: Store client credentials temporarily in state parameter
+    // Step 2: Save integration to database for automatic reauthorization
+    try {
+      await saveIntegration({
+        userId: user.id,
+        provider: 'notion',
+        clientId: registrationData.client_id,
+        clientSecret: registrationData.client_secret,
+      });
+      console.log('Notion integration saved successfully');
+    } catch (error) {
+      console.error('Failed to save Notion integration:', error);
+      // Continue with the flow even if saving fails
+    }
+
+    // Step 3: Prepare client credentials for state parameter (fallback)
     const clientCredentials = {
       client_id: registrationData.client_id,
       client_secret: registrationData.client_secret,
       user_id: user.id
     };
 
-    // Step 3: Redirect to authorization endpoint with DCR client credentials
+    // Step 4: Redirect to authorization endpoint with DCR client credentials
     const notionAuthUrl = new URL('https://mcp.notion.com/authorize');
     notionAuthUrl.searchParams.set('client_id', registrationData.client_id);
     notionAuthUrl.searchParams.set('redirect_uri', redirectUri);
     notionAuthUrl.searchParams.set('response_type', 'code');
-    // Encode client credentials in state (in production, use more secure storage)
+    // Encode client credentials in state (fallback for callback)
     notionAuthUrl.searchParams.set('state', Buffer.from(JSON.stringify(clientCredentials)).toString('base64'));
 
     console.log('Redirecting to Notion MCP authorization:', notionAuthUrl.toString());

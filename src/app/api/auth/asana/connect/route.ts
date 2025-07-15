@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { saveIntegration } from '@/lib/db/queries'
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -38,7 +39,21 @@ export async function GET(request: NextRequest) {
     const clientCredentials = await registrationResponse.json()
     console.log('Asana client registered successfully:', { client_id: clientCredentials.client_id })
 
-    // Encode client credentials in state parameter
+    // Save integration to database for automatic reauthorization
+    try {
+      await saveIntegration({
+        userId: user.id,
+        provider: 'asana',
+        clientId: clientCredentials.client_id,
+        clientSecret: clientCredentials.client_secret,
+      });
+      console.log('Asana integration saved successfully');
+    } catch (error) {
+      console.error('Failed to save Asana integration:', error);
+      // Continue with the flow even if saving fails
+    }
+
+    // Encode client credentials in state parameter (fallback for callback)
     const stateData = {
       user_id: user.id,
       client_id: clientCredentials.client_id,

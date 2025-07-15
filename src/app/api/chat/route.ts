@@ -21,6 +21,7 @@ import {
   saveChat,
   saveMessage,
   updateChatTitle,
+  getAllIntegrations,
   getOAuthTokensFromProvider
 } from '@/lib/db/queries'
 import { ChatSDKError, errorHandler } from '@/lib/errors'
@@ -91,162 +92,110 @@ export async function POST(request: Request) {
       }
     }
 
-    // Get OAuth tokens for all supported integrations
-    const [linearTokens, notionTokens, asanaTokens] = await Promise.all([
-      getOAuthTokensFromProvider({ userId: user.id, provider: 'linear' }),
-      getOAuthTokensFromProvider({ userId: user.id, provider: 'notion' }),
-      getOAuthTokensFromProvider({ userId: user.id, provider: 'asana' })
-    ]);
+    const mcpConfigs = {
+      linear: {
+        name: 'Linear',
+        url: 'https://mcp.linear.app/sse'
+      },
+      notion: {
+        name: 'Notion',
+        url: 'https://mcp.notion.com/sse'
+      },
+      asana: {
+        name: 'Asana',
+        url: 'https://mcp.asana.com/sse'
+      }
+    }
+
+    const userIntegrations = await getAllIntegrations({ userId: user.id })
+    const availableIntegrations = userIntegrations?.filter(
+      integration => mcpConfigs[integration.provider as keyof typeof mcpConfigs]
+    ) || []
+
+    console.log('Available integrations:', availableIntegrations.map(i => i.provider))
+
+    const connectedIntegrations = availableIntegrations.filter(integration => integration.access_token)
 
     const mcpClients: Array<{ close(): Promise<void> }> = []
     let mcpTools = {}
-    const expiredProviders: string[] = []
 
-    // Create Linear MCP client if tokens are available
-    if (linearTokens) {
-      console.log('Creating Linear MCP client')
+    for (const integration of connectedIntegrations) {
+      const config = mcpConfigs[integration.provider as keyof typeof mcpConfigs]
 
-      try {
-        const linearMcpClient = await experimental_createMCPClient({
+      if (!config) {
+        console.warn(`No MCP configuration found for provider: ${integration.provider}`)
+
+        continue
+      }
+
+      console.log(`Creating ${config.name} MCP client`)
+
+      const createMCPClient = async (accessToken: string) => {
+        return await experimental_createMCPClient({
           transport: {
             type: 'sse',
-            url: 'https://mcp.linear.app/sse',
+            url: config.url,
             headers: {
-              Authorization: `Bearer ${linearTokens.accessToken}`
+              Authorization: `Bearer ${accessToken}`
             }
           },
           onUncaughtError: (error) => {
-            console.error('Linear MCP client error:', error)
+            console.error(`${config.name} MCP client error:`, error)
           }
         })
-
-        try {
-          const linearTools = await linearMcpClient.tools()
-          mcpTools = { ...mcpTools, ...linearTools }
-          mcpClients.push(linearMcpClient)
-          console.log('Linear MCP tools loaded:', Object.keys(linearTools).length)
-        } catch (error) {
-          console.error('Failed to fetch Linear MCP tools:', error)
-          // Check if error is related to authorization
-          if (error && typeof error === 'object' && 'message' in error) {
-            const errorMessage = String(error.message).toLowerCase()
-            if (errorMessage.includes('unauthorized') || errorMessage.includes('token') || errorMessage.includes('auth')) {
-              expiredProviders.push('Linear')
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Failed to create Linear MCP client:', error)
-        // Check if error is related to authorization
-        if (error && typeof error === 'object' && 'message' in error) {
-          const errorMessage = String(error.message).toLowerCase()
-          if (errorMessage.includes('unauthorized') || errorMessage.includes('token') || errorMessage.includes('auth')) {
-            expiredProviders.push('Linear')
-          }
-        }
       }
-    } else {
-      console.log('No Linear tokens found')
-    }
-
-    // Create Notion MCP client if tokens are available
-    if (notionTokens) {
-      console.log('Creating Notion MCP client')
 
       try {
-        const notionMcpClient = await experimental_createMCPClient({
-          transport: {
-            type: 'sse',
-            url: 'https://mcp.notion.com/sse',
-            headers: {
-              Authorization: `Bearer ${notionTokens.accessToken}`
-            }
-          },
-          onUncaughtError: (error) => {
-            console.error('Notion MCP client error:', error)
-          }
-        })
+        let mcpClient = await createMCPClient(integration.access_token)
 
         try {
-          const notionTools = await notionMcpClient.tools()
-          mcpTools = { ...mcpTools, ...notionTools }
-          mcpClients.push(notionMcpClient)
-          console.log('Notion MCP tools loaded:', Object.keys(notionTools).length)
+          const tools = await mcpClient.tools()
+
+          mcpTools = { ...mcpTools, ...tools }
+          mcpClients.push(mcpClient)
+
+          console.log(`${config.name} MCP tools loaded:`, Object.keys(tools).length)
         } catch (error) {
-          console.error('Failed to fetch Notion MCP tools:', error)
-          // Check if error is related to authorization
-          if (error && typeof error === 'object' && 'message' in error) {
-            const errorMessage = String(error.message).toLowerCase()
-            if (errorMessage.includes('unauthorized') || errorMessage.includes('token') || errorMessage.includes('auth')) {
-              expiredProviders.push('Notion')
-            }
-          }
+          console.error(`Failed to fetch ${config.name} MCP tools:`, error)
         }
       } catch (error) {
-        console.error('Failed to create Notion MCP client:', error)
-        // Check if error is related to authorization
-        if (error && typeof error === 'object' && 'message' in error) {
-          const errorMessage = String(error.message).toLowerCase()
-          if (errorMessage.includes('unauthorized') || errorMessage.includes('token') || errorMessage.includes('auth')) {
-            expiredProviders.push('Notion')
+        console.error(`Failed to create ${config.name} MCP client:`, error)
+
+        const errorMessage = error instanceof Error ? error.message : String(error)
+        if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
+          console.log(`${config.name} returned 401 - attempting automatic reauthorization...`)
+
+          try {
+            const tokenData = await getOAuthTokensFromProvider({
+              userId: user.id,
+              provider: integration.provider
+            })
+
+            if (tokenData) {
+              console.log(`${config.name} reauthorization successful, retrying MCP client creation...`)
+
+              // Retry MCP client creation with new token
+              const mcpClient = await createMCPClient(tokenData.accessToken)
+
+              try {
+                const tools = await mcpClient.tools()
+                mcpTools = { ...mcpTools, ...tools }
+                mcpClients.push(mcpClient)
+                console.log(`${config.name} MCP tools loaded after reauthorization:`, Object.keys(tools).length)
+              } catch (toolsError) {
+                console.error(`Failed to fetch ${config.name} MCP tools after reauthorization:`, toolsError)
+              }
+            } else {
+              console.log(`${config.name} reauthorization failed - user needs to reconnect`)
+            }
+          } catch (reauthorizationError) {
+            console.error(`${config.name} reauthorization error:`, reauthorizationError)
           }
         }
       }
-    } else {
-      console.log('No Notion tokens found')
-    }
-
-    // Create Asana MCP client if tokens are available
-    if (asanaTokens) {
-      console.log('Creating Asana MCP client')
-
-      try {
-        const asanaMcpClient = await experimental_createMCPClient({
-          transport: {
-            type: 'sse',
-            url: 'https://mcp.asana.com/sse',
-            headers: {
-              Authorization: `Bearer ${asanaTokens.accessToken}`
-            }
-          },
-          onUncaughtError: (error) => {
-            console.error('Asana MCP client error:', error)
-          }
-        })
-
-        try {
-          const asanaTools = await asanaMcpClient.tools()
-          mcpTools = { ...mcpTools, ...asanaTools }
-          mcpClients.push(asanaMcpClient)
-          console.log('Asana MCP tools loaded:', Object.keys(asanaTools).length)
-        } catch (error) {
-          console.error('Failed to fetch Asana MCP tools:', error)
-          // Check if error is related to authorization
-          if (error && typeof error === 'object' && 'message' in error) {
-            const errorMessage = String(error.message).toLowerCase()
-            if (errorMessage.includes('unauthorized') || errorMessage.includes('token') || errorMessage.includes('auth')) {
-              expiredProviders.push('Asana')
-            }
-          }
-        }
-      } catch (error) {
-        console.error('Failed to create Asana MCP client:', error)
-        // Check if error is related to authorization
-        if (error && typeof error === 'object' && 'message' in error) {
-          const errorMessage = String(error.message).toLowerCase()
-          if (errorMessage.includes('unauthorized') || errorMessage.includes('token') || errorMessage.includes('auth')) {
-            expiredProviders.push('Asana')
-          }
-        }
-      }
-    } else {
-      console.log('No Asana tokens found')
     }
 
     console.log('Total MCP tools available:', Object.keys(mcpTools).length)
-    if (expiredProviders.length > 0) {
-      console.log('Providers with expired tokens:', expiredProviders)
-    }
 
     const transformedPreviousMessages = previousMessages.map((message) => ({
       ...message,
@@ -282,16 +231,6 @@ export async function POST(request: Request) {
       country
     }
 
-    // Add system message about expired integrations if any
-    let updatedSystemPrompt = systemPrompt({
-      selectedChatModel: lastSelectedModelCode,
-      requestHints
-    })
-
-    if (expiredProviders.length > 0) {
-      updatedSystemPrompt += `\n\nIMPORTANT: Some integrations have expired tokens and are not available: ${expiredProviders.join(', ')}. If the user asks to use these services, let them know their tokens have expired and they need to re-authenticate by visiting the integrations page in their dashboard.`
-    }
-
     return createDataStreamResponse({
       execute: (dataStream) => {
         dataStream.writeMessageAnnotation({
@@ -300,7 +239,10 @@ export async function POST(request: Request) {
 
         const result = streamText({
           model: myProvider.languageModel(lastSelectedModelCode),
-          system: updatedSystemPrompt,
+          system: systemPrompt({
+            selectedChatModel: lastSelectedModelCode,
+            requestHints
+          }),
           messages,
           providerOptions: {
             ...(lastSelectedModelCode === LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING

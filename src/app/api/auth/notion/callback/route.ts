@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { saveOAuthTokens } from '@/lib/db/queries';
+import { saveIntegration } from '@/lib/db/queries';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -103,23 +103,24 @@ export async function GET(request: NextRequest) {
     });
 
     try {
-      const saveResult = await saveOAuthTokens({
+      const saveResult = await saveIntegration({
         userId: user_id,
         provider: 'notion',
+        clientId: client_id,
+        clientSecret: client_secret,
         accessToken: tokenData.access_token,
-        // Notion tokens don't expire and don't have refresh tokens
-        refreshToken: undefined,
-        expiresIn: undefined,
       });
 
-      console.log('saveOAuthTokens returned:', saveResult);
-      console.log('Notion tokens saved successfully');
+      console.log('saveIntegration returned:', saveResult);
+      console.log('Notion integration saved successfully');
     } catch (dbError) {
       console.error('Database error details:', {
         error: dbError,
         userId: user_id,
         provider: 'notion',
         hasAccessToken: !!tokenData.access_token,
+        hasClientId: !!client_id,
+        hasClientSecret: !!client_secret,
         errorMessage: dbError instanceof Error ? dbError.message : 'Unknown error',
         errorStack: dbError instanceof Error ? dbError.stack : undefined
       });

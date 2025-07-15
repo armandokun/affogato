@@ -256,40 +256,38 @@ export async function createSubscription({
   return { subscription }
 }
 
-export async function saveOAuthTokens({
+export async function saveIntegration({
   userId,
   provider,
+  clientId,
+  clientSecret,
   accessToken,
-  refreshToken,
-  expiresIn,
 }: {
   userId: string;
   provider: string;
-  accessToken: string;
-  refreshToken?: string;
-  expiresIn?: number;
+  clientId: string;
+  clientSecret: string;
+  accessToken?: string;
 }) {
   const supabase = await createClient();
-  const expiresAt = expiresIn ? new Date(Date.now() + expiresIn * 1000).toISOString() : null;
 
-  console.log('Attempting to save OAuth tokens:', {
+  console.log('Attempting to save integration:', {
     userId,
     provider,
+    hasClientId: !!clientId,
+    hasClientSecret: !!clientSecret,
     hasAccessToken: !!accessToken,
-    hasRefreshToken: !!refreshToken,
-    expiresAt,
-    expiresIn
   });
 
   // Use upsert to insert or update based on the unique constraint (user_id, provider)
   const { error } = await supabase
-    .from('user_oauth_accounts')
+    .from('user_integrations')
     .upsert({
       user_id: userId,
       provider,
+      client_id: clientId,
+      client_secret: clientSecret,
       access_token: accessToken,
-      refresh_token: refreshToken,
-      expires_at: expiresAt,
       updated_at: new Date().toISOString(),
     }, {
       onConflict: 'user_id,provider'
@@ -303,159 +301,105 @@ export async function saveOAuthTokens({
       hint: error.hint,
       error: error
     });
-    throw new ChatSDKError('bad_request:database', `Failed to save OAuth tokens for ${provider}: ${error.message}`);
+
+    throw new ChatSDKError('bad_request:database', `Failed to save integration for ${provider}: ${error.message}`);
   }
 
-  console.log('OAuth tokens saved successfully');
+  console.log('Integration saved successfully');
   return true;
 }
 
-export async function refreshOAuthToken({
+export async function updateAccessToken({
   userId,
   provider,
-  refreshToken,
-  clientId,
-  clientSecret,
+  accessToken,
 }: {
   userId: string;
   provider: string;
-  refreshToken: string;
-  clientId: string;
-  clientSecret: string;
-}): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number } | null> {
-  try {
-    // Different MCP providers have different token refresh endpoints
-    const tokenUrls = {
-      linear: 'https://mcp.linear.app/token',
-      notion: 'https://mcp.notion.com/token',
-      asana: 'https://mcp.asana.com/token'
-    };
+  accessToken: string;
+}) {
+  const supabase = await createClient();
 
-    const redirectUris = {
-      linear: process.env.NODE_ENV === 'production'
-        ? 'https://affogato.app/api/auth/linear/callback'
-        : 'http://localhost:3000/api/auth/linear/callback',
-      notion: process.env.NODE_ENV === 'production'
-        ? 'https://affogato.app/api/auth/notion/callback'
-        : 'http://localhost:3000/api/auth/notion/callback',
-      asana: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/asana/callback`
-    };
+  console.log('Attempting to update access token:', {
+    userId,
+    provider,
+    hasAccessToken: !!accessToken,
+  });
 
-    const tokenUrl = tokenUrls[provider as keyof typeof tokenUrls];
-    const redirectUri = redirectUris[provider as keyof typeof redirectUris];
+  const { error } = await supabase
+    .from('user_integrations')
+    .update({
+      access_token: accessToken,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId)
+    .eq('provider', provider);
 
-    if (!tokenUrl) {
-      console.error(`Unsupported provider for token refresh: ${provider}`);
-      return null;
-    }
-
-    console.log(`Attempting to refresh ${provider} token...`);
-
-    const response = await fetch(tokenUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: new URLSearchParams({
-        grant_type: 'refresh_token',
-        refresh_token: refreshToken,
-        client_id: clientId,
-        client_secret: clientSecret,
-        redirect_uri: redirectUri,
-      }),
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error(`Failed to refresh ${provider} token:`, {
-        status: response.status,
-        statusText: response.statusText,
-        error: errorText
-      });
-      return null;
-    }
-
-    const tokenData = await response.json();
-    console.log(`Successfully refreshed ${provider} token`);
-
-    // Save the new tokens to database
-    await saveOAuthTokens({
-      userId,
-      provider,
-      accessToken: tokenData.access_token,
-      refreshToken: tokenData.refresh_token || refreshToken, // Use new refresh token if provided, otherwise keep existing
-      expiresIn: tokenData.expires_in,
-    });
-
-    return {
-      accessToken: tokenData.access_token,
-      refreshToken: tokenData.refresh_token || refreshToken,
-      expiresIn: tokenData.expires_in,
-    };
-
-  } catch (error) {
-    console.error(`Error refreshing ${provider} token:`, error);
-    return null;
+  if (error) {
+    console.error('Failed to update access token:', error);
+    throw new ChatSDKError('bad_request:database', `Failed to update access token for ${provider}: ${error.message}`);
   }
+
+  console.log('Access token updated successfully');
+  return true;
 }
 
-export async function getOAuthTokensFromProvider({ userId, provider }: { userId: string; provider: string }): Promise<{ accessToken: string; refreshToken?: string; expiresAt?: string | null } | null> {
+export async function getOAuthTokensFromProvider({ userId, provider }: { userId: string; provider: string }): Promise<{ accessToken: string } | null> {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from('user_oauth_accounts')
-    .select('access_token, refresh_token, expires_at')
+    .from('user_integrations')
+    .select('access_token, client_id, client_secret')
     .eq('user_id', userId)
     .eq('provider', provider)
     .single();
 
-  if (error || !data || !data.access_token) {
+  if (error || !data) {
+    console.log(`No integration found for ${provider} user ${userId}`);
     return null;
   }
 
-  // Check if token is expired
-  if (data.expires_at) {
-    const expirationTime = new Date(data.expires_at).getTime();
-    const currentTime = Date.now();
-    const fiveMinutesInMs = 5 * 60 * 1000; // 5 minutes buffer
+  // If we have an access token, return it
+  if (data.access_token) {
+    return {
+      accessToken: data.access_token,
+    };
+  }
 
-    // If token expires within 5 minutes, try to refresh it
-    if (expirationTime <= currentTime + fiveMinutesInMs) {
-      console.log(`${provider} token is expired or expiring soon, attempting refresh...`);
+  // If we don't have an access token but have DCR credentials, try to get one
+  if (data.client_id && data.client_secret) {
+    console.log(`No access token found for ${provider}, attempting automatic reauthorization...`);
 
-      if (data.refresh_token) {
-        // For MCP providers, we need to get the client credentials from the stored DCR data
-        // Since DCR credentials are ephemeral, we'll need to re-authenticate if refresh fails
-        console.log(`Attempting to refresh ${provider} token with refresh token`);
+    const reauthorizationResult = await performAutomaticReauthorization({
+      userId,
+      provider,
+    });
 
-        // For now, we'll return null to force re-authentication
-        // In a production system, you might want to store DCR credentials more persistently
-        console.log(`${provider} token expired. User needs to re-authenticate.`);
-        return null;
-      } else {
-        console.log(`${provider} token expired and no refresh token available`);
-        return null;
-      }
+    if (reauthorizationResult) {
+      console.log(`${provider} token successfully reauthorized automatically`);
+      return {
+        accessToken: reauthorizationResult.accessToken,
+      };
+    } else {
+      console.log(`${provider} automatic reauthorization failed. User needs to re-authenticate.`);
+      return null;
     }
   }
 
-  return {
-    accessToken: data.access_token,
-    refreshToken: data.refresh_token,
-    expiresAt: data.expires_at || null,
-  };
+  console.log(`No access token or DCR credentials found for ${provider} user ${userId}`);
+  return null;
 }
 
-export async function getAllOAuthTokens({ userId }: { userId: string }) {
+export async function getAllIntegrations({ userId }: { userId: string }) {
   const supabase = await createClient();
 
   const { data, error } = await supabase
-    .from('user_oauth_accounts')
-    .select('access_token, refresh_token, expires_at, provider')
+    .from('user_integrations')
+    .select('access_token, provider, client_id, client_secret')
     .eq('user_id', userId)
 
   if (error) {
-    console.error('Error fetching OAuth tokens:', error);
+    console.error('Error fetching integrations:', error);
 
     return null;
   }
@@ -463,7 +407,7 @@ export async function getAllOAuthTokens({ userId }: { userId: string }) {
   return data;
 }
 
-export async function deleteOAuthTokens({
+export async function deleteIntegration({
   userId,
   provider,
 }: {
@@ -472,19 +416,243 @@ export async function deleteOAuthTokens({
 }): Promise<boolean> {
   const supabase = await createClient();
 
-  console.log(`Deleting OAuth tokens for ${provider} user ${userId}`);
+  console.log(`Deleting integration for ${provider} user ${userId}`);
 
   const { error } = await supabase
-    .from('user_oauth_accounts')
+    .from('user_integrations')
     .delete()
     .eq('user_id', userId)
     .eq('provider', provider);
 
   if (error) {
-    console.error(`Failed to delete ${provider} tokens:`, error);
+    console.error(`Failed to delete ${provider} integration:`, error);
     return false;
   }
 
-  console.log(`Successfully deleted ${provider} tokens`);
+  console.log(`Successfully deleted ${provider} integration`);
   return true;
+}
+
+export async function getDCRCredentials({
+  userId,
+  provider,
+}: {
+  userId: string;
+  provider: string;
+}): Promise<{ clientId: string; clientSecret: string } | null> {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from('user_integrations')
+    .select('client_id, client_secret')
+    .eq('user_id', userId)
+    .eq('provider', provider)
+    .single();
+
+  if (error || !data || !data.client_id || !data.client_secret) {
+    console.log(`No DCR credentials found for ${provider} user ${userId}`);
+    return null;
+  }
+
+  return {
+    clientId: data.client_id,
+    clientSecret: data.client_secret,
+  };
+}
+
+// === Automatic Reauthorization ===
+
+export async function performAutomaticReauthorization({
+  userId,
+  provider,
+}: {
+  userId: string;
+  provider: string;
+}): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number } | null> {
+  console.log(`Starting automatic reauthorization for ${provider} user ${userId}`);
+
+  try {
+    // First, try to get existing DCR credentials
+    let dcrCredentials = await getDCRCredentials({ userId, provider });
+
+    // If no DCR credentials exist, perform DCR
+    if (!dcrCredentials) {
+      console.log(`No DCR credentials found for ${provider}, performing DCR...`);
+      dcrCredentials = await performDCR({ userId, provider });
+
+      if (!dcrCredentials) {
+        console.error(`Failed to perform DCR for ${provider}`);
+        return null;
+      }
+    }
+
+    // Perform device authorization flow or implicit grant
+    // For MCP providers, we can use the client credentials directly
+    const tokenData = await exchangeClientCredentialsForToken({
+      provider,
+      clientId: dcrCredentials.clientId,
+      clientSecret: dcrCredentials.clientSecret,
+    });
+
+    if (!tokenData) {
+      console.error(`Failed to exchange client credentials for token: ${provider}`);
+      return null;
+    }
+
+    // Save the new access token to the same record
+    await updateAccessToken({
+      userId,
+      provider,
+      accessToken: tokenData.accessToken,
+    });
+
+    console.log(`Successfully completed automatic reauthorization for ${provider}`);
+    return tokenData;
+
+  } catch (error) {
+    console.error(`Error during automatic reauthorization for ${provider}:`, error);
+    return null;
+  }
+}
+
+async function performDCR({
+  userId,
+  provider,
+}: {
+  userId: string;
+  provider: string;
+}): Promise<{ clientId: string; clientSecret: string } | null> {
+  const registrationUrls = {
+    linear: 'https://mcp.linear.app/register',
+    notion: 'https://mcp.notion.com/register',
+    asana: 'https://mcp.asana.com/register',
+  };
+
+  const redirectUris = {
+    linear: process.env.NODE_ENV === 'production'
+      ? 'https://affogato.app/api/auth/linear/callback'
+      : 'http://localhost:3000/api/auth/linear/callback',
+    notion: process.env.NODE_ENV === 'production'
+      ? 'https://affogato.app/api/auth/notion/callback'
+      : 'http://localhost:3000/api/auth/notion/callback',
+    asana: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/asana/callback`,
+  };
+
+  const registrationUrl = registrationUrls[provider as keyof typeof registrationUrls];
+  const redirectUri = redirectUris[provider as keyof typeof redirectUris];
+
+  if (!registrationUrl) {
+    console.error(`Unsupported provider for DCR: ${provider}`);
+    return null;
+  }
+
+  try {
+    console.log(`Performing DCR for ${provider}...`);
+
+    const response = await fetch(registrationUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        client_name: 'affogato.chat',
+        redirect_uris: [redirectUri],
+        grant_types: ['authorization_code', 'client_credentials'],
+        response_types: ['code'],
+        token_endpoint_auth_method: 'client_secret_post',
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`DCR failed for ${provider}:`, {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+      });
+      return null;
+    }
+
+    const registrationData = await response.json();
+    console.log(`DCR successful for ${provider}`);
+
+    // Save DCR credentials to the integrations table
+    await saveIntegration({
+      userId,
+      provider,
+      clientId: registrationData.client_id,
+      clientSecret: registrationData.client_secret,
+    });
+
+    return {
+      clientId: registrationData.client_id,
+      clientSecret: registrationData.client_secret,
+    };
+
+  } catch (error) {
+    console.error(`Error during DCR for ${provider}:`, error);
+    return null;
+  }
+}
+
+async function exchangeClientCredentialsForToken({
+  provider,
+  clientId,
+  clientSecret,
+}: {
+  provider: string;
+  clientId: string;
+  clientSecret: string;
+}): Promise<{ accessToken: string; refreshToken?: string; expiresIn?: number } | null> {
+  const tokenUrls = {
+    linear: 'https://mcp.linear.app/token',
+    notion: 'https://mcp.notion.com/token',
+    asana: 'https://mcp.asana.com/token',
+  };
+
+  const tokenUrl = tokenUrls[provider as keyof typeof tokenUrls];
+
+  if (!tokenUrl) {
+    console.error(`Unsupported provider for token exchange: ${provider}`);
+    return null;
+  }
+
+  try {
+    console.log(`Exchanging client credentials for token: ${provider}`);
+
+    const response = await fetch(tokenUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        grant_type: 'client_credentials',
+        client_id: clientId,
+        client_secret: clientSecret,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error(`Token exchange failed for ${provider}:`, {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+      });
+      return null;
+    }
+
+    const tokenData = await response.json();
+    console.log(`Token exchange successful for ${provider}`);
+
+    return {
+      accessToken: tokenData.access_token,
+      refreshToken: tokenData.refresh_token,
+      expiresIn: tokenData.expires_in,
+    };
+
+  } catch (error) {
+    console.error(`Error during token exchange for ${provider}:`, error);
+    return null;
+  }
 }

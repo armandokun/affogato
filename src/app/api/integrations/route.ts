@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
+
 import { getServerSession } from '@/lib/auth'
-import { getAllOAuthTokens, deleteOAuthTokens } from '@/lib/db/queries'
+import { getAllIntegrations, deleteIntegration } from '@/lib/db/queries'
 
 export async function GET() {
   try {
@@ -12,18 +13,12 @@ export async function GET() {
       })
     }
 
-    const oauthTokens = await getAllOAuthTokens({ userId: user.id })
+    const userIntegrations = await getAllIntegrations({ userId: user.id })
 
-    const linearTokens = oauthTokens?.find((token) => token.provider === 'linear')
-    const notionTokens = oauthTokens?.find((token) => token.provider === 'notion')
-    const asanaTokens = oauthTokens?.find((token) => token.provider === 'asana')
+    const linearTokens = userIntegrations?.find((integration) => integration.provider === 'linear')
+    const notionTokens = userIntegrations?.find((integration) => integration.provider === 'notion')
+    const asanaTokens = userIntegrations?.find((integration) => integration.provider === 'asana')
 
-    // Check if tokens are expired
-    const checkTokenExpired = (token: any) => {
-      if (!token?.expires_at) return false; // Notion tokens don't expire
-      const expirationTime = new Date(token.expires_at).getTime();
-      return expirationTime <= Date.now();
-    };
 
     const integrations = [
       {
@@ -31,8 +26,7 @@ export async function GET() {
         name: 'Linear',
         icon: '/integration-icons/linear.png',
         isConnected: !!linearTokens,
-        isExpired: linearTokens ? checkTokenExpired(linearTokens) : false,
-        tools: linearTokens && !checkTokenExpired(linearTokens) ? [
+        tools: linearTokens ? [
           'Create Issues',
           'Search Issues',
           'Update Issues',
@@ -45,7 +39,6 @@ export async function GET() {
         name: 'Notion',
         icon: '/integration-icons/notion.png',
         isConnected: !!notionTokens,
-        isExpired: false, // Notion tokens don't expire
         tools: notionTokens ? [
           'Create Pages',
           'Search Pages',
@@ -59,8 +52,7 @@ export async function GET() {
         name: 'Asana',
         icon: '/integration-icons/asana.png',
         isConnected: !!asanaTokens,
-        isExpired: asanaTokens ? checkTokenExpired(asanaTokens) : false,
-        tools: asanaTokens && !checkTokenExpired(asanaTokens) ? [
+        tools: asanaTokens ? [
           'Create Tasks',
           'List Tasks',
           'Update Tasks',
@@ -97,13 +89,13 @@ export async function DELETE(request: Request) {
       })
     }
 
-    const success = await deleteOAuthTokens({
+    const success = await deleteIntegration({
       userId: user.id,
       provider,
     })
 
     if (!success) {
-      return new Response(JSON.stringify({ error: 'Failed to delete tokens' }), {
+      return new Response(JSON.stringify({ error: 'Failed to delete integration' }), {
         status: 500,
       })
     }

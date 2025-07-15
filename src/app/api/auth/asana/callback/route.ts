@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { saveOAuthTokens } from '@/lib/db/queries'
+import { saveIntegration } from '@/lib/db/queries'
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -75,13 +75,12 @@ export async function GET(request: NextRequest) {
     const tokens = await tokenResponse.json()
     console.log('Asana tokens received successfully')
 
-    // Save tokens to database
-    await saveOAuthTokens({
+    await saveIntegration({
       userId: user.id,
       provider: 'asana',
+      clientId: client_id,
+      clientSecret: client_secret,
       accessToken: tokens.access_token,
-      refreshToken: tokens.refresh_token || null,
-      expiresIn: tokens.expires_in || null,
     })
 
     console.log('Asana tokens saved successfully')

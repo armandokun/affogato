@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { saveOAuthTokens } from '@/lib/db/queries';
+import { saveIntegration } from '@/lib/db/queries';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -99,22 +99,22 @@ export async function GET(request: NextRequest) {
     });
 
     try {
-      await saveOAuthTokens({
+      await saveIntegration({
         userId: user_id,
         provider: 'linear',
+        clientId: client_id,
+        clientSecret: client_secret,
         accessToken: tokenData.access_token,
-        refreshToken: tokenData.refresh_token || undefined,
-        expiresIn: tokenData.expires_in,
       });
-      console.log('Linear tokens saved successfully');
+      console.log('Linear integration saved successfully');
     } catch (dbError) {
       console.error('Database error details:', {
         error: dbError,
         userId: user_id,
         provider: 'linear',
         hasAccessToken: !!tokenData.access_token,
-        hasRefreshToken: !!tokenData.refresh_token,
-        expiresIn: tokenData.expires_in
+        hasClientId: !!client_id,
+        hasClientSecret: !!client_secret,
       });
       throw dbError;
     }
