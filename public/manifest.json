@@ -2,7 +2,7 @@
   "name": "Affogato",
   "short_name": "Affogato",
   "description": "All your LLMs for one subscription price.",
-  "start_url": "/",
+  "start_url": "/dashboard",
   "display": "standalone",
   "background_color": "#18181B",
   "theme_color": "#18181B",
@@ -10,22 +10,16 @@
   "scope": "/",
   "icons": [
     {
-      "src": "/logo.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/logo.png",
+      "src": "/manifest/192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
+    },
+    {
+      "src": "/manifest/512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "categories": [
@@ -35,53 +29,13 @@
   ],
   "lang": "en-US",
   "dir": "ltr",
-  "shortcuts": [
+  "screenshots": [
     {
-      "name": "New Chat",
-      "short_name": "New Chat",
-      "description": "Start a new conversation",
-      "url": "/dashboard",
-      "icons": [
-        {
-          "src": "/logo.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Spaces",
-      "short_name": "Spaces",
-      "description": "View your spaces",
-      "url": "/dashboard/spaces",
-      "icons": [
-        {
-          "src": "/logo.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "Pricing",
-      "short_name": "Pricing",
-      "description": "View pricing plans",
-      "url": "/dashboard/pricing",
-      "icons": [
-        {
-          "src": "/logo.png",
-          "sizes": "192x192"
-        }
-      ]
+      "src": "/manifest/1200x800.png",
+      "sizes": "1200x800",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Affogato - All your LLMs for one subscription price"
     }
-  ],
-  "share_target": {
-    "action": "/dashboard",
-    "method": "GET",
-    "params": {
-      "text": "shared_text"
-    }
-  },
-  "display_override": [
-    "standalone",
-    "minimal-ui"
   ]
 }
