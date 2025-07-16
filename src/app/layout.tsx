@@ -22,7 +22,9 @@ const geistMono = Geist_Mono({
 })
 
 export const viewport: Viewport = {
-  themeColor: 'black'
+  themeColor: '#18181B',
+  width: 'device-width',
+  viewportFit: 'cover'
 }
 
 export const metadata: Metadata = {
@@ -41,38 +43,47 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      {process.env.NODE_ENV === 'development' && (
-        <head>
-          <Script src="https://unpkg.com/react-scan/dist/auto.global.js" />
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `
-              !function(f,b,e,v,n,t,s)
-              {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-              n.callMethod.apply(n,arguments):n.queue.push
-              (arguments)}; if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!
-              0;n.version='2.0';n.queue=[];t=b.createElement(e);
-              t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];
-              s.parentNode.insertBefore(t,s)}(window, document,
-              'script',
-              'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}');
-              fbq('track', 'PageView');
-            `
-            }}
-          />
-          <noscript>
-            <img
-              height="1"
-              width="1"
-              style={{ display: 'none' }}
-              src={`https://www.facebook.com/tr?id=${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}&ev=
-            PageView&noscript=1`}
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="Affogato" />
+        <link rel="apple-touch-icon" href="/logo.png" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="application-name" content="Affogato" />
+        {process.env.NODE_ENV === 'development' && (
+          <>
+            <Script src="https://unpkg.com/react-scan/dist/auto.global.js" />
+            <script
+              dangerouslySetInnerHTML={{
+                __html: `
+                !function(f,b,e,v,n,t,s)
+                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+                n.callMethod.apply(n,arguments):n.queue.push
+                (arguments)}; if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!
+                0;n.version='2.0';n.queue=[];t=b.createElement(e);
+                t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];
+                s.parentNode.insertBefore(t,s)}(window, document,
+                'script',
+                'https://connect.facebook.net/en_US/fbevents.js');
+                fbq('init', '${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}');
+                fbq('track', 'PageView');
+              `
+              }}
             />
-          </noscript>
-          <meta name="facebook-domain-verification" content="nge0o5s39gpmxaegqsdcjbmv6v81pf" />
-        </head>
-      )}
+            <noscript>
+              <img
+                height="1"
+                width="1"
+                style={{ display: 'none' }}
+                src={`https://www.facebook.com/tr?id=${process.env.NEXT_PUBLIC_FACEBOOK_PIXEL_ID}&ev=
+              PageView&noscript=1`}
+              />
+            </noscript>
+            <meta name="facebook-domain-verification" content="nge0o5s39gpmxaegqsdcjbmv6v81pf" />
+          </>
+        )}
+      </head>
       <Analytics />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased font-sans bg-black min-h-screen`}>
