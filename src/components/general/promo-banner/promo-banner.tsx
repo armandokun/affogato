@@ -18,7 +18,7 @@ const PromoBanner = () => {
     tomorrow.setHours(22, 59, 59, 999) // 22:59:59 local time
 
     // Convert to EET (UTC+2) - adjust for timezone difference
-    const eetOffset = 3 * 60 // EET is UTC+2
+    const eetOffset = 2 * 60 // EET is UTC+2
     const localOffset = now.getTimezoneOffset() // Local timezone offset in minutes from UTC
     const offsetDifference = (eetOffset + localOffset) * 60 * 1000 // Convert to milliseconds
 
