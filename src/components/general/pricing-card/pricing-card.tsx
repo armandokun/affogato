@@ -100,7 +100,8 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout, showOldPrice = f
                 ? 'text-xs text-muted-foreground font-normal min-h-[20px] mt-1'
                 : 'text-xs text-muted-foreground font-normal min-h-[20px] mt-1 opacity-0 pointer-events-none'
             }>
-            Billed as {tier.currency === 'eur' ? '€' : '$'}180/year
+            Billed as {tier.currency === 'eur' ? '€' : '$'}
+            {Math.round(tier.yearlyPrice * 100) / 100}/year
           </div>
         </div>
         <p className="text-sm">{tier.description}</p>
