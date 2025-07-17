@@ -98,8 +98,8 @@ const ChatMockup = () => (
     {/* AI Model Dropdown */}
     <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl border border-gray-600">
       <div className="flex items-center gap-3">
-        <img src="/llm-icons/chatgpt.png" alt="ChatGPT" className="w-5 h-5 object-contain" />
-        <span className="text-xs text-gray-300 font-medium">ChatGPT</span>
+        <img src={SUBSCRIPTION_PROVIDERS[0].icon} alt={SUBSCRIPTION_PROVIDERS[0].name} className="w-5 h-5 object-contain" />
+        <span className="text-xs text-gray-300 font-medium">{SUBSCRIPTION_PROVIDERS[0].name}</span>
       </div>
       <ChevronDown className="w-4 h-4 text-gray-400" />
     </div>
