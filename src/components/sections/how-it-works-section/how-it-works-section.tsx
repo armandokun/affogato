@@ -95,16 +95,20 @@ const ChatBubble = ({ isUser, children }: { isUser: boolean; children: React.Rea
 
 const ChatMockup = () => (
   <div className="h-full flex flex-col gap-3">
-    {/* AI Model Dropdown */}
     <div className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl border border-gray-600">
       <div className="flex items-center gap-3">
-        <img src={SUBSCRIPTION_PROVIDERS[0].icon} alt={SUBSCRIPTION_PROVIDERS[0].name} className="w-5 h-5 object-contain" />
+        <Image
+          src={SUBSCRIPTION_PROVIDERS[0].icon}
+          alt={SUBSCRIPTION_PROVIDERS[0].name}
+          className="size-5 object-contain"
+          width={20}
+          height={20}
+        />
         <span className="text-xs text-gray-300 font-medium">{SUBSCRIPTION_PROVIDERS[0].name}</span>
       </div>
       <ChevronDown className="w-4 h-4 text-gray-400" />
     </div>
 
-    {/* Chat Messages Area */}
     <div className="flex-1 space-y-4 p-2">
       <ChatBubble isUser={true}>
         <div className="space-y-2">
@@ -125,7 +129,6 @@ const ChatMockup = () => (
       </ChatBubble>
     </div>
 
-    {/* Input Area */}
     <div className="flex items-center gap-2 p-3 bg-gray-700/50 rounded-xl border border-gray-600">
       <div className="flex-1 bg-gray-600 h-3 rounded-full"></div>
       <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center shadow-sm">
