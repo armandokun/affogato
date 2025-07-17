@@ -6,10 +6,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubTrigger,
-  DropdownMenuSubContent
+  DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu/dropdown-menu'
 import { LanguageModelCode, thinkingModelDropdownOptions } from '@/lib/ai/providers'
 import { setCookie } from '@/lib/utils'
@@ -57,98 +54,80 @@ const ModelDropdown = ({ selectedModelCode, setSelectedModel, modelDropdownOptio
           </button>
         </div>
       </DropdownMenuTrigger>
-      <DropdownMenuContent side="top" align="start" className="w-72" sideOffset={10}>
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
+      <DropdownMenuContent
+        side="top"
+        align="start"
+        className="w-72"
+        sideOffset={10}
+        avoidCollisions={false}
+        style={{
+          maxHeight: '300px',
+          overflowY: 'auto'
+        }}>
+        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          Chat Models
+        </div>
+        {modelDropdownOptions.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onSelect={() => {
+              setSelectedModel(option.value as LanguageModelCode)
+              setCookie(SELECTED_MODEL_COOKIE, option.value)
+            }}
+            className="flex items-center gap-4 cursor-pointer mb-1">
+            <Image
+              src={option.logo}
+              alt={`${option.label} logo`}
+              width={20}
+              height={20}
+              className="inline-block"
+            />
             <div>
-              <div className="font-semibold">Chat Models</div>
-              <div className="text-xs text-muted-foreground">General conversation and Q&A</div>
-            </div>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent
-            className="w-72"
-            style={{
-              maxHeight: 'calc(100vh - 40px)',
-              marginBottom: 20,
-              overflowY: 'auto'
-            }}>
-            {modelDropdownOptions.map((option) => (
-              <DropdownMenuItem
-                key={option.value}
-                onSelect={() => {
-                  setSelectedModel(option.value as LanguageModelCode)
-                  setCookie(SELECTED_MODEL_COOKIE, option.value)
-                }}
-                className="flex items-center gap-4 cursor-pointer mb-1">
-                <Image
-                  src={option.logo}
-                  alt={`${option.label} logo`}
-                  width={20}
-                  height={20}
-                  className="inline-block"
-                />
-                <div>
-                  <div className="font-semibold flex items-center gap-2">
-                    {option.label}
-                    {option.badge && (
-                      <span className="text-xs bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                        {option.badge}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-muted-foreground">{option.description}</div>
-                </div>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator className="my-2" />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>
-            <div>
-              <div className="font-semibold">Reasoning Models</div>
-              <div className="text-xs text-muted-foreground">
-                Advanced logic, analysis, and problem solving
+              <div className="font-semibold flex items-center gap-2">
+                {option.label}
+                {option.badge && (
+                  <span className="text-xs bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent">
+                    {option.badge}
+                  </span>
+                )}
               </div>
+              <div className="text-xs text-muted-foreground">{option.description}</div>
             </div>
-          </DropdownMenuSubTrigger>
-          <DropdownMenuSubContent
-            className="w-72"
-            style={{
-              maxHeight: 'calc(100vh - 40px)',
-              marginBottom: 20,
-              overflowY: 'auto'
-            }}>
-            {thinkingModelDropdownOptions.map((option) => (
-              <DropdownMenuItem
-                key={option.value}
-                onSelect={() => {
-                  setSelectedModel(option.value as LanguageModelCode)
-                  setCookie(SELECTED_MODEL_COOKIE, option.value)
-                }}
-                className="flex items-center gap-4 cursor-pointer mb-1">
-                <Image
-                  src={option.logo}
-                  alt={`${option.label} logo`}
-                  width={20}
-                  height={20}
-                  className="inline-block"
-                />
-                <div>
-                  <div className="font-semibold flex items-center gap-2">
-                    {option.label}
-                    {option.badge && (
-                      <span className="text-xs bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                        {option.badge}
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-xs text-muted-foreground">{option.description}</div>
-                </div>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
+          </DropdownMenuItem>
+        ))}
+
+        <DropdownMenuSeparator className="my-2" />
+        <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          Reasoning Models
+        </div>
+        {thinkingModelDropdownOptions.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onSelect={() => {
+              setSelectedModel(option.value as LanguageModelCode)
+              setCookie(SELECTED_MODEL_COOKIE, option.value)
+            }}
+            className="flex items-center gap-4 cursor-pointer mb-1">
+            <Image
+              src={option.logo}
+              alt={`${option.label} logo`}
+              width={20}
+              height={20}
+              className="inline-block"
+            />
+            <div>
+              <div className="font-semibold flex items-center gap-2">
+                {option.label}
+                {option.badge && (
+                  <span className="text-xs bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent">
+                    {option.badge}
+                  </span>
+                )}
+              </div>
+              <div className="text-xs text-muted-foreground">{option.description}</div>
+            </div>
+          </DropdownMenuItem>
+        ))}
       </DropdownMenuContent>
     </DropdownMenu>
   )

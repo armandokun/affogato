@@ -7,6 +7,7 @@ import { motion, useScroll } from 'motion/react'
 import { cn } from '@/lib/utils'
 import Icons from '@/components/general/icons'
 import NavMenu from '@/components/general/nav-menu'
+import { LogIn } from 'lucide-react'
 
 const Navbar = () => {
   const [hasScrolled, setHasScrolled] = useState(false)
@@ -49,11 +50,16 @@ const Navbar = () => {
             <NavMenu />
 
             <div className="flex flex-row items-center gap-1 md:gap-3 shrink-0">
-              <div className="flex items-center space-x-6">
+              <div className="flex items-center space-x-1">
+                <Link
+                  href="#pricing"
+                  className="bg-secondary h-9 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-secondary-foreground w-fit px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-secondary/80 transition-all ease-out active:scale-95">
+                  Buy Now
+                </Link>
                 <Link
                   href="/login"
-                  className="h-10 flex items-center justify-center w-24 px-5 text-sm font-normal tracking-wide text-primary rounded-full transition-all ease-out active:scale-95 bg-background border border-[#27272A] hover:bg-background/80">
-                  Log in
+                  className="bg-accent/60 size-9 flex items-center justify-center rounded-full text-secondary-foreground shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-border hover:bg-border transition-all ease-out active:scale-95">
+                  <LogIn size={16} />
                 </Link>
               </div>
             </div>

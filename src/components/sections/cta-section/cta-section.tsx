@@ -3,7 +3,6 @@ import Link from 'next/link'
 
 import Icons from '@/components/general/icons'
 import Button from '@/components/ui/button'
-import { LOGIN } from '@/constants/routes'
 
 const CtaSection = () => {
   return (
@@ -15,13 +14,20 @@ const CtaSection = () => {
           </div>
           <div className="flex flex-col items-center md:items-start md:w-1/2 text-center md:text-left md:order-1">
             <h2 className="text-4xl font-medium mb-4 text-balance max-w-3xl tracking-tighter">
-              Try Affogato Now
+              Ready to ditch multiple subscriptions?
             </h2>
-            <Link href={LOGIN}>
-              <Button className="bg-secondary text-primary hover:bg-secondary/80">
-                Get Started <ArrowTopRightIcon className="size-4" />
-              </Button>
-            </Link>
+            <div className="flex flex-col md:flex-row items-center gap-4">
+              <Link href="#pricing">
+                <Button className="bg-secondary text-primary hover:bg-secondary/80">
+                  Buy now <ArrowTopRightIcon className="size-4" />
+                </Button>
+              </Link>
+              <p className="text-muted-foreground text-sm font-normal leading-tight flex items-center gap-1">
+                <span className="text-muted-foreground text-sm font-normal leading-tight">
+                  14-day money back guarantee. <br /> Cancel anytime.
+                </span>
+              </p>
+            </div>
           </div>
         </div>
       </div>

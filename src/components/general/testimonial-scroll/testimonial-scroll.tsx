@@ -40,7 +40,7 @@ export const TestimonialCard = ({
     <div className="flex w-full select-none items-center justify-start gap-5">
       <Image
         src={`/testimonial-profile-images/${img}`}
-        className="size-10 rounded-full ring-1 ring-border ring-offset-2 object-cover"
+        className="size-10 rounded-full ring-1 ring-border ring-offset-2 object-cover bg-black"
         alt={name}
         width={40}
         height={40}

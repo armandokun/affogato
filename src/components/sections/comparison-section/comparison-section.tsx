@@ -121,9 +121,12 @@ const ComparisonSection = ({ currency }: { currency: 'usd' | 'eur' }) => {
                 <div className="w-full border-t border-gray-200 my-4" />
                 <div className="flex justify-between w-full text-lg font-semibold items-center">
                   <span>Total</span>
-                  <span>
+                  <span className="flex items-center gap-2">
+                    <span className="line-through text-gray-500 text-base">
+                      {currency === 'eur' ? '€' : '$'}30/mo
+                    </span>
                     <span className="bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent text-xl">
-                      from {currency === 'eur' ? '€' : '$'}12.5/mo
+                      {currency === 'eur' ? '€' : '$'}15/mo
                     </span>
                   </span>
                 </div>
@@ -135,12 +138,17 @@ const ComparisonSection = ({ currency }: { currency: 'usd' | 'eur' }) => {
           </Card>
         </div>
 
-        <div className="flex items-center justify-center mt-10">
+        <div className="flex flex-col items-center justify-center mt-10 gap-4">
           <Link
             href="#pricing"
             className="bg-secondary h-9 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-secondary-foreground w-fit px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-secondary/80 transition-all ease-out active:scale-95">
             Buy Now
           </Link>
+          <p className="text-muted-foreground text-sm font-normal leading-tight flex items-center gap-1">
+            <span className="text-muted-foreground text-sm font-normal leading-tight">
+              14-day money back guarantee. <br /> Cancel anytime.
+            </span>
+          </p>
         </div>
       </div>
     </section>

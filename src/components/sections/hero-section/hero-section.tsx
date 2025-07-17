@@ -50,26 +50,39 @@ const HeroSection = ({ currency }: Props) => {
               <div className="relative z-10 max-w-3xl mx-auto h-full w-full flex flex-col gap-10 items-center justify-center">
                 <motion.div initial="hidden" animate="visible" variants={headingVariants}>
                   <h1 className="text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-medium tracking-tighter text-balance text-center text-primary">
-                    <span>All AI models, for a lower price</span>
-                    <span className="block">than ChatGPT Plus</span>
+                    <span>All the best AIs,</span>{' '}
+                    <span className="block">for one lower price.</span>
                   </h1>
                 </motion.div>
                 <motion.div initial="hidden" animate="visible" variants={descriptionVariants}>
                   <p className="text-base md:text-lg text-center text-muted-foreground text-balance leading-relaxed tracking-tight">
-                    Stop paying for multiple subscriptions. <br />
-                    Access all top models from {currency === 'usd' ? '$' : '€'}
-                    12/mo.
+                    ChatGPT, Claude, Gemini and more - no separate accounts, no surprise fees. Pay a
+                    single price from{' '}
+                    <span className="line-through text-gray-500">
+                      {currency === 'usd' ? '$' : '€'}30/mo
+                    </span>{' '}
+                    <span className="font-semibold text-primary">
+                      {currency === 'usd' ? '$' : '€'}15/mo
+                    </span>
+                    .
                   </p>
                 </motion.div>
                 <motion.div initial="hidden" animate="visible" variants={buttonVariants}>
-                  <div className="flex items-center gap-2.5 flex-wrap justify-center">
+                  <div className="flex flex-col items-center flex-wrap justify-center">
                     <Link
                       href="#pricing"
                       className="bg-secondary h-9 flex items-center justify-center text-sm font-normal tracking-wide rounded-full text-secondary-foreground w-32 px-4 shadow-[inset_0_1px_2px_rgba(255,255,255,0.25),0_3px_3px_-1.5px_rgba(16,24,40,0.06),0_1px_1px_rgba(16,24,40,0.08)] border border-white/[0.12] hover:bg-secondary/80 transition-all ease-out active:scale-95">
                       Buy Now
                     </Link>
+                    <div className="flex items-center gap-1 mt-2 flex-wrap justify-center">
+                      <p className="text-muted-foreground text-sm font-normal leading-tight flex items-center gap-1 text-center">
+                        <span className="text-muted-foreground text-sm font-normal leading-tight">
+                          14-day money back guarantee. <br /> Cancel anytime.
+                        </span>
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex items-center mt-4">
+                  <div className="flex items-center justify-center mt-10">
                     <Icons.leftLaurel className="size-10 invert brightness-0" />
                     <div className="flex flex-col items-center mx-2">
                       <div className="flex items-center gap-1">

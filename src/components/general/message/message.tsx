@@ -26,24 +26,9 @@ const getModelLogo = (languageModelCode?: string) => {
 
 const getToolProvider = (toolName: string) => {
   if (toolName === 'webSearch') return 'Web Search'
-  if (
-    toolName.toLowerCase().includes('linear') ||
-    toolName.includes('issue') ||
-    toolName.includes('comment')
-  )
-    return 'Linear'
-  if (
-    toolName.toLowerCase().includes('notion') ||
-    toolName.includes('page') ||
-    toolName.includes('database')
-  )
-    return 'Notion'
-  if (
-    toolName.toLowerCase().includes('asana') ||
-    toolName.includes('task') ||
-    toolName.includes('project')
-  )
-    return 'Asana'
+  if (toolName.startsWith('linear_')) return 'Linear'
+  if (toolName.startsWith('notion_')) return 'Notion'
+  if (toolName.startsWith('asana_')) return 'Asana'
   return 'External Tool'
 }
 
@@ -76,6 +61,17 @@ const formatToolParameters = (args: unknown) => {
       return `${key}: ${displayValue}`
     })
     .join(', ')
+}
+
+const getCleanToolName = (toolName: string) => {
+  if (
+    toolName.startsWith('linear_') ||
+    toolName.startsWith('notion_') ||
+    toolName.startsWith('asana_')
+  ) {
+    return toolName.substring(toolName.indexOf('_') + 1)
+  }
+  return toolName
 }
 
 type Props = {
@@ -170,6 +166,9 @@ const Message = ({ message, isLoading }: Props) => {
                   const providerIcon = getProviderIcon(provider)
                   const parameters = formatToolParameters(toolInvocation.args)
 
+                  // Clean tool name by removing provider prefix
+                  const cleanToolName = getCleanToolName(toolName)
+
                   return (
                     <div
                       key={toolCallId}
@@ -183,7 +182,7 @@ const Message = ({ message, isLoading }: Props) => {
                           className="rounded-sm"
                         />
                         <AnimatedShinyText className="text-sm">
-                          {provider}: {toolName}
+                          {provider}: {cleanToolName}
                         </AnimatedShinyText>
                       </div>
                       {parameters && (
@@ -221,6 +220,9 @@ const Message = ({ message, isLoading }: Props) => {
                   const provider = getToolProvider(toolName)
                   const providerIcon = getProviderIcon(provider)
 
+                  // Clean tool name by removing provider prefix
+                  const cleanToolName = getCleanToolName(toolName)
+
                   return (
                     <div
                       key={`${toolCallId}-result`}
@@ -232,7 +234,7 @@ const Message = ({ message, isLoading }: Props) => {
                         height={14}
                         className="rounded-sm"
                       />
-                      <span>✓ {toolName} completed</span>
+                      <span>✓ {cleanToolName} completed</span>
                     </div>
                   )
                 }

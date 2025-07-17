@@ -151,7 +151,14 @@ export async function POST(request: Request) {
         try {
           const tools = await mcpClient.tools()
 
-          mcpTools = { ...mcpTools, ...tools }
+          // Prefix tool names with provider to avoid conflicts and identify source
+          const prefixedTools = Object.entries(tools).reduce((acc, [toolName, toolConfig]) => {
+            const prefixedName = `${integration.provider}_${toolName}`
+            acc[prefixedName] = toolConfig
+            return acc
+          }, {} as Record<string, unknown>)
+
+          mcpTools = { ...mcpTools, ...prefixedTools }
           mcpClients.push(mcpClient)
         } catch (error) {
           console.error(`Failed to fetch ${config.name} MCP tools:`, error)

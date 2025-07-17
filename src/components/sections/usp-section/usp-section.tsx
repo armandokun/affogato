@@ -1,14 +1,16 @@
 import Image from 'next/image'
 
+import ExtendedUspSection from './extended-usp-section'
+
 const UspSection = () => {
   return (
-    <section id="how-it-works" className="flex flex-col items-center justify-center w-full">
+    <section id="meet-your-ai-team" className="flex flex-col items-center justify-center w-full">
       <div className="container mx-auto max-w-4xl">
         <h2 className="text-4xl font-medium mb-2 text-balance max-w-3xl mx-auto tracking-tighter text-center">
-          Models, unique in their own way.
+          Meet your AI team.
         </h2>
         <p className="text-gray-400 text-center">
-          We support the latest models, with unique features.
+          Each one&apos;s great at different things. Pick the right brain for the job.
         </p>
         <div className="grid grid-cols-1 md:grid-cols-2 md:grid-rows-[1fr_1.5fr] gap-6 mt-10 md:mt-5 w-full">
           {/* Card 1: ChatGPT */}
@@ -82,6 +84,7 @@ const UspSection = () => {
             </div>
           </div>
         </div>
+        <ExtendedUspSection />
       </div>
     </section>
   )

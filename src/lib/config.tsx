@@ -44,11 +44,6 @@ export const siteConfig = {
         href: '#how-it-works'
       },
       {
-        id: 3,
-        name: 'Features',
-        href: '#features'
-      },
-      {
         id: 4,
         name: 'Pricing',
         href: '#pricing'
