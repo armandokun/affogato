@@ -3,12 +3,13 @@ import { NextRequest, NextResponse } from 'next/server'
 
 import { stripe } from '@/lib/payments/stripe'
 import { updateUserSubscription } from '@/lib/db/queries'
+import { CHECKOUT_SUCCESS, DASHBOARD_PRICING } from '@/constants/routes'
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
   const sessionId = searchParams.get('session_id')
 
-  if (!sessionId) return NextResponse.redirect(new URL('/dashboard/pricing', request.url))
+  if (!sessionId) return NextResponse.redirect(new URL(DASHBOARD_PRICING, request.url))
 
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
@@ -50,7 +51,7 @@ export async function GET(request: NextRequest) {
     })
 
     return NextResponse.redirect(
-      new URL('/dashboard/checkout/success?session_id=' + sessionId, request.url)
+      new URL(`${CHECKOUT_SUCCESS}?session_id=${sessionId}`, request.url)
     )
   } catch (error) {
     console.error('Error handling successful checkout:', error)

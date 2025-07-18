@@ -7,6 +7,7 @@ import {
   DropdownMenuSeparator
 } from '@/components/ui/dropdown-menu/dropdown-menu'
 import { signOut } from '@/app/login/actions'
+import { DASHBOARD_PRICING } from '@/constants/routes'
 
 type Props = {
   onClose: () => void
@@ -24,7 +25,7 @@ const DropdownAvatarContentMenu = ({ onClose }: Props) => {
   const handleUpgrade = () => {
     onClose()
 
-    router.push('/dashboard/pricing')
+    router.push(DASHBOARD_PRICING)
   }
 
   return (

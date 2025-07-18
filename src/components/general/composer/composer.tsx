@@ -4,6 +4,7 @@ import { UseChatHelpers } from '@ai-sdk/react'
 import { Attachment } from 'ai'
 
 import Button from '@/components/ui/button'
+import { DASHBOARD } from '@/constants/routes'
 import { toast } from '@/components/ui/toast/toast'
 import { LanguageModelCode, modelDropdownOptions } from '@/lib/ai/providers'
 
@@ -105,7 +106,7 @@ const Composer = ({
 
       if (status === 'streaming') stop()
 
-      window.history.replaceState({}, '', `/dashboard/${chatId}`)
+      window.history.replaceState({}, '', `${DASHBOARD}/${chatId}`)
 
       handleSubmit(undefined, {
         experimental_attachments: attachments

@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronsUpDown, HeartHandshake, LifeBuoy, LogOut, Sparkles } from 'lucide-react'
+import { ChevronsUpDown, HeartHandshake, LifeBuoy, LogIn, LogOut, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -18,7 +18,7 @@ import {
 import { useSubscription } from '@/hooks/use-subscription'
 import { useSession } from '@/containers/SessionProvider'
 import { signOut } from '@/app/login/actions'
-import { DASHBOARD_PRICING } from '@/constants/routes'
+import { DASHBOARD_PRICING, LOGIN } from '@/constants/routes'
 import { siteConfig } from '@/lib/config'
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './sidebar'
@@ -28,9 +28,9 @@ export function NavUser() {
   const router = useRouter()
   const { currentPlan } = useSubscription()
 
-  if (!user) return null
-
   const getInitials = () => {
+    if (!user) return '?'
+
     const name = user.user_metadata?.full_name?.trim()
 
     if (name) {
@@ -53,6 +53,23 @@ export function NavUser() {
     }
 
     return '?'
+  }
+
+  if (!user) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <Link href={LOGIN} className="flex items-center gap-2">
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer">
+              <LogIn className="size-4" />
+              <span className="text-sm font-medium">Log in</span>
+            </SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
   }
 
   return (

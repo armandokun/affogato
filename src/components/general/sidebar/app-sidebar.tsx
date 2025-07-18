@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { PlanName } from '@/constants/user'
+import { DASHBOARD, INTEGRATIONS } from '@/constants/routes'
 import { useSubscription } from '@/hooks/use-subscription'
 
 import {
@@ -51,7 +52,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
               onClick={() => {
                 if (disabled) return
 
-                router.push('/dashboard')
+                router.push(DASHBOARD)
               }}>
               <div className="flex items-center gap-2">
                 <SquarePen className="size-4" />
@@ -67,7 +68,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/dashboard/integrations">
+              <Link href={INTEGRATIONS}>
                 <div className="flex items-center gap-2">
                   <Plug className="size-4" />
                   <span className="text-sm font-medium">Integrations</span>

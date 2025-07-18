@@ -14,7 +14,14 @@ import {
   SheetTitle,
   SheetTrigger
 } from '@/components/ui/sheet/sheet'
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger
+} from '@/components/ui/tooltip/tooltip'
 import { AVAILABLE_INTEGRATIONS, Integration, IntegrationTool } from '@/constants/integrations'
+import { cn } from '@/lib/utils'
 
 function ToolsModal({ integration }: { integration: Integration }) {
   const groupedTools = integration.tools.reduce(
@@ -113,10 +120,12 @@ async function IntegrationStatus({
   userId,
   integration
 }: {
-  userId: string
+  userId: string | undefined
   integration: Integration
 }) {
-  const tokens = await getOAuthTokensFromProvider({ userId, provider: integration.id })
+  const tokens = userId
+    ? await getOAuthTokensFromProvider({ userId, provider: integration.id })
+    : undefined
   const isConnected = !!tokens
   const isExpired = isConnected && !tokens?.accessToken
 
@@ -165,9 +174,15 @@ async function IntegrationStatus({
       </div>
       <div className="flex items-center gap-2">
         {!isConnected && (
-          <Button asChild>
-            <a href={integration.connectUrl}>Connect</a>
-          </Button>
+          <>
+            {!userId ? (
+              <Button disabled>Connect</Button>
+            ) : (
+              <Button asChild>
+                <a href={integration.connectUrl}>Connect</a>
+              </Button>
+            )}
+          </>
         )}
         {isExpired && (
           <Button asChild>
@@ -210,15 +225,27 @@ function IntegrationSkeleton() {
 async function IntegrationsContent() {
   const user = await getServerSession()
 
-  if (!user) {
-    return <div>Please log in to manage integrations</div>
-  }
-
   return (
     <div className="space-y-3">
+      {!user && (
+        <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20">
+          <div className="flex items-start gap-3">
+            <div className="w-5 h-5 text-yellow-300 mt-0.5 flex-shrink-0">
+              <Info className="h-5 w-5" />
+            </div>
+            <div>
+              <h4 className="font-medium text-yellow-300">Log in required</h4>
+              <p className="text-sm text-yellow-300 mt-1">
+                Please log in to your account to connect and manage integrations.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {AVAILABLE_INTEGRATIONS.map((integration) => (
         <Suspense key={integration.id} fallback={<IntegrationSkeleton />}>
-          <IntegrationStatus userId={user.id} integration={integration} />
+          <IntegrationStatus userId={user?.id} integration={integration} />
         </Suspense>
       ))}
 

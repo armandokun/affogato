@@ -5,6 +5,7 @@ import { useEffect } from 'react'
 
 import Button from '@/components/ui/button'
 import { event } from '@/lib/fpixel'
+import { DASHBOARD } from '@/constants/routes'
 
 type Props = {
   fbpValue: string | undefined
@@ -63,7 +64,7 @@ const ClientCheckoutSuccessPage = ({ fbpValue, fbpCurrency }: Props) => {
         plan features.
       </p>
       <Button asChild className="rounded-full">
-        <Link href="/dashboard">Go to Dashboard</Link>
+        <Link href={DASHBOARD}>Go to Dashboard</Link>
       </Button>
     </div>
   )

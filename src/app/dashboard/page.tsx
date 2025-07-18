@@ -12,10 +12,6 @@ import ChatPage from './ChatPage'
 const COOKIE_NAME = 'affogato_selected_model'
 
 const DashboardPage = async () => {
-  const session = await getServerSession()
-
-  if (!session) redirect(LOGIN)
-
   const cookieStore = await cookies()
   const cookieValue = cookieStore.get(COOKIE_NAME)?.value
 

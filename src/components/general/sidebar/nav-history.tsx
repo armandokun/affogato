@@ -2,7 +2,9 @@ import React from 'react'
 import Link from 'next/link'
 import { MessagesSquare } from 'lucide-react'
 
+import { DASHBOARD } from '@/constants/routes'
 import useLibraryItems from '@/hooks/use-library-items'
+import { useSession } from '@/containers/SessionProvider'
 
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from './sidebar'
 
@@ -10,7 +12,7 @@ const ChatListItem = ({ chat }: { chat: { id: string; title: string } }) => {
   return (
     <SidebarMenuItem key={chat.id}>
       <SidebarMenuButton asChild size="sm">
-        <Link href={`/dashboard/${chat.id}`} className="w-full">
+        <Link href={`${DASHBOARD}/${chat.id}`} className="w-full">
           <span className="truncate text-xs">{chat.title || 'Untitled Chat'}</span>
         </Link>
       </SidebarMenuButton>
@@ -42,6 +44,7 @@ const ChatSection = ({
 
 const NavHistory = () => {
   const { items: chats, loading } = useLibraryItems()
+  const { user } = useSession()
 
   const today: typeof chats = []
   const last7Days: typeof chats = []
@@ -65,6 +68,22 @@ const NavHistory = () => {
       last30Days.push(chat)
     }
   })
+
+  if (!user) {
+    return (
+      <SidebarMenu className="flex flex-1 items-center justify-center">
+        <SidebarMenuItem className="w-full flex flex-col items-center justify-center">
+          <MessagesSquare className="size-8 text-muted-foreground" />
+          <span className="text-md font-medium text-muted-foreground p-2 text-center w-full block">
+            Sign up to save your chats
+          </span>
+          <span className="text-xs text-muted-foreground text-center">
+            Once you sign up, your chat history will appear here.
+          </span>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
+  }
 
   return (
     <SidebarMenu

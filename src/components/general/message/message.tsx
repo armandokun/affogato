@@ -6,12 +6,26 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { cn } from '@/lib/utils'
 import Markdown from '@/components/ui/markdown'
+import { useTextStream } from '@/components/ui/response-stream/response-stream'
 import { LanguageModelCode } from '@/lib/ai/providers'
 import AvatarStack from '@/components/ui/avatar-stack'
 import AnimatedShinyText from '@/components/magicui/animated-shiny-text'
 
 import AttachmentStack from '../attachment-stack/attachment-stack'
 import MessageReasoning from '../message-reasoning'
+
+// Custom component to combine ResponseStream with Markdown
+const MarkdownResponseStream = ({ textStream }: { textStream: string }) => {
+  const { displayedText } = useTextStream({
+    textStream,
+    mode: 'fade',
+    speed: 25,
+    fadeDuration: 200,
+    segmentDelay: 50
+  })
+
+  return <Markdown>{displayedText}</Markdown>
+}
 
 const getModelLogo = (languageModelCode?: string) => {
   if (!languageModelCode) return '/logo.png'
@@ -142,7 +156,7 @@ const Message = ({ message, isLoading }: Props) => {
                   return (
                     <div key={key} className={'flex flex-row gap-2 items-start'}>
                       <div className={cn('flex flex-col w-[90%] max-w-2xl [&>*:first-child]:mt-0')}>
-                        <Markdown>{part.text}</Markdown>
+                        <MarkdownResponseStream textStream={part.text} />
                       </div>
                     </div>
                   )
