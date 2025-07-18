@@ -18,6 +18,7 @@ export async function GET() {
     const linearTokens = userIntegrations?.find((integration) => integration.provider === 'linear')?.access_token
     const notionTokens = userIntegrations?.find((integration) => integration.provider === 'notion')?.access_token
     const asanaTokens = userIntegrations?.find((integration) => integration.provider === 'asana')?.access_token
+    const atlassianTokens = userIntegrations?.find((integration) => integration.provider === 'atlassian')?.access_token
 
     const integrations = [
       {
@@ -57,6 +58,20 @@ export async function GET() {
           'Update Tasks',
           'Get Projects',
           'Create Projects'
+        ] : []
+      },
+      {
+        id: 'atlassian',
+        name: 'Atlassian',
+        icon: '/integration-icons/atlassian.webp',
+        isConnected: !!atlassianTokens,
+        tools: atlassianTokens ? [
+          'Create Issues',
+          'List Issues',
+          'Update Issues',
+          'Search JQL',
+          'Create Pages',
+          'Search Confluence'
         ] : []
       }
     ]
