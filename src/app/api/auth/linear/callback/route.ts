@@ -33,7 +33,7 @@ export async function GET(request: NextRequest) {
       grant_type: 'authorization_code',
       client_id,
       client_secret,
-      redirect_uri: 'http://localhost:3000/api/auth/linear/callback',
+      redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/linear/callback`,
       code,
     });
 

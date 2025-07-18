@@ -12,10 +12,6 @@ export async function GET() {
   }
 
   try {
-    const redirectUri = process.env.NODE_ENV === 'production'
-      ? 'https://affogato.app/api/auth/notion/callback'
-      : 'http://localhost:3000/api/auth/notion/callback';
-
     const registrationResponse = await fetch('https://mcp.notion.com/register', {
       method: 'POST',
       headers: {
@@ -23,7 +19,7 @@ export async function GET() {
       },
       body: JSON.stringify({
         client_name: 'Affogato Chat',
-        redirect_uris: [redirectUri],
+        redirect_uris: [`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/notion/callback`],
         grant_types: ['authorization_code'],
         response_types: ['code'],
         token_endpoint_auth_method: 'client_secret_post'
@@ -65,7 +61,7 @@ export async function GET() {
 
     const notionAuthUrl = new URL('https://mcp.notion.com/authorize');
     notionAuthUrl.searchParams.set('client_id', registrationData.client_id);
-    notionAuthUrl.searchParams.set('redirect_uri', redirectUri);
+    notionAuthUrl.searchParams.set('redirect_uri', `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/notion/callback`);
     notionAuthUrl.searchParams.set('response_type', 'code');
     notionAuthUrl.searchParams.set('state', Buffer.from(JSON.stringify(clientCredentials)).toString('base64'));
 

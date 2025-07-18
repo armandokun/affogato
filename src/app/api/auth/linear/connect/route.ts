@@ -19,7 +19,7 @@ export async function GET() {
       },
       body: JSON.stringify({
         client_name: 'Affogato Chat',
-        redirect_uris: ['http://localhost:3000/api/auth/linear/callback'],
+        redirect_uris: [`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/linear/callback`],
         grant_types: ['authorization_code'],
         response_types: ['code'],
         token_endpoint_auth_method: 'client_secret_post'
@@ -61,7 +61,7 @@ export async function GET() {
 
     const linearAuthUrl = new URL('https://mcp.linear.app/authorize');
     linearAuthUrl.searchParams.set('client_id', registrationData.client_id);
-    linearAuthUrl.searchParams.set('redirect_uri', 'http://localhost:3000/api/auth/linear/callback');
+    linearAuthUrl.searchParams.set('redirect_uri', `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/linear/callback`);
     linearAuthUrl.searchParams.set('response_type', 'code');
     linearAuthUrl.searchParams.set('scope', 'read,write');
     linearAuthUrl.searchParams.set('state', Buffer.from(JSON.stringify(clientCredentials)).toString('base64'));
