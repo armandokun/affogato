@@ -29,15 +29,11 @@ export async function GET(request: NextRequest) {
       });
     }
 
-    const redirectUri = process.env.NODE_ENV === 'production'
-      ? 'https://affogato.app/api/auth/notion/callback'
-      : 'http://localhost:3000/api/auth/notion/callback';
-
     const tokenRequestBody = new URLSearchParams({
       grant_type: 'authorization_code',
       client_id,
       client_secret,
-      redirect_uri: redirectUri,
+      redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/notion/callback`,
       code,
     });
 

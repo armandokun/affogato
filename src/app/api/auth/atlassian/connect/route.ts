@@ -12,14 +12,14 @@ export async function GET() {
   }
 
   try {
-    const registrationResponse = await fetch('https://mcp.linear.app/register', {
+    const registrationResponse = await fetch('https://atlassian-remote-mcp-production.atlassian-remote-mcp-server-production.workers.dev/v1/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         client_name: 'Affogato Chat',
-        redirect_uris: [`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/linear/callback`],
+        redirect_uris: [`${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/atlassian/callback`],
         grant_types: ['authorization_code'],
         response_types: ['code'],
         token_endpoint_auth_method: 'client_secret_post'
@@ -28,12 +28,12 @@ export async function GET() {
 
     if (!registrationResponse.ok) {
       const errorBody = await registrationResponse.text();
-      console.error('Linear DCR failed:', {
+      console.error('Atlassian MCP DCR failed:', {
         status: registrationResponse.status,
         body: errorBody
       });
       return new Response(JSON.stringify({
-        error: 'Failed to register with Linear MCP',
+        error: 'Failed to register with Atlassian MCP',
         details: errorBody
       }), {
         status: 500,
@@ -45,12 +45,12 @@ export async function GET() {
     try {
       await saveIntegration({
         userId: user.id,
-        provider: 'linear',
+        provider: 'atlassian',
         clientId: registrationData.client_id,
         clientSecret: registrationData.client_secret,
       });
     } catch (error) {
-      console.error('Failed to save Linear integration:', error);
+      console.error('Failed to save Atlassian integration:', error);
     }
 
     const clientCredentials = {
@@ -59,19 +59,19 @@ export async function GET() {
       user_id: user.id
     };
 
-    const linearAuthUrl = new URL('https://mcp.linear.app/authorize');
-    linearAuthUrl.searchParams.set('client_id', registrationData.client_id);
-    linearAuthUrl.searchParams.set('redirect_uri', `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/linear/callback`);
-    linearAuthUrl.searchParams.set('response_type', 'code');
-    linearAuthUrl.searchParams.set('scope', 'read,write');
-    linearAuthUrl.searchParams.set('state', Buffer.from(JSON.stringify(clientCredentials)).toString('base64'));
+    const atlassianAuthUrl = new URL('https://mcp.atlassian.com/v1/authorize');
+    atlassianAuthUrl.searchParams.set('client_id', registrationData.client_id);
+    atlassianAuthUrl.searchParams.set('redirect_uri', `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/atlassian/callback`);
+    atlassianAuthUrl.searchParams.set('response_type', 'code');
+    atlassianAuthUrl.searchParams.set('scope', 'read,write');
+    atlassianAuthUrl.searchParams.set('state', Buffer.from(JSON.stringify(clientCredentials)).toString('base64'));
 
-    return NextResponse.redirect(linearAuthUrl.toString());
+    return NextResponse.redirect(atlassianAuthUrl.toString());
 
   } catch (error) {
-    console.error('Linear MCP DCR error:', error);
+    console.error('Atlassian MCP DCR error:', error);
     return new Response(JSON.stringify({
-      error: 'Failed to connect to Linear MCP',
+      error: 'Failed to connect to Atlassian MCP',
       details: error instanceof Error ? error.message : 'Unknown error'
     }), {
       status: 500,

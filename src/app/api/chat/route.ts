@@ -120,6 +120,10 @@ export async function POST(request: Request) {
       asana: {
         name: 'Asana',
         url: 'https://mcp.asana.com/sse'
+      },
+      atlassian: {
+        name: 'Atlassian',
+        url: 'https://mcp.atlassian.com/v1/sse'
       }
     }
 

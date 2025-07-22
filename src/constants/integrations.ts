@@ -279,5 +279,105 @@ export const AVAILABLE_INTEGRATIONS: Array<Integration> = [
         category: 'Collaboration'
       }
     ]
+  },
+  {
+    id: 'atlassian',
+    name: 'Atlassian',
+    description: 'Jira and Confluence integration for issue tracking and documentation',
+    icon: '/integration-icons/atlassian.webp',
+    connectUrl: '/api/auth/atlassian/connect',
+    externalUrl: 'https://atlassian.com',
+    tools: [
+      {
+        name: 'Create Issue',
+        description: 'Create a new Jira issue with details, assignee, and priority',
+        category: 'Issue Management'
+      },
+      {
+        name: 'List Issues',
+        description: 'Retrieve issues from Jira projects with filtering and search',
+        category: 'Issue Management'
+      },
+      {
+        name: 'Get Issue',
+        description: 'Get detailed information about a specific Jira issue',
+        category: 'Issue Management'
+      },
+      {
+        name: 'Update Issue',
+        description: 'Modify issue properties like summary, description, status, or assignee',
+        category: 'Issue Management'
+      },
+      {
+        name: 'Transition Issue',
+        description: 'Move issues through workflow states (e.g., To Do → In Progress → Done)',
+        category: 'Issue Management'
+      },
+      {
+        name: 'Add Comment',
+        description: 'Add comments to Jira issues for collaboration and updates',
+        category: 'Collaboration'
+      },
+      {
+        name: 'Get Comments',
+        description: 'Retrieve comments from Jira issues',
+        category: 'Collaboration'
+      },
+      {
+        name: 'List Projects',
+        description: 'Get all Jira projects accessible to the user',
+        category: 'Project Management'
+      },
+      {
+        name: 'Get Project',
+        description: 'Retrieve detailed information about a specific Jira project',
+        category: 'Project Management'
+      },
+      {
+        name: 'List Sprints',
+        description: 'Get active and completed sprints for Agile projects',
+        category: 'Agile Management'
+      },
+      {
+        name: 'Get Sprint',
+        description: 'Retrieve detailed information about a specific sprint',
+        category: 'Agile Management'
+      },
+      {
+        name: 'List Boards',
+        description: 'Get Scrum and Kanban boards for project management',
+        category: 'Agile Management'
+      },
+      {
+        name: 'Search JQL',
+        description: 'Execute JQL (Jira Query Language) searches for advanced issue filtering',
+        category: 'Search & Discovery'
+      },
+      {
+        name: 'Create Page',
+        description: 'Create new pages in Confluence spaces',
+        category: 'Documentation'
+      },
+      {
+        name: 'Get Page',
+        description: 'Retrieve Confluence page content and metadata',
+        category: 'Documentation'
+      },
+      {
+        name: 'Update Page',
+        description: 'Edit existing Confluence pages',
+        category: 'Documentation'
+      },
+      {
+        name: 'Search Confluence',
+        description: 'Search across Confluence spaces and pages',
+        category: 'Documentation'
+      },
+      {
+        name: 'List Spaces',
+        description: 'Get all Confluence spaces accessible to the user',
+        category: 'Documentation'
+      }
+    ]
   }
 ]

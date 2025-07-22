@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import { saveIntegration } from '@/lib/db/queries';
-import { INTEGRATIONS } from '@/constants/routes';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -34,11 +33,11 @@ export async function GET(request: NextRequest) {
       grant_type: 'authorization_code',
       client_id,
       client_secret,
-      redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/linear/callback`,
+      redirect_uri: `${process.env.NEXT_PUBLIC_SITE_URL}/api/auth/atlassian/callback`,
       code,
     });
 
-    const response = await fetch('https://mcp.linear.app/token', {
+    const response = await fetch('https://atlassian-remote-mcp-production.atlassian-remote-mcp-server-production.workers.dev/v1/token', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -49,13 +48,13 @@ export async function GET(request: NextRequest) {
     const responseText = await response.text();
 
     if (!response.ok) {
-      console.error('Linear token exchange failed:', {
+      console.error('Atlassian token exchange failed:', {
         status: response.status,
         statusText: response.statusText,
         body: responseText
       });
       return new Response(JSON.stringify({
-        error: 'Failed to exchange token with Linear MCP',
+        error: 'Failed to exchange token with Atlassian MCP',
         details: responseText
       }), {
         status: 500,
@@ -64,35 +63,32 @@ export async function GET(request: NextRequest) {
 
     const tokenData = JSON.parse(responseText);
 
+    if (!tokenData.access_token) {
+      console.error('No access token received from Atlassian:', tokenData);
+      return new Response(JSON.stringify({
+        error: 'No access token received from Atlassian MCP',
+        details: tokenData
+      }), {
+        status: 500,
+      });
+    }
+
     try {
       await saveIntegration({
         userId: user_id,
-        provider: 'linear',
+        provider: 'atlassian',
         clientId: client_id,
         clientSecret: client_secret,
         accessToken: tokenData.access_token,
       });
-    } catch (dbError) {
-      console.error('Database error details:', {
-        error: dbError,
-        userId: user_id,
-        provider: 'linear',
-        hasAccessToken: !!tokenData.access_token,
-        hasClientId: !!client_id,
-        hasClientSecret: !!client_secret,
-      });
-      throw dbError;
+
+      return Response.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/integrations?success=atlassian_connected`);
+    } catch (error) {
+      console.error('Failed to save Atlassian integration:', error);
+      return Response.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/integrations?error=atlassian_save_failed`);
     }
-
-    return Response.redirect(new URL(INTEGRATIONS, request.url));
-
   } catch (error) {
-    console.error('Linear OAuth callback error:', error);
-    return new Response(JSON.stringify({
-      error: 'OAuth callback failed',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    }), {
-      status: 500,
-    });
+    console.error('Error in Atlassian callback:', error);
+    return Response.redirect(`${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/integrations?error=atlassian_callback_failed`);
   }
 }

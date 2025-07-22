@@ -29,6 +29,7 @@ const getToolProvider = (toolName: string) => {
   if (toolName.startsWith('linear_')) return 'Linear'
   if (toolName.startsWith('notion_')) return 'Notion'
   if (toolName.startsWith('asana_')) return 'Asana'
+  if (toolName.startsWith('atlassian_')) return 'Atlassian'
   return 'External Tool'
 }
 
@@ -40,6 +41,8 @@ const getProviderIcon = (provider: string) => {
       return '/integration-icons/notion.png'
     case 'Asana':
       return '/integration-icons/asana.png'
+    case 'Atlassian':
+      return '/integration-icons/atlassian.webp'
     default:
       return '/logo.png'
   }
@@ -67,7 +70,8 @@ const getCleanToolName = (toolName: string) => {
   if (
     toolName.startsWith('linear_') ||
     toolName.startsWith('notion_') ||
-    toolName.startsWith('asana_')
+    toolName.startsWith('asana_') ||
+    toolName.startsWith('atlassian_')
   ) {
     return toolName.substring(toolName.indexOf('_') + 1)
   }
