@@ -5,7 +5,8 @@ import { useEffect } from 'react'
 
 import Button from '@/components/ui/button'
 import { event } from '@/lib/fpixel'
-import { DASHBOARD } from '@/constants/routes'
+import { DASHBOARD, LOGIN } from '@/constants/routes'
+import { useSession } from '@/containers/SessionProvider'
 
 type Props = {
   fbpValue: string | undefined
@@ -13,6 +14,8 @@ type Props = {
 }
 
 const ClientCheckoutSuccessPage = ({ fbpValue, fbpCurrency }: Props) => {
+  const { user } = useSession()
+
   useEffect(() => {
     const isTracked = localStorage.getItem('fbp_tracked')
 
@@ -60,12 +63,18 @@ const ClientCheckoutSuccessPage = ({ fbpValue, fbpCurrency }: Props) => {
       </div>
       <h1 className="text-2xl font-semibold mb-2 text-center">Thank you for subscribing!</h1>
       <p className="text-muted-foreground mb-6 text-center max-w-md">
-        Your payment was successful and your subscription is now active. You can now enjoy all paid
-        plan features.
+        Your payment was successful and your subscription is now active. To enjoy all the paid plan
+        features, link your account to your email.
       </p>
-      <Button asChild className="rounded-full">
-        <Link href={DASHBOARD}>Go to Dashboard</Link>
-      </Button>
+      {user?.is_anonymous ? (
+        <Button asChild className="rounded-full">
+          <Link href={`${LOGIN}?signup=true`}>Link Account</Link>
+        </Button>
+      ) : (
+        <Button asChild className="rounded-full">
+          <Link href={DASHBOARD}>Go to Dashboard</Link>
+        </Button>
+      )}
     </div>
   )
 }
