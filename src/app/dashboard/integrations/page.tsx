@@ -223,7 +223,7 @@ async function IntegrationsContent() {
   return (
     <div className="space-y-3">
       {(!user || user.is_anonymous) && (
-        <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20">
+        <div className="p-4 border rounded-lg border-yellow-800 bg-yellow-900/20">
           <div className="flex items-start gap-3">
             <div className="w-5 h-5 text-yellow-300 mt-0.5 flex-shrink-0">
               <Info className="h-5 w-5" />
