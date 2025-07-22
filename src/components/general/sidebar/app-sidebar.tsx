@@ -1,12 +1,11 @@
 'use client'
 
 import { ComponentProps } from 'react'
-import { LockIcon, SquarePen, Plug } from 'lucide-react'
+import { SquarePen, Plug } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { PlanName } from '@/constants/user'
-import { useSubscription } from '@/hooks/use-subscription'
+import { DASHBOARD, INTEGRATIONS } from '@/constants/routes'
 
 import {
   Sidebar,
@@ -24,9 +23,6 @@ import NavHistory from './nav-history'
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const router = useRouter()
-  const { currentPlan } = useSubscription()
-
-  const disabled = currentPlan?.toLocaleLowerCase() === PlanName.FREE
 
   return (
     <Sidebar variant="floating" {...props}>
@@ -49,25 +45,17 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
             <SidebarMenuButton
               className="flex flex-row justify-between"
               onClick={() => {
-                if (disabled) return
-
-                router.push('/dashboard')
+                router.push(DASHBOARD)
               }}>
               <div className="flex items-center gap-2">
                 <SquarePen className="size-4" />
                 <span className="text-sm font-medium">New Chat</span>
               </div>
-              {disabled && <LockIcon className="size-4" />}
             </SidebarMenuButton>
-            {disabled && (
-              <p className="text-xs text-muted-foreground ml-2">
-                Unlock chat creation by upgrading a plan.
-              </p>
-            )}
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/dashboard/integrations">
+              <Link href={INTEGRATIONS}>
                 <div className="flex items-center gap-2">
                   <Plug className="size-4" />
                   <span className="text-sm font-medium">Integrations</span>

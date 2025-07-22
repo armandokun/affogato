@@ -4,8 +4,11 @@ import { UseChatHelpers } from '@ai-sdk/react'
 import { Attachment } from 'ai'
 
 import Button from '@/components/ui/button'
+import { DASHBOARD } from '@/constants/routes'
 import { toast } from '@/components/ui/toast/toast'
 import { LanguageModelCode, modelDropdownOptions } from '@/lib/ai/providers'
+import { createClient } from '@/lib/supabase/client'
+import { useSession } from '@/containers/SessionProvider'
 
 import Icons from '../icons'
 import ComposerInput from './composer-input'
@@ -39,9 +42,28 @@ const Composer = ({
   const [attachments, setAttachments] = useState<Attachment[]>([])
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([])
 
+  const { user, setUser } = useSession()
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const uploadFile = useCallback(async (file: File) => {
+    if (!user) {
+      const supabase = createClient()
+
+      const { data, error } = await supabase.auth.signInAnonymously()
+
+      if (error) {
+        toast({
+          type: 'error',
+          description: error.message
+        })
+
+        return
+      }
+
+      setUser(data.user)
+    }
+
     const formData = new FormData()
     formData.append('file', file)
 
@@ -105,7 +127,7 @@ const Composer = ({
 
       if (status === 'streaming') stop()
 
-      window.history.replaceState({}, '', `/dashboard/${chatId}`)
+      window.history.replaceState({}, '', `${DASHBOARD}/${chatId}`)
 
       handleSubmit(undefined, {
         experimental_attachments: attachments

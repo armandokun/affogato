@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { saveIntegration } from '@/lib/db/queries';
+import { INTEGRATIONS } from '@/constants/routes';
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
       throw dbError;
     }
 
-    return Response.redirect(new URL('/dashboard/integrations', request.url));
+    return Response.redirect(new URL(INTEGRATIONS, request.url));
 
   } catch (error) {
     console.error('Notion OAuth callback error:', error);

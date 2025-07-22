@@ -1,6 +1,6 @@
 'use client'
 
-import { ChevronsUpDown, HeartHandshake, LifeBuoy, LogOut, Sparkles } from 'lucide-react'
+import { ChevronsUpDown, HeartHandshake, LifeBuoy, LogIn, LogOut, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 
@@ -17,9 +17,10 @@ import {
 
 import { useSubscription } from '@/hooks/use-subscription'
 import { useSession } from '@/containers/SessionProvider'
-import { signOut } from '@/app/login/actions'
-import { DASHBOARD_PRICING } from '@/constants/routes'
+import { DASHBOARD_PRICING, LOGIN } from '@/constants/routes'
 import { siteConfig } from '@/lib/config'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from '@/components/ui/toast/toast'
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './sidebar'
 
@@ -28,9 +29,9 @@ export function NavUser() {
   const router = useRouter()
   const { currentPlan } = useSubscription()
 
-  if (!user) return null
-
   const getInitials = () => {
+    if (!user) return '?'
+
     const name = user.user_metadata?.full_name?.trim()
 
     if (name) {
@@ -53,6 +54,33 @@ export function NavUser() {
     }
 
     return '?'
+  }
+
+  const handleSignOut = async () => {
+    const supabase = createClient()
+
+    const { error } = await supabase.auth.signOut()
+
+    if (error) return toast({ description: error.message, type: 'error' })
+
+    return router.push(LOGIN)
+  }
+
+  if (!user || user.is_anonymous) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <Link href={LOGIN} className="flex items-center gap-2">
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer">
+              <LogIn className="size-4" />
+              <span className="text-sm font-medium">Log in</span>
+            </SidebarMenuButton>
+          </Link>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    )
   }
 
   return (
@@ -91,7 +119,9 @@ export function NavUser() {
                   <span className="truncate font-semibold">
                     {user.user_metadata.full_name || user.email}
                   </span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  {user.user_metadata.full_name && (
+                    <span className="truncate text-xs">{user.email}</span>
+                  )}
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -118,7 +148,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>

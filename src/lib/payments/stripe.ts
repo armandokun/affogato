@@ -10,6 +10,7 @@ import {
 import { UserSubscription } from '@/constants/user'
 
 import { createClient } from '../supabase/server'
+import { DASHBOARD_PRICING } from '@/constants/routes'
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-04-30.basil'
@@ -36,7 +37,7 @@ export async function createCheckoutSession({
     ],
     mode: 'subscription',
     success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/api/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/pricing`,
+    cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}${DASHBOARD_PRICING}`,
     customer: user.stripe_customer_id ?? undefined,
     client_reference_id: user.user_id,
     allow_promotion_codes: true,
@@ -51,7 +52,7 @@ export async function createCheckoutSession({
 
 export async function createCustomerPortalSession(user: UserSubscription) {
   if (!user.stripe_customer_id || !user.stripe_product_id) {
-    redirect('/dashboard/pricing')
+    redirect(DASHBOARD_PRICING)
   }
 
   let configuration: Stripe.BillingPortal.Configuration

@@ -17,7 +17,12 @@ export default function useLibraryItems() {
 
   useEffect(() => {
     const fetchLibrary = async () => {
-      if (!user) return
+      if (!user) {
+        setItems([])
+        setLoading(false)
+
+        return
+      }
 
       const supabase = createClient()
 

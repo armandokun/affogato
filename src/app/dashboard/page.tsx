@@ -1,9 +1,6 @@
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 
-import { LOGIN } from '@/constants/routes'
 import { ChatVisibility } from '@/constants/chat'
-import { getServerSession } from '@/lib/auth'
 import { LanguageModelCode } from '@/lib/ai/providers'
 import { generateUUID } from '@/lib/utils'
 
@@ -12,10 +9,6 @@ import ChatPage from './ChatPage'
 const COOKIE_NAME = 'affogato_selected_model'
 
 const DashboardPage = async () => {
-  const session = await getServerSession()
-
-  if (!session) redirect(LOGIN)
-
   const cookieStore = await cookies()
   const cookieValue = cookieStore.get(COOKIE_NAME)?.value
 

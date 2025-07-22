@@ -1,28 +1,37 @@
 'use server'
 
 import { redirect } from 'next/navigation'
+import { revalidatePath } from 'next/cache'
 
 import { encodedRedirect } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
 import { DASHBOARD, LOGIN } from '@/constants/routes'
-import { toast } from '@/components/ui/toast/toast'
-
-export const signOut = async () => {
-  const supabase = await createClient()
-
-  const { error } = await supabase.auth.signOut()
-
-  if (error) return toast({ description: error.message, type: 'error' })
-
-  redirect(LOGIN)
-}
+import { constructUrlWithParams } from '@/lib/utils/url/url'
 
 export const signInWithEmail = async (formData: FormData) => {
   const supabase = await createClient()
 
   const email = formData.get('email')?.toString() || ''
 
+  if (!email) return encodedRedirect('error', LOGIN, 'Email is required')
+
+  const { data: userData } = await supabase.auth.getUser()
+
   const redirectToUrl = process.env.NODE_ENV === 'production' ? process.env.NEXT_PUBLIC_SITE_URL : 'http://127.0.0.1:3000'
+
+  if (userData.user?.is_anonymous) {
+    const { error: updateEmailError } = await supabase.auth.updateUser({
+      email
+    })
+
+    if (updateEmailError) {
+      return encodedRedirect('error', LOGIN, `Email linking failed: ${updateEmailError.message}`)
+    }
+
+    return encodedRedirect('success', LOGIN, 'Please check your email to verify and complete your account setup.', {
+      signup: 'true'
+    })
+  }
 
   const { error } = await supabase.auth.signInWithOtp({
     email,
@@ -44,7 +53,32 @@ export const signInWithOAuth = async (formData: FormData) => {
 
   const supabase = await createClient()
 
-  const redirectToUrl = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=${encodeURIComponent(ref)}`
+  const redirectToUrl = constructUrlWithParams(`${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback`, {
+    next: encodeURIComponent(ref)
+  })
+
+  const { data: userData } = await supabase.auth.getUser()
+
+  if (userData.user?.is_anonymous) {
+    const { data, error } = await supabase.auth.linkIdentity({
+      provider,
+      options: {
+        redirectTo: redirectToUrl
+      }
+    })
+
+    if (error) {
+      return encodedRedirect('error', LOGIN, `OAuth linking failed: ${error.message}`)
+    }
+
+    if (data.url) {
+      revalidatePath(data.url, 'layout')
+
+      return redirect(data.url)
+    }
+
+    return encodedRedirect('error', LOGIN, 'No redirect URL from provider.')
+  }
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
@@ -55,7 +89,11 @@ export const signInWithOAuth = async (formData: FormData) => {
 
   if (error) return encodedRedirect('error', LOGIN, error.message)
 
-  if (data.url) return redirect(data.url)
+  if (data.url) {
+    revalidatePath(data.url, 'layout')
+
+    return redirect(data.url)
+  }
 
   return encodedRedirect('error', LOGIN, 'No redirect URL from provider.')
 }

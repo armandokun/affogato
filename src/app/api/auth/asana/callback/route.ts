@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
+
 import { createClient } from '@/lib/supabase/server'
 import { saveIntegration } from '@/lib/db/queries'
+import { INTEGRATIONS } from '@/constants/routes'
 
 export async function GET(request: NextRequest) {
   const supabase = await createClient()
@@ -14,14 +16,14 @@ export async function GET(request: NextRequest) {
     if (error) {
       console.error('Asana OAuth error:', error)
       return NextResponse.redirect(
-        new URL('/dashboard/integrations?error=asana_auth_failed', request.url)
+        new URL(`${INTEGRATIONS}?error=asana_auth_failed`, request.url)
       )
     }
 
     if (!code || !state) {
       console.error('Missing code or state parameter')
       return NextResponse.redirect(
-        new URL('/dashboard/integrations?error=asana_missing_params', request.url)
+        new URL(`${INTEGRATIONS}?error=asana_missing_params`, request.url)
       )
     }
 
@@ -32,7 +34,7 @@ export async function GET(request: NextRequest) {
     } catch (decodeError) {
       console.error('Failed to decode state:', decodeError)
       return NextResponse.redirect(
-        new URL('/dashboard/integrations?error=asana_invalid_state', request.url)
+        new URL(`${INTEGRATIONS}?error=asana_invalid_state`, request.url)
       )
     }
 
@@ -67,7 +69,7 @@ export async function GET(request: NextRequest) {
         error: errorText
       })
       return NextResponse.redirect(
-        new URL('/dashboard/integrations?error=asana_token_failed', request.url)
+        new URL(`${INTEGRATIONS}?error=asana_token_failed`, request.url)
       )
     }
 
@@ -81,13 +83,13 @@ export async function GET(request: NextRequest) {
       accessToken: tokens.access_token,
     })
     return NextResponse.redirect(
-      new URL('/dashboard/integrations?success=asana_connected', request.url)
+      new URL(`${INTEGRATIONS}?success=asana_connected`, request.url)
     )
 
   } catch (error) {
     console.error('Error in Asana callback:', error)
     return NextResponse.redirect(
-      new URL('/dashboard/integrations?error=asana_callback_failed', request.url)
+      new URL(`${INTEGRATIONS}?error=asana_callback_failed`, request.url)
     )
   }
 }
