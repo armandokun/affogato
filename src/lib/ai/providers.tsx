@@ -3,6 +3,7 @@ import { createOpenAI } from '@ai-sdk/openai'
 import { createAnthropic } from '@ai-sdk/anthropic'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { createXai } from '@ai-sdk/xai'
+import Badge from '@/components/ui/badge'
 
 const openai = createOpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -78,15 +79,14 @@ export const modelDropdownOptions = [
     value: LanguageModelCode.ANTHROPIC_CHAT_MODEL_LATEST,
     label: 'Sonnet 4',
     description: 'High performance matched with creativity of Claude.',
-    logo: '/llm-icons/claude.png',
-    badge: 'New'
+    logo: '/llm-icons/claude.png'
   },
   {
     value: LanguageModelCode.GEMINI_CHAT_MODEL_FAST,
     label: '2.5 Flash',
     description: "Google's most reliable and efficient model.",
     logo: '/llm-icons/gemini.png',
-    badge: 'New'
+    badge: <Badge variant="destructive">Integrations unavailable</Badge>
   }
 ]
 
@@ -103,7 +103,7 @@ export const thinkingModelDropdownOptions = [
     description:
       'For STEM reasoning that excels in science, math, and coding tasks. Thinks internally before responding.',
     logo: '/llm-icons/chatgpt.png',
-    badge: 'Internal'
+    badge: <Badge variant="default">Internal</Badge>
   },
   {
     value: LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING,

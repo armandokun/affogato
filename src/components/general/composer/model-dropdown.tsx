@@ -85,11 +85,7 @@ const ModelDropdown = ({ selectedModelCode, setSelectedModel, modelDropdownOptio
             <div>
               <div className="font-semibold flex items-center gap-2">
                 {option.label}
-                {option.badge && (
-                  <span className="text-xs bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                    {option.badge}
-                  </span>
-                )}
+                {option.badge}
               </div>
               <div className="text-xs text-muted-foreground">{option.description}</div>
             </div>
@@ -118,11 +114,7 @@ const ModelDropdown = ({ selectedModelCode, setSelectedModel, modelDropdownOptio
             <div>
               <div className="font-semibold flex items-center gap-2">
                 {option.label}
-                {option.badge && (
-                  <span className="text-xs bg-gradient-to-r from-blue-500 via-pink-400 to-orange-400 bg-clip-text text-transparent">
-                    {option.badge}
-                  </span>
-                )}
+                {option.badge}
               </div>
               <div className="text-xs text-muted-foreground">{option.description}</div>
             </div>
