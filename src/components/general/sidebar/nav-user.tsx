@@ -119,7 +119,9 @@ export function NavUser() {
                   <span className="truncate font-semibold">
                     {user.user_metadata.full_name || user.email}
                   </span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  {user.user_metadata.full_name && (
+                    <span className="truncate text-xs">{user.email}</span>
+                  )}
                 </div>
               </div>
             </DropdownMenuLabel>
