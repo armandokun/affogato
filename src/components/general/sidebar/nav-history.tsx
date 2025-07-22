@@ -69,7 +69,7 @@ const NavHistory = () => {
     }
   })
 
-  if (!user) {
+  if (!user || user.is_anonymous) {
     return (
       <SidebarMenu className="flex flex-1 items-center justify-center">
         <SidebarMenuItem className="w-full flex flex-col items-center justify-center">
