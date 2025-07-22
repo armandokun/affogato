@@ -43,7 +43,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
         <SidebarMenu>
           <SidebarMenuItem className="flex flex-col gap-2">
             <SidebarMenuButton
-              className="flex flex-row justify-between"
+              className="flex flex-row justify-between cursor-pointer"
               onClick={() => {
                 router.push(DASHBOARD)
               }}>
@@ -59,9 +59,6 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                 <div className="flex items-center gap-2">
                   <Plug className="size-4" />
                   <span className="text-sm font-medium">Integrations</span>
-                  <span className="inline-flex items-center px-1.5 py-0.5 text-xs font-medium text-white rounded-md ml-auto bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500">
-                    New
-                  </span>
                 </div>
               </Link>
             </SidebarMenuButton>

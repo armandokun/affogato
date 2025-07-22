@@ -10,6 +10,7 @@ import Message from '@/components/general/message'
 import Composer from '@/components/general/composer'
 import { toast } from '@/components/ui/toast/toast'
 import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
+import PricingModal, { PricingModalRef } from '@/components/general/pricing-modal/pricing-modal'
 
 import { ChatVisibility, SELECTED_MODEL_COOKIE } from '@/constants/chat'
 import { cn, fetchWithErrorHandlers, generateUUID, getCookie } from '@/lib/utils'
@@ -35,6 +36,9 @@ const ChatPage = ({
   chatId,
   createdAt
 }: Props) => {
+  const [selectedModelCode, setSelectedModel] = useState<LanguageModelCode>(initialModel)
+  const pricingModalRef = useRef<PricingModalRef>(null)
+
   const { messages, input, handleSubmit, error, status, stop, setMessages, setInput } = useChat({
     api: '/api/chat',
     id: chatId,
@@ -48,16 +52,19 @@ const ChatPage = ({
       selectedChatModelCode: selectedModelCode,
       selectedVisibilityType: visibilityType
     }),
-    onError: (error) => {
+    onError: async (error) => {
       if (error instanceof ChatSDKError) {
-        toast({
-          type: 'error',
-          description: error.message
-        })
+        if (error.type === 'rate_limit' && error.surface === 'chat') {
+          pricingModalRef.current?.show()
+        } else {
+          toast({
+            type: 'error',
+            description: error.message
+          })
+        }
       }
     }
   })
-  const [selectedModelCode, setSelectedModel] = useState<LanguageModelCode>(initialModel)
 
   const mainRef = useRef<HTMLDivElement | null>(null)
 
@@ -108,72 +115,79 @@ const ChatPage = ({
   const hasMessages = messages.length > 0
 
   return (
-    <div className="flex flex-col size-full">
-      {hasMessages && (
-        <header className="flex items-center justify-between border-b border-border px-4 relative h-14">
-          <div className="flex items-center gap-2">
-            {(!open || isMobile) && <SidebarTrigger />}
-            <span className="hidden md:flex text-xs text-muted-foreground whitespace-nowrap items-center gap-1">
-              <Clock className="size-4" />
-              {getRelativeTimeFromNow(createdAt)}
-            </span>
-          </div>
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
-            <p className="font-semibold text-sm truncate max-w-[200px] md:max-w-[250px] lg:max-w-[450px]">
-              {chatTitle || messages[0].content}
-            </p>
-          </div>
-        </header>
-      )}
-      <motion.main
-        className="transition-all duration-300 overflow-y-auto"
-        initial={false}
-        animate={
-          hasMessages ? { height: '90%', overflowY: 'auto' } : { height: '50%', overflow: 'hidden' }
-        }
-        transition={{
-          duration: 0
-        }}
-        ref={mainRef}>
-        {hasMessages ? (
-          <div className={cn('w-full max-w-2xl mx-auto px-0 md:px-2 py-4', hasMessages && 'mb-14')}>
-            {messages.map((message, index) => {
-              const isLast = index === messages.length - 1
-              const isAI = message.role === 'assistant'
-
-              return (
-                <div
-                  key={message.id}
-                  className={`mb-12 text-white ${
-                    message.role === 'user' ? 'text-right' : 'text-left'
-                  }${isLast && isAI ? ' min-h-96' : ''}`}>
-                  <Message
-                    message={message}
-                    isLoading={status === 'streaming' && index === messages.length - 1}
-                  />
-                </div>
-              )
-            })}
-            {error && <div className="text-red-500">{error.message}</div>}
-          </div>
-        ) : (
-          <div className="p-2">{(!open || isMobile) && <SidebarTrigger />}</div>
+    <>
+      <div className="flex flex-col size-full">
+        {hasMessages && (
+          <header className="flex items-center justify-between border-b border-border px-4 relative h-14">
+            <div className="flex items-center gap-2">
+              {(!open || isMobile) && <SidebarTrigger />}
+              <span className="hidden md:flex text-xs text-muted-foreground whitespace-nowrap items-center gap-1">
+                <Clock className="size-4" />
+                {getRelativeTimeFromNow(createdAt)}
+              </span>
+            </div>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
+              <p className="font-semibold text-sm truncate max-w-[200px] md:max-w-[250px] lg:max-w-[450px]">
+                {chatTitle || messages[0].content}
+              </p>
+            </div>
+          </header>
         )}
-      </motion.main>
-      <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[60px]">
-        <Composer
-          chatId={chatId}
-          input={input}
-          setInput={setInput}
-          handleSubmit={handleSubmit}
-          hasMessages={hasMessages}
-          selectedModelCode={selectedModelCode}
-          setSelectedModel={setSelectedModel}
-          status={status}
-          stop={stop}
-        />
-      </footer>
-    </div>
+        <motion.main
+          className="transition-all duration-300 overflow-y-auto"
+          initial={false}
+          animate={
+            hasMessages
+              ? { height: '90%', overflowY: 'auto' }
+              : { height: '50%', overflow: 'hidden' }
+          }
+          transition={{
+            duration: 0
+          }}
+          ref={mainRef}>
+          {hasMessages ? (
+            <div
+              className={cn('w-full max-w-2xl mx-auto px-0 md:px-2 py-4', hasMessages && 'mb-14')}>
+              {messages.map((message, index) => {
+                const isLast = index === messages.length - 1
+                const isAI = message.role === 'assistant'
+
+                return (
+                  <div
+                    key={message.id}
+                    className={`mb-12 text-white ${
+                      message.role === 'user' ? 'text-right' : 'text-left'
+                    }${isLast && isAI ? ' min-h-96' : ''}`}>
+                    <Message
+                      message={message}
+                      isLoading={status === 'streaming' && index === messages.length - 1}
+                    />
+                  </div>
+                )
+              })}
+              {error && <div className="text-red-500">{error.message}</div>}
+            </div>
+          ) : (
+            <div className="p-2">{(!open || isMobile) && <SidebarTrigger />}</div>
+          )}
+        </motion.main>
+        <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[60px]">
+          <Composer
+            chatId={chatId}
+            input={input}
+            setInput={setInput}
+            handleSubmit={handleSubmit}
+            hasMessages={hasMessages}
+            selectedModelCode={selectedModelCode}
+            setSelectedModel={setSelectedModel}
+            status={status}
+            stop={stop}
+          />
+        </footer>
+      </div>
+
+      <PricingModal ref={pricingModalRef} />
+    </>
   )
 }
 

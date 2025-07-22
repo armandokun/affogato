@@ -18,11 +18,13 @@ import { buildTiersFromStripe } from '../pricing-section/pricing-section'
 const DashboardPricingPage = ({
   prices,
   products,
-  currency
+  currency,
+  isModal = false
 }: {
   prices: Array<PricingPrice>
   products: Array<PricingProduct>
   currency: 'usd' | 'eur'
+  isModal?: boolean
 }) => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'yearly'>('yearly')
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null)
@@ -67,23 +69,28 @@ const DashboardPricingPage = ({
   return (
     <section
       id="pricing"
-      className="flex flex-col items-center justify-center gap-10 pb-10 w-full relative">
-      {(!open || isMobile) && (
+      className={`flex flex-col items-center justify-center gap-10 pb-10 w-full relative ${isModal ? 'px-0' : ''}`}>
+      {!isModal && (!open || isMobile) && (
         <div className="absolute top-0 left-0 p-2">
           <SidebarTrigger />
         </div>
       )}
-      <SectionHeader>
-        <Image src="/logo.png" alt="Pricing" width={100} height={100} className="size-15" />
-        <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance mt-4">
-          Pricing that grows with you
-        </h2>
-        <p className="text-muted-foreground text-center text-balance font-medium">
-          No hidden fees, no surprises.
-        </p>
-      </SectionHeader>
+      {!isModal && (
+        <SectionHeader>
+          <Image src="/logo.png" alt="Pricing" width={100} height={100} className="size-15" />
+          <h2 className="text-3xl md:text-4xl font-medium tracking-tighter text-center text-balance mt-4">
+            Pricing that grows with you
+          </h2>
+          <p className="text-muted-foreground text-center text-balance font-medium">
+            No hidden fees, no surprises.
+          </p>
+        </SectionHeader>
+      )}
       <div className="relative w-full h-full">
-        <div className="absolute -top-14 left-1/2 -translate-x-1/2">
+        <div
+          className={
+            isModal ? 'flex justify-center mb-6' : 'absolute -top-14 left-1/2 -translate-x-1/2'
+          }>
           <PricingTabs
             activeTab={billingCycle}
             setActiveTab={setBillingCycle}
@@ -91,7 +98,8 @@ const DashboardPricingPage = ({
           />
         </div>
 
-        <div className="grid min-[650px]:grid-cols-2 gap-4 w-full max-w-3xl mx-auto px-6">
+        <div
+          className={`grid min-[650px]:grid-cols-2 gap-4 w-full mx-auto ${isModal ? 'max-w-none px-6' : 'max-w-3xl px-6'}`}>
           {tiers.map((tier) => {
             const priceId =
               billingCycle === 'yearly' ? tier.stripePriceIdYearly : tier.stripePriceIdMonthly
