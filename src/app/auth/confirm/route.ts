@@ -4,7 +4,7 @@ import { cookies } from 'next/headers'
 
 import { createClient } from '@/lib/supabase/server'
 import { stripe } from '@/lib/payments/stripe'
-import { CHECKOUT_SUCCESS } from '@/constants/routes'
+import { CHECKOUT_SUCCESS, DASHBOARD } from '@/constants/routes'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -80,7 +80,7 @@ export async function GET(request: NextRequest) {
   }
 
   const redirectTo = request.nextUrl.clone()
-  redirectTo.pathname = CHECKOUT_SUCCESS
+  redirectTo.pathname = sessionId ? CHECKOUT_SUCCESS : DASHBOARD
   redirectTo.searchParams.delete('token_hash')
   redirectTo.searchParams.delete('type')
 

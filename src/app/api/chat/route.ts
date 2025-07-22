@@ -30,6 +30,7 @@ import { ChatVisibility } from '@/constants/chat'
 import { getTrailingMessageId } from '@/lib/utils'
 import { webSearch } from '@/lib/ai/tools'
 import { entitlementsByPlanName, PlanName } from '@/constants/user'
+import { createClient } from '@/lib/supabase/server'
 
 export async function POST(request: Request) {
   const {
@@ -45,17 +46,32 @@ export async function POST(request: Request) {
   } = await request.json()
 
   try {
-    const user = await getServerSession()
+    let user = await getServerSession()
 
     if (!user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
-        status: 401
-      })
+      const supabase = await createClient()
+      const { data, error } = await supabase.auth.signInAnonymously()
+
+      if (error) {
+        console.error('Error signing in anonymously:', error)
+
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401
+        })
+      }
+
+      if (!data.user) {
+        return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+          status: 401
+        })
+      }
+
+      user = data.user
     }
 
     const chatId = id
 
-    const planNamePromise = getPlanNameByUserId({ userId: user.id })
+    const planNamePromise = user.is_anonymous ? Promise.resolve('Free') : getPlanNameByUserId({ userId: user.id })
     const messageCountPromise = getMessageCountByUserId({
       id: user.id,
       differenceInHours: 24

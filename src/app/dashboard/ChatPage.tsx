@@ -5,7 +5,6 @@ import { motion } from 'motion/react'
 import { Clock } from 'lucide-react'
 import { useRef, useEffect, useId, useState } from 'react'
 import { UIMessage } from 'ai'
-import { redirect } from 'next/navigation'
 
 import Message from '@/components/general/message'
 import Composer from '@/components/general/composer'
@@ -18,9 +17,6 @@ import { ChatSDKError } from '@/lib/errors'
 import { LanguageModelCode } from '@/lib/ai/providers'
 import { getRelativeTimeFromNow } from '@/lib/utils/date'
 import useSidebar from '@/hooks/use-sidebar'
-import { useSubscription } from '@/hooks/use-subscription'
-import { PlanName } from '@/constants/user'
-import { DASHBOARD_PRICING } from '@/constants/routes'
 
 type Props = {
   chatId: string
@@ -67,15 +63,6 @@ const ChatPage = ({
 
   const placeholderId = useId()
   const { open, isMobile } = useSidebar()
-  const { currentPlan } = useSubscription()
-
-  useEffect(() => {
-    if (!currentPlan) return
-
-    if (currentPlan.toLocaleLowerCase() === PlanName.FREE) {
-      redirect(DASHBOARD_PRICING)
-    }
-  }, [currentPlan])
 
   useEffect(() => {
     if (selectedModelCode !== initialModel) return

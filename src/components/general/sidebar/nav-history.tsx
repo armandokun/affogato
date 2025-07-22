@@ -75,7 +75,7 @@ const NavHistory = () => {
         <SidebarMenuItem className="w-full flex flex-col items-center justify-center">
           <MessagesSquare className="size-8 text-muted-foreground" />
           <span className="text-md font-medium text-muted-foreground p-2 text-center w-full block">
-            Sign up to save your chats
+            Log in to save your chats
           </span>
           <span className="text-xs text-muted-foreground text-center">
             Once you sign up, your chat history will appear here.

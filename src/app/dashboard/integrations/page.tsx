@@ -14,14 +14,7 @@ import {
   SheetTitle,
   SheetTrigger
 } from '@/components/ui/sheet/sheet'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from '@/components/ui/tooltip/tooltip'
 import { AVAILABLE_INTEGRATIONS, Integration, IntegrationTool } from '@/constants/integrations'
-import { cn } from '@/lib/utils'
 
 function ToolsModal({ integration }: { integration: Integration }) {
   const groupedTools = integration.tools.reduce(
@@ -118,10 +111,12 @@ function ToolsModal({ integration }: { integration: Integration }) {
 
 async function IntegrationStatus({
   userId,
-  integration
+  integration,
+  isAnonymous
 }: {
   userId: string | undefined
   integration: Integration
+  isAnonymous: boolean | undefined
 }) {
   const tokens = userId
     ? await getOAuthTokensFromProvider({ userId, provider: integration.id })
@@ -175,7 +170,7 @@ async function IntegrationStatus({
       <div className="flex items-center gap-2">
         {!isConnected && (
           <>
-            {!userId ? (
+            {!userId || isAnonymous ? (
               <Button disabled>Connect</Button>
             ) : (
               <Button asChild>
@@ -227,7 +222,7 @@ async function IntegrationsContent() {
 
   return (
     <div className="space-y-3">
-      {!user && (
+      {(!user || user.is_anonymous) && (
         <div className="p-4 border border-yellow-200 rounded-lg bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/20">
           <div className="flex items-start gap-3">
             <div className="w-5 h-5 text-yellow-300 mt-0.5 flex-shrink-0">
@@ -245,7 +240,11 @@ async function IntegrationsContent() {
 
       {AVAILABLE_INTEGRATIONS.map((integration) => (
         <Suspense key={integration.id} fallback={<IntegrationSkeleton />}>
-          <IntegrationStatus userId={user?.id} integration={integration} />
+          <IntegrationStatus
+            userId={user?.id}
+            integration={integration}
+            isAnonymous={user?.is_anonymous}
+          />
         </Suspense>
       ))}
 

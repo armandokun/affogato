@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/client'
 export type SessionContextType = {
   user: User | null
   loading: boolean
+  setUser: (user: User | null) => void
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined)
@@ -17,31 +18,27 @@ const SessionProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    let mounted = true
+    const supabase = createClient()
 
-    const fetchUser = async () => {
-      const supabase = createClient()
-      const { data } = await supabase.auth.getUser()
+    const {
+      data: { subscription }
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log({ event, session })
 
-      if (mounted) {
-        setUser(data.user ?? null)
-        setLoading(false)
-      }
+      if (event === 'SIGNED_OUT') setUser(null)
+      else if (session?.user) setUser(session.user)
 
-      const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-        setUser(session?.user ?? null)
-      })
+      setLoading(false)
+    })
 
-      return () => {
-        mounted = false
-        listener?.subscription.unsubscribe()
-      }
+    return () => {
+      subscription.unsubscribe()
     }
-
-    fetchUser()
   }, [])
 
-  return <SessionContext.Provider value={{ user, loading }}>{children}</SessionContext.Provider>
+  return (
+    <SessionContext.Provider value={{ user, loading, setUser }}>{children}</SessionContext.Provider>
+  )
 }
 
 const useSession = () => {

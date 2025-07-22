@@ -1,9 +1,6 @@
 import { cookies } from 'next/headers'
-import { redirect } from 'next/navigation'
 
-import { LOGIN } from '@/constants/routes'
 import { ChatVisibility } from '@/constants/chat'
-import { getServerSession } from '@/lib/auth'
 import { LanguageModelCode } from '@/lib/ai/providers'
 import { generateUUID } from '@/lib/utils'
 

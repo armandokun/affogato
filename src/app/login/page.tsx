@@ -24,7 +24,7 @@ const LoginPage = async ({ searchParams }: { searchParams: Promise<SearchParams>
 
   const signup = params?.signup as string | undefined
 
-  if (user) redirect(DASHBOARD)
+  if (user && !user?.is_anonymous) redirect(DASHBOARD)
 
   return (
     <div className="flex-row flex items-stretch justify-center bg-background min-h-screen">

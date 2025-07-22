@@ -17,9 +17,10 @@ import {
 
 import { useSubscription } from '@/hooks/use-subscription'
 import { useSession } from '@/containers/SessionProvider'
-import { signOut } from '@/app/login/actions'
 import { DASHBOARD_PRICING, LOGIN } from '@/constants/routes'
 import { siteConfig } from '@/lib/config'
+import { createClient } from '@/lib/supabase/client'
+import { toast } from '@/components/ui/toast/toast'
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './sidebar'
 
@@ -55,7 +56,17 @@ export function NavUser() {
     return '?'
   }
 
-  if (!user) {
+  const handleSignOut = async () => {
+    const supabase = createClient()
+
+    const { error } = await supabase.auth.signOut()
+
+    if (error) return toast({ description: error.message, type: 'error' })
+
+    return router.push(LOGIN)
+  }
+
+  if (!user || user.is_anonymous) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -135,7 +146,7 @@ export function NavUser() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem onClick={handleSignOut}>
               <LogOut />
               Log out
             </DropdownMenuItem>
