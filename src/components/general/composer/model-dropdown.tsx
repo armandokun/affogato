@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactNode } from 'react'
 import Image from 'next/image'
 
 import {
@@ -16,7 +16,7 @@ type ModelOption = {
   value: string
   label: string
   logo: string
-  badge?: string
+  badge?: ReactNode
   description?: string
 }
 
