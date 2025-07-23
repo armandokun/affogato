@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import { useEffect, useState } from 'react'
+import { loadStripe } from '@stripe/stripe-js'
 
 import { createClient } from '@/lib/supabase/client'
 import useSidebar from '@/hooks/use-sidebar'
@@ -66,6 +67,32 @@ const DashboardPricingPage = ({
     getSelectedPlan()
   }, [user?.id])
 
+  const handlePublicCheckout = async (
+    price: { currency: string; amount: number },
+    priceId?: string
+  ) => {
+    try {
+      const res = await fetch('/api/stripe/public-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ priceId, price })
+      })
+      const data = await res.json()
+
+      if (!data.sessionUrl) throw new Error('No session URL returned')
+
+      const stripe = await loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!)
+
+      if (stripe) {
+        window.location.href = data.sessionUrl
+      } else {
+        window.location.href = data.sessionUrl
+      }
+    } catch (err) {
+      alert(`Failed to start checkout. Please try again: ${err}`)
+    }
+  }
+
   return (
     <section
       id="pricing"
@@ -111,6 +138,11 @@ const DashboardPricingPage = ({
                 tier={tier}
                 isSelected={isSelected}
                 activeTab={billingCycle}
+                onCheckout={() =>
+                  user?.is_anonymous
+                    ? handlePublicCheckout({ currency: currency, amount: tier.price }, priceId)
+                    : undefined
+                }
               />
             )
           })}

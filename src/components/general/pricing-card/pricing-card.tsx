@@ -141,6 +141,20 @@ const PricingCard = ({ tier, activeTab, isSelected, onCheckout, showOldPrice = f
                 return
               }
 
+              if (user.is_anonymous) {
+                if (onCheckout) {
+                  const priceId =
+                    activeTab === 'yearly' ? tier.stripePriceIdYearly : tier.stripePriceIdMonthly
+                  onCheckout(
+                    {
+                      currency: tier.currency,
+                      amount: tier.price
+                    },
+                    priceId
+                  )
+                }
+              }
+
               if (isSelected) {
                 customerPortalAction(user.id)
               } else {
