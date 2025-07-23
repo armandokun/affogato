@@ -4,8 +4,7 @@ import { Globe } from 'lucide-react'
 import {
   DropdownMenu,
   DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuItem
+  DropdownMenuContent
 } from '@/components/ui/dropdown-menu/dropdown-menu'
 import Button from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
