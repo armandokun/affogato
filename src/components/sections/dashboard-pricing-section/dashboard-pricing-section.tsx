@@ -99,7 +99,7 @@ const DashboardPricingPage = ({
         </div>
 
         <div
-          className={`grid min-[650px]:grid-cols-2 gap-4 w-full mx-auto ${isModal ? 'max-w-none px-6' : 'max-w-3xl px-6'}`}>
+          className={`grid min-[650px]:grid-cols-2 gap-4 w-full mx-auto ${isModal ? 'max-w-none md:px-6' : 'max-w-3xl px-6'}`}>
           {tiers.map((tier) => {
             const priceId =
               billingCycle === 'yearly' ? tier.stripePriceIdYearly : tier.stripePriceIdMonthly
