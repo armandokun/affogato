@@ -21,6 +21,7 @@ import { DASHBOARD_PRICING, LOGIN } from '@/constants/routes'
 import { siteConfig } from '@/lib/config'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from '@/components/ui/toast/toast'
+import useSidebar from '@/hooks/use-sidebar'
 
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from './sidebar'
 
@@ -28,6 +29,13 @@ export function NavUser() {
   const { user } = useSession()
   const router = useRouter()
   const { currentPlan } = useSubscription()
+  const { isMobile, setOpenMobile } = useSidebar()
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
 
   const getInitials = () => {
     if (!user) return '?'
@@ -63,6 +71,7 @@ export function NavUser() {
 
     if (error) return toast({ description: error.message, type: 'error' })
 
+    handleLinkClick()
     return router.push(LOGIN)
   }
 
@@ -70,7 +79,7 @@ export function NavUser() {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
-          <Link href={LOGIN} className="flex items-center gap-2">
+          <Link href={LOGIN} className="flex items-center gap-2" onClick={handleLinkClick}>
             <SidebarMenuButton
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground cursor-pointer">
@@ -127,7 +136,11 @@ export function NavUser() {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem onClick={() => router.push(DASHBOARD_PRICING)}>
+              <DropdownMenuItem
+                onClick={() => {
+                  router.push(DASHBOARD_PRICING)
+                  handleLinkClick()
+                }}>
                 <Sparkles />
                 View plans
               </DropdownMenuItem>
@@ -135,13 +148,13 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href={`mailto:${siteConfig.links.mail}`}>
+                <Link href={`mailto:${siteConfig.links.mail}`} onClick={handleLinkClick}>
                   <HeartHandshake />
                   Feedback
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href={`mailto:${siteConfig.links.mail}`}>
+                <Link href={`mailto:${siteConfig.links.mail}`} onClick={handleLinkClick}>
                   <LifeBuoy />
                   Support
                 </Link>

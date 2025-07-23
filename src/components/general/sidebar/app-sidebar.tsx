@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
 import { DASHBOARD, INTEGRATIONS } from '@/constants/routes'
+import useSidebar from '@/hooks/use-sidebar'
 
 import {
   Sidebar,
@@ -23,13 +24,20 @@ import NavHistory from './nav-history'
 
 export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
   const router = useRouter()
+  const { isMobile, setOpenMobile } = useSidebar()
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
 
   return (
     <Sidebar variant="floating" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="flex flex-row justify-between m-2 items-center">
-            <Link href="/">
+            <Link href="/" onClick={handleLinkClick}>
               <div className="flex flex-row gap-2 leading-none items-center">
                 <Icons.logo className="size-6" />
                 <span className="text-md font-medium">Affogato</span>
@@ -46,6 +54,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
               className="flex flex-row justify-between cursor-pointer"
               onClick={() => {
                 router.push(DASHBOARD)
+                handleLinkClick()
               }}>
               <div className="flex items-center gap-2">
                 <SquarePen className="size-4" />
@@ -55,7 +64,7 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href={INTEGRATIONS}>
+              <Link href={INTEGRATIONS} onClick={handleLinkClick}>
                 <div className="flex items-center gap-2">
                   <Plug className="size-4" />
                   <span className="text-sm font-medium">Integrations</span>

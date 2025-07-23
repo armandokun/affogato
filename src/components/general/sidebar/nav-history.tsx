@@ -5,14 +5,23 @@ import { MessagesSquare } from 'lucide-react'
 import { DASHBOARD } from '@/constants/routes'
 import useLibraryItems from '@/hooks/use-library-items'
 import { useSession } from '@/containers/SessionProvider'
+import useSidebar from '@/hooks/use-sidebar'
 
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from './sidebar'
 
 const ChatListItem = ({ chat }: { chat: { id: string; title: string } }) => {
+  const { isMobile, setOpenMobile } = useSidebar()
+
+  const handleLinkClick = () => {
+    if (isMobile) {
+      setOpenMobile(false)
+    }
+  }
+
   return (
     <SidebarMenuItem key={chat.id}>
       <SidebarMenuButton asChild size="sm">
-        <Link href={`${DASHBOARD}/${chat.id}`} className="w-full">
+        <Link href={`${DASHBOARD}/${chat.id}`} className="w-full" onClick={handleLinkClick}>
           <span className="truncate text-xs">{chat.title || 'Untitled Chat'}</span>
         </Link>
       </SidebarMenuButton>
