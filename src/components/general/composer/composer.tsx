@@ -15,6 +15,7 @@ import ComposerInput from './composer-input'
 import PreviewAttachment from '../preview-attachment'
 import GlobalDragDrop from './global-drag-drop'
 import ModelDropdown from './model-dropdown'
+import SearchSourceDropdown from './search-source-dropdown'
 
 type Props = {
   chatId: string
@@ -41,10 +42,43 @@ const Composer = ({
 }: Props) => {
   const [attachments, setAttachments] = useState<Attachment[]>([])
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([])
+  const [searchSources, setSearchSources] = useState([
+    {
+      id: 'web',
+      name: 'Web',
+      description: 'Search across the entire Internet',
+      enabled: true
+    }
+    // Future sources can be added here:
+    // {
+    //   id: 'academic',
+    //   name: 'Academic',
+    //   description: 'Search academic papers',
+    //   enabled: false
+    // },
+    // {
+    //   id: 'social',
+    //   name: 'Social',
+    //   description: 'Discussions and opinions',
+    //   enabled: false
+    // },
+    // {
+    //   id: 'finance',
+    //   name: 'Finance',
+    //   description: 'Search SEC filings',
+    //   enabled: false
+    // }
+  ])
 
   const { user, setUser } = useSession()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const handleSourceToggle = useCallback((sourceId: string, enabled: boolean) => {
+    setSearchSources((prev) =>
+      prev.map((source) => (source.id === sourceId ? { ...source, enabled } : source))
+    )
+  }, [])
 
   const uploadFile = useCallback(async (file: File) => {
     if (!user) {
@@ -207,6 +241,7 @@ const Composer = ({
             />
           </div>
           <div className="flex items-center gap-2">
+            <SearchSourceDropdown sources={searchSources} onSourceToggle={handleSourceToggle} />
             <Button
               variant="ghost"
               size="icon"
