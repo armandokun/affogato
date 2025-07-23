@@ -35,7 +35,7 @@ function ToolsModal({ integration }: { integration: Integration }) {
         <div className="flex flex-wrap gap-1">
           {integration.tools.slice(0, 3).map((tool) => (
             <SheetTrigger key={tool.name} asChild>
-              <button className="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800 rounded border border-blue-200 cursor-pointer hover:bg-blue-200 transition-colors dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800 dark:hover:bg-blue-900/50">
+              <button className="inline-flex items-center px-2 py-1 text-xs font-medium bg-blue-900/30 text-blue-300 rounded border border-blue-800 cursor-pointer hover:bg-blue-900/50 transition-colors">
                 {tool.name}
               </button>
             </SheetTrigger>
@@ -125,62 +125,92 @@ async function IntegrationStatus({
   const isExpired = isConnected && !tokens?.accessToken
 
   return (
-    <div className="flex items-center justify-between p-4 border border-border rounded-lg hover:border-accent transition-colors bg-background">
-      <div className="flex items-start space-x-4">
-        <Image
-          src={integration.icon}
-          alt={integration.name}
-          width={40}
-          height={40}
-          className="rounded-md"
-        />
-        <div className="flex-1">
-          <div className="flex items-center gap-3">
-            {isConnected ? (
-              <a
-                href={integration.externalUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-lg font-semibold text-foreground hover:text-accent-foreground hover:underline transition-colors">
-                {integration.name}
-              </a>
-            ) : (
-              <h3 className="text-lg font-semibold text-foreground">{integration.name}</h3>
+    <div className="flex flex-col p-4 border border-border rounded-lg hover:border-accent transition-colors bg-background">
+      <div className="flex items-center justify-between">
+        <div className="flex items-start space-x-4 flex-1">
+          <Image
+            src={integration.icon}
+            alt={integration.name}
+            width={40}
+            height={40}
+            className="rounded-md flex-shrink-0"
+          />
+          <div className="flex-1 min-w-0">
+            <div className="flex flex-row sm:flex-row sm:items-center gap-2 sm:gap-3">
+              {isConnected ? (
+                <a
+                  href={integration.externalUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-lg font-semibold text-foreground hover:text-accent-foreground hover:underline transition-colors truncate">
+                  {integration.name}
+                </a>
+              ) : (
+                <h3 className="text-lg font-semibold text-foreground truncate">
+                  {integration.name}
+                </h3>
+              )}
+              {isConnected ? (
+                <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-500/20 text-green-400 rounded-full border border-green-500/30 flex-shrink-0">
+                  Connected
+                </span>
+              ) : (
+                <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-full flex-shrink-0">
+                  Not Connected
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground mt-1 line-clamp-2 sm:line-clamp-none">
+              {integration.description}
+            </p>
+            {isExpired && (
+              <p className="text-sm text-yellow-400 mt-1">
+                Your {integration.name} token has expired. Re-authenticate to restore access to your
+                tools.
+              </p>
             )}
-            {isConnected ? (
-              <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-green-500/20 text-green-400 rounded-full border border-green-500/30">
-                Connected
-              </span>
-            ) : (
-              <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-muted text-muted-foreground rounded-full">
-                Not Connected
-              </span>
+            {integration.tools.length > 0 && isConnected && (
+              <ToolsModal integration={integration} />
             )}
           </div>
-          <p className="text-sm text-muted-foreground mt-1">{integration.description}</p>
-          {isExpired && (
-            <p className="text-sm text-yellow-600 mt-1">
-              Your {integration.name} token has expired. Re-authenticate to restore access to your
-              tools.
-            </p>
+        </div>
+
+        <div className="items-center gap-2 hidden md:flex flex-shrink-0 ml-4">
+          {!isConnected && (
+            <>
+              {!userId || isAnonymous ? (
+                <Button disabled>Connect</Button>
+              ) : (
+                <Button asChild>
+                  <a href={integration.connectUrl}>Connect</a>
+                </Button>
+              )}
+            </>
           )}
-          {integration.tools.length > 0 && isConnected && <ToolsModal integration={integration} />}
+          {isExpired && (
+            <Button asChild>
+              <a href={integration.connectUrl}>Re-authenticate</a>
+            </Button>
+          )}
         </div>
       </div>
-      <div className="flex items-center gap-2">
+
+      <div className="flex items-center gap-2 mt-4 md:hidden">
         {!isConnected && (
           <>
             {!userId || isAnonymous ? (
-              <Button disabled>Connect</Button>
+              <Button disabled className="w-full">
+                Connect
+              </Button>
             ) : (
-              <Button asChild>
+              <Button asChild className="w-full">
                 <a href={integration.connectUrl}>Connect</a>
               </Button>
             )}
           </>
         )}
         {isExpired && (
-          <Button asChild>
+          <Button asChild className="w-full">
             <a href={integration.connectUrl}>Re-authenticate</a>
           </Button>
         )}
@@ -248,23 +278,36 @@ async function IntegrationsContent() {
         </Suspense>
       ))}
 
-      <div className="flex items-center justify-between p-4 border-2 border-dashed border-border rounded-lg hover:border-secondary transition-colors bg-card/50">
-        <div className="flex items-center space-x-4">
-          <div className="w-10 h-10 bg-secondary/20 rounded-md flex items-center justify-center border border-secondary/30">
-            <span className="text-lg">💡</span>
+      <div className="flex flex-col p-4 border-2 border-dashed border-border rounded-lg hover:border-secondary transition-colors bg-card/50">
+        <div className="flex items-center justify-between">
+          <div className="flex items-start space-x-4 flex-1">
+            <div className="w-10 h-10 bg-secondary/20 rounded-md flex-shrink-0 flex items-center justify-center border border-secondary/30">
+              <span className="text-lg">💡</span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="text-lg font-semibold text-foreground">Missing an Integration?</h3>
+              <p className="text-sm text-muted-foreground">
+                Let us know what integration would help your workflow.
+              </p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-lg font-semibold text-foreground">Missing an Integration?</h3>
-            <p className="text-sm text-muted-foreground">
-              Let us know what integration would help your workflow.
-            </p>
+
+          <div className="items-center gap-2 hidden md:flex flex-shrink-0 ml-4">
+            <Button asChild>
+              <a href="mailto:armandas@affogato.ai?subject=Integration Request&body=Hi! I'd like to request an integration with:">
+                Request
+              </a>
+            </Button>
           </div>
         </div>
-        <Button asChild>
-          <a href="mailto:armandas@affogato.ai?subject=Integration Request&body=Hi! I'd like to request an integration with:">
-            Request
-          </a>
-        </Button>
+
+        <div className="flex items-center gap-2 mt-4 md:hidden">
+          <Button asChild className="w-full">
+            <a href="mailto:armandas@affogato.ai?subject=Integration Request&body=Hi! I'd like to request an integration with:">
+              Request
+            </a>
+          </Button>
+        </div>
       </div>
     </div>
   )
