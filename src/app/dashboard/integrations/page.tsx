@@ -1,5 +1,5 @@
 import { Suspense } from 'react'
-import { ChevronRight, Info } from 'lucide-react'
+import { ChevronRight, Info, X } from 'lucide-react'
 import Image from 'next/image'
 
 import { getServerSession } from '@/lib/auth'
@@ -8,6 +8,7 @@ import Button from '@/components/ui/button'
 import PageHeading from '@/components/general/page-heading'
 import {
   Sheet,
+  SheetClose,
   SheetContent,
   SheetDescription,
   SheetHeader,
@@ -52,20 +53,28 @@ function ToolsModal({ integration }: { integration: Integration }) {
       </div>
       <SheetContent className="sm:max-w-[600px] w-full flex flex-col">
         <SheetHeader className="flex-shrink-0">
-          <div className="flex items-center gap-3">
-            <Image
-              src={integration.icon}
-              alt={integration.name}
-              width={32}
-              height={32}
-              className="rounded-md"
-            />
-            <div>
-              <SheetTitle>{integration.name} Tools</SheetTitle>
-              <SheetDescription>
-                Available tools for {integration.name} integration
-              </SheetDescription>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Image
+                src={integration.icon}
+                alt={integration.name}
+                width={32}
+                height={32}
+                className="rounded-md"
+              />
+              <div>
+                <SheetTitle>{integration.name} Tools</SheetTitle>
+                <SheetDescription>
+                  Available tools for {integration.name} integration
+                </SheetDescription>
+              </div>
             </div>
+            <SheetClose asChild>
+              <button className="rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-secondary">
+                <X className="h-4 w-4" />
+                <span className="sr-only">Close</span>
+              </button>
+            </SheetClose>
           </div>
         </SheetHeader>
 
