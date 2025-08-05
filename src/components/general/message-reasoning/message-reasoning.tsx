@@ -9,10 +9,10 @@ import AnimatedShinyText from '@/components/magicui/animated-shiny-text'
 
 type Props = {
   isLoading: boolean
-  reasoning: string
+  reasoningText: string
 }
 
-const MessageReasoning = ({ isLoading, reasoning }: Props) => {
+const MessageReasoning = ({ isLoading, reasoningText }: Props) => {
   const [isExpanded, setIsExpanded] = useState(false)
 
   const variants = {
@@ -72,7 +72,7 @@ const MessageReasoning = ({ isLoading, reasoning }: Props) => {
             transition={{ duration: 0.2, ease: 'easeInOut' }}
             style={{ overflow: 'hidden' }}
             className="pl-4 text-zinc-600 dark:text-zinc-400 border-l flex flex-col gap-4">
-            <Markdown>{reasoning}</Markdown>
+            <Markdown>{reasoningText}</Markdown>
           </motion.div>
         )}
       </AnimatePresence>

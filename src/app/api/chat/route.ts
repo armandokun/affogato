@@ -1,10 +1,11 @@
 import {
+  JsonToSseTransformStream,
   UIMessage,
-  appendClientMessage,
-  appendResponseMessages,
-  createDataStreamResponse,
+  convertToModelMessages,
+  createUIMessageStream,
   experimental_createMCPClient,
   smoothStream,
+  stepCountIs,
   streamText
 } from 'ai'
 import { NextResponse } from 'next/server'
@@ -24,10 +25,9 @@ import {
   getAllIntegrations,
   updateAccessToken
 } from '@/lib/db/queries'
-import { ChatSDKError, errorHandler } from '@/lib/errors'
+import { ChatSDKError } from '@/lib/errors'
 import { generateTitleFromUserMessage } from '@/app/dashboard/actions'
 import { ChatVisibility } from '@/constants/chat'
-import { getTrailingMessageId } from '@/lib/utils'
 import { webSearch } from '@/lib/ai/tools'
 import { entitlementsByPlanName, PlanName } from '@/constants/user'
 import { createClient } from '@/lib/supabase/server'
@@ -36,13 +36,11 @@ export async function POST(request: Request) {
   const {
     id,
     message,
-    selectedVisibilityType,
     selectedChatModelCode
   }: {
     id: string
     message: UIMessage
     selectedChatModelCode: LanguageModelCode
-    selectedVisibilityType: ChatVisibility
   } = await request.json()
 
   try {
@@ -71,7 +69,9 @@ export async function POST(request: Request) {
 
     const chatId = id
 
-    const planNamePromise = user.is_anonymous ? Promise.resolve('Free') : getPlanNameByUserId({ userId: user.id })
+    const planNamePromise = user.is_anonymous
+      ? Promise.resolve('Free')
+      : getPlanNameByUserId({ userId: user.id })
     const messageCountPromise = getMessageCountByUserId({
       id: user.id,
       differenceInHours: 24
@@ -96,7 +96,7 @@ export async function POST(request: Request) {
       await saveChat({
         id: chatId,
         title: 'New Chat',
-        visibility: selectedVisibilityType
+        visibility: ChatVisibility.PERMANENT
       })
 
       generateTitleFromUserMessage({ message })
@@ -128,9 +128,10 @@ export async function POST(request: Request) {
     }
 
     const userIntegrations = await getAllIntegrations({ userId: user.id })
-    const availableIntegrations = userIntegrations?.filter(
-      integration => mcpConfigs[integration.provider as keyof typeof mcpConfigs]
-    ) || []
+    const availableIntegrations =
+      userIntegrations?.filter(
+        (integration) => mcpConfigs[integration.provider as keyof typeof mcpConfigs]
+      ) || []
 
     const mcpClients: Array<{ close(): Promise<void> }> = []
     let mcpTools = {}
@@ -171,12 +172,14 @@ export async function POST(request: Request) {
         try {
           const tools = await mcpClient.tools()
 
-          // Prefix tool names with provider to avoid conflicts and identify source
-          const prefixedTools = Object.entries(tools).reduce((acc, [toolName, toolConfig]) => {
-            const prefixedName = `${integration.provider}_${toolName}`
-            acc[prefixedName] = toolConfig
-            return acc
-          }, {} as Record<string, unknown>)
+          const prefixedTools = Object.entries(tools).reduce(
+            (acc, [toolName, toolConfig]) => {
+              const prefixedName = `${integration.provider}_${toolName}`
+              acc[prefixedName] = toolConfig
+              return acc
+            },
+            {} as Record<string, unknown>
+          )
 
           mcpTools = { ...mcpTools, ...prefixedTools }
           mcpClients.push(mcpClient)
@@ -201,28 +204,13 @@ export async function POST(request: Request) {
       }
     }
 
-    const transformedPreviousMessages = previousMessages.map((message) => ({
-      ...message,
-      experimental_attachments: message.attachments || []
-    }))
-
-    const messages = appendClientMessage({
-      messages: transformedPreviousMessages,
-      message
-    })
-
-    const lastSelectedModelCode = selectedChatModelCode || LanguageModelCode.OPENAI_CHAT_MODEL_FAST
-
     saveMessage({
       chatId,
       message: {
         id: message.id,
         role: message.role,
         parts: message.parts,
-        experimental_attachments: message.experimental_attachments ?? [],
-        createdAt: new Date(),
-        content: message.content,
-        model_code: lastSelectedModelCode
+        model_code: selectedChatModelCode
       }
     })
 
@@ -235,21 +223,27 @@ export async function POST(request: Request) {
       country
     }
 
-    return createDataStreamResponse({
-      execute: (dataStream) => {
-        dataStream.writeMessageAnnotation({
-          model_code: lastSelectedModelCode
-        })
+    const transformedPreviousMessages: UIMessage[] = previousMessages.map((dbMessage) => ({
+      id: dbMessage.id,
+      role: dbMessage.role,
+      parts: dbMessage.parts,
+      createdAt: dbMessage.created_at
+    }))
 
+    const allUIMessages = [...transformedPreviousMessages, message]
+    const modelMessages = convertToModelMessages(allUIMessages)
+
+    const stream = createUIMessageStream({
+      execute: ({ writer: dataStream }) => {
         const result = streamText({
-          model: myProvider.languageModel(lastSelectedModelCode),
+          model: myProvider.languageModel(selectedChatModelCode),
           system: systemPrompt({
-            selectedChatModel: lastSelectedModelCode,
+            selectedChatModel: selectedChatModelCode,
             requestHints
           }),
-          messages,
+          messages: modelMessages,
           providerOptions: {
-            ...(lastSelectedModelCode === LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING
+            ...(selectedChatModelCode === LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING
               ? {
                   anthropic: {
                     thinking: { type: 'enabled', budgetTokens: 10000 }
@@ -262,14 +256,13 @@ export async function POST(request: Request) {
           },
           temperature: 0.5,
           topP: 0.9,
-          maxSteps: 5,
+          stopWhen: stepCountIs(5),
           experimental_transform: smoothStream({ chunking: 'word' }),
           tools: {
             webSearch,
             ...mcpTools
           },
-          onFinish: async ({ response }) => {
-            // Close all MCP clients
+          onFinish: async () => {
             for (const client of mcpClients) {
               try {
                 await client.close()
@@ -277,46 +270,41 @@ export async function POST(request: Request) {
                 console.error('Error closing MCP client:', error)
               }
             }
-
-            if (user.id) {
-              try {
-                const assistantId = getTrailingMessageId({
-                  messages: response.messages.filter((message) => message.role === 'assistant')
-                })
-
-                if (!assistantId) {
-                  throw new Error('No assistant message found!')
-                }
-
-                const [, assistantMessage] = appendResponseMessages({
-                  messages: [message],
-                  responseMessages: response.messages
-                })
-
-                await saveMessage({
-                  chatId,
-                  message: {
-                    id: assistantId,
-                    role: assistantMessage.role,
-                    parts: assistantMessage.parts,
-                    experimental_attachments: assistantMessage.experimental_attachments ?? [],
-                    content: assistantMessage.content,
-                    model_code: lastSelectedModelCode
-                  }
-                })
-              } catch (error) {
-                console.error('Failed to save message', error)
-              }
-            }
           }
         })
 
-        result.mergeIntoDataStream(dataStream, {
-          sendReasoning: true
+        dataStream.write({
+          id: `${message.id}-model-code`,
+          type: 'data-model-code',
+          data: {
+            model_code: selectedChatModelCode
+          }
         })
+
+        result.consumeStream()
+
+        dataStream.merge(
+          result.toUIMessageStream({
+            sendReasoning: true
+          })
+        )
       },
-      onError: errorHandler
+      onFinish: async ({ responseMessage }) => {
+        if (responseMessage.role !== 'assistant') return
+
+        await saveMessage({
+          chatId,
+          message: {
+            id: crypto.randomUUID(),
+            role: responseMessage.role,
+            parts: responseMessage.parts,
+            model_code: selectedChatModelCode
+          }
+        })
+      }
     })
+
+    return new Response(stream.pipeThrough(new JsonToSseTransformStream()))
   } catch (error) {
     return NextResponse.json({ error }, { status: 400 })
   }

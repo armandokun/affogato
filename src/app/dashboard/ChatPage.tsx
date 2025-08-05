@@ -4,7 +4,7 @@ import { useChat } from '@ai-sdk/react'
 import { motion } from 'motion/react'
 import { Clock } from 'lucide-react'
 import { useRef, useEffect, useId, useState } from 'react'
-import { UIMessage } from 'ai'
+import { UIMessage, DefaultChatTransport } from 'ai'
 
 import Message from '@/components/general/message'
 import Composer from '@/components/general/composer'
@@ -12,7 +12,7 @@ import { toast } from '@/components/ui/toast/toast'
 import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
 import PricingModal, { PricingModalRef } from '@/components/general/pricing-modal/pricing-modal'
 
-import { ChatVisibility, SELECTED_MODEL_COOKIE } from '@/constants/chat'
+import { SELECTED_MODEL_COOKIE } from '@/constants/chat'
 import { cn, fetchWithErrorHandlers, generateUUID, getCookie } from '@/lib/utils'
 import { ChatSDKError } from '@/lib/errors'
 import { LanguageModelCode } from '@/lib/ai/providers'
@@ -24,33 +24,37 @@ type Props = {
   chatTitle: string
   initialModel: LanguageModelCode
   initialMessages: Array<UIMessage>
-  visibilityType: ChatVisibility
   createdAt: string
 }
 
-const ChatPage = ({
-  chatTitle,
-  visibilityType,
-  initialModel,
-  initialMessages,
-  chatId,
-  createdAt
-}: Props) => {
+const ChatPage = ({ chatTitle, initialModel, initialMessages, chatId, createdAt }: Props) => {
   const [selectedModelCode, setSelectedModel] = useState<LanguageModelCode>(initialModel)
-  const pricingModalRef = useRef<PricingModalRef>(null)
 
-  const { messages, input, handleSubmit, error, status, stop, setMessages, setInput } = useChat({
-    api: '/api/chat',
+  const mainRef = useRef<HTMLDivElement | null>(null)
+  const pricingModalRef = useRef<PricingModalRef>(null)
+  const currentModelRef = useRef(selectedModelCode)
+  currentModelRef.current = selectedModelCode
+
+  const placeholderId = useId()
+  const { open, isMobile } = useSidebar()
+
+  const { messages, sendMessage, error, status, stop, setMessages } = useChat({
     id: chatId,
-    initialMessages,
-    sendExtraMessageFields: true,
+    messages: initialMessages,
     generateId: generateUUID,
-    fetch: fetchWithErrorHandlers,
-    experimental_prepareRequestBody: (body) => ({
-      id: chatId,
-      message: body.messages.at(-1),
-      selectedChatModelCode: selectedModelCode,
-      selectedVisibilityType: visibilityType
+    transport: new DefaultChatTransport({
+      api: '/api/chat',
+      fetch: fetchWithErrorHandlers,
+      prepareSendMessagesRequest({ messages, id, body }) {
+        return {
+          body: {
+            id,
+            message: messages.at(-1),
+            selectedChatModelCode: currentModelRef.current,
+            ...body
+          }
+        }
+      }
     }),
     onError: async (error) => {
       if (error instanceof ChatSDKError) {
@@ -65,11 +69,6 @@ const ChatPage = ({
       }
     }
   })
-
-  const mainRef = useRef<HTMLDivElement | null>(null)
-
-  const placeholderId = useId()
-  const { open, isMobile } = useSidebar()
 
   useEffect(() => {
     if (selectedModelCode !== initialModel) return
@@ -98,11 +97,11 @@ const ChatPage = ({
           {
             id: placeholderId,
             role: 'assistant',
-            content: 'Thinking...',
+            parts: [{ type: 'text', text: 'Thinking...' }],
             data: {
               model_code: selectedModelCode
             }
-          }
+          } as UIMessage
         ])
       }
     } else {
@@ -128,7 +127,10 @@ const ChatPage = ({
             </div>
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
               <p className="font-semibold text-sm truncate max-w-[200px] md:max-w-[250px] lg:max-w-[450px]">
-                {chatTitle || messages[0].content}
+                {chatTitle ||
+                  (messages[0]?.parts?.[0]?.type === 'text'
+                    ? messages[0].parts[0].text
+                    : 'New Chat')}
               </p>
             </div>
           </header>
@@ -154,7 +156,7 @@ const ChatPage = ({
 
                 return (
                   <div
-                    key={message.id}
+                    key={`message-${message.id}`}
                     className={`mb-12 text-white ${
                       message.role === 'user' ? 'text-right' : 'text-left'
                     }${isLast && isAI ? ' min-h-96' : ''}`}>
@@ -174,12 +176,10 @@ const ChatPage = ({
         <footer className="flex items-center justify-center p-2 pt-0 px-4 relative min-h-[60px]">
           <Composer
             chatId={chatId}
-            input={input}
-            setInput={setInput}
-            handleSubmit={handleSubmit}
             hasMessages={hasMessages}
             selectedModelCode={selectedModelCode}
             setSelectedModel={setSelectedModel}
+            sendMessage={sendMessage}
             status={status}
             stop={stop}
           />

@@ -1,4 +1,4 @@
-import { Message } from 'ai'
+import { UIMessage } from 'ai'
 
 import { ChatVisibility } from '@/constants/chat'
 
@@ -59,17 +59,22 @@ export async function saveMessage({
   message
 }: {
   chatId: string
-  message: Message & { model_code: LanguageModelCode }
+  message: UIMessage & { model_code: LanguageModelCode }
 }) {
   const supabase = await createClient()
+
+  const attachments = message.parts.filter(part => part.type === 'file').map(part => ({
+      url: part.url,
+      filename: part.filename,
+      media_type: part.mediaType
+    }))
 
   const { data, error } = await supabase.from('messages').insert({
     chat_id: chatId,
     role: message.role,
     parts: message.parts,
-    attachments: message.experimental_attachments ?? [],
+    attachments,
     created_at: new Date(),
-    content: message.content,
     model_code: message.model_code
   })
 

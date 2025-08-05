@@ -10,7 +10,7 @@ export type DbMessage = {
   id: string
   role: UIMessage['role']
   parts: UIMessage['parts']
-  attachments: UIMessage['experimental_attachments']
+  attachments: unknown[] // Will be empty for AI SDK 5 compatibility
   content: string
   created_at: Date
   model_code: LanguageModelCode

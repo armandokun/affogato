@@ -1,7 +1,7 @@
 import { FormEvent, useCallback, useRef, useState } from 'react'
 import { ArrowUp, Paperclip, Square } from 'lucide-react'
+import { UIMessage, FileUIPart } from 'ai'
 import { UseChatHelpers } from '@ai-sdk/react'
-import { Attachment } from 'ai'
 
 import Button from '@/components/ui/button'
 import { DASHBOARD } from '@/constants/routes'
@@ -17,13 +17,13 @@ import GlobalDragDrop from './global-drag-drop'
 import ModelDropdown from './model-dropdown'
 import SearchSourceDropdown from './search-source-dropdown'
 
+type Message = Parameters<UseChatHelpers<UIMessage>['sendMessage']>[0]
+
 type Props = {
   chatId: string
-  input: UseChatHelpers['input']
-  setInput: UseChatHelpers['setInput']
-  handleSubmit: UseChatHelpers['handleSubmit']
-  status: UseChatHelpers['status']
-  stop: UseChatHelpers['stop']
+  sendMessage: (message: Message) => void
+  status: 'ready' | 'streaming' | 'submitted' | 'error'
+  stop: () => void
   hasMessages: boolean
   selectedModelCode: LanguageModelCode
   setSelectedModel: (modelCode: LanguageModelCode) => void
@@ -31,16 +31,14 @@ type Props = {
 
 const Composer = ({
   chatId,
-  input,
-  setInput,
   hasMessages,
   selectedModelCode,
   setSelectedModel,
   status,
-  handleSubmit,
+  sendMessage,
   stop
 }: Props) => {
-  const [attachments, setAttachments] = useState<Attachment[]>([])
+  const [attachments, setAttachments] = useState<FileUIPart[]>([])
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([])
   const [searchSources, setSearchSources] = useState([
     {
@@ -49,26 +47,8 @@ const Composer = ({
       description: 'Search across the entire Internet',
       enabled: true
     }
-    // Future sources can be added here:
-    // {
-    //   id: 'academic',
-    //   name: 'Academic',
-    //   description: 'Search academic papers',
-    //   enabled: false
-    // },
-    // {
-    //   id: 'social',
-    //   name: 'Social',
-    //   description: 'Discussions and opinions',
-    //   enabled: false
-    // },
-    // {
-    //   id: 'finance',
-    //   name: 'Finance',
-    //   description: 'Search SEC filings',
-    //   enabled: false
-    // }
   ])
+  const [input, setInput] = useState('')
 
   const { user, setUser } = useSession()
 
@@ -112,10 +92,11 @@ const Composer = ({
         const { url, name, contentType } = data
 
         return {
+          type: 'file' as const,
           url,
-          name,
-          contentType
-        }
+          mediaType: contentType,
+          filename: name
+        } as FileUIPart
       }
       const { error } = await response.json()
       toast({
@@ -153,6 +134,30 @@ const Composer = ({
     [uploadFile]
   )
 
+  const handleSubmit = async (e?: { preventDefault?: () => void }) => {
+    e?.preventDefault?.()
+
+    if (!input.trim()) return
+
+    sendMessage({
+      role: 'user',
+      parts: [
+        ...attachments.map((attachment) => ({
+          type: 'file' as const,
+          url: attachment.url,
+          name: attachment.filename,
+          mediaType: attachment.mediaType
+        })),
+        {
+          type: 'text',
+          text: input
+        }
+      ]
+    })
+
+    setInput('')
+  }
+
   const submitForm = useCallback(
     (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault()
@@ -163,18 +168,16 @@ const Composer = ({
 
       window.history.replaceState({}, '', `${DASHBOARD}/${chatId}`)
 
-      handleSubmit(undefined, {
-        experimental_attachments: attachments
-      })
+      handleSubmit()
 
       setAttachments([])
     },
     [input, status, stop, chatId, handleSubmit, attachments]
   )
 
-  const handleAttachmentRemove = useCallback((attachment: Attachment) => {
+  const handleAttachmentRemove = useCallback((attachment: FileUIPart) => {
     setAttachments((current) =>
-      current.filter((a) => a.url !== attachment.url || a.name !== attachment.name)
+      current.filter((a) => a.url !== attachment.url || a.filename !== attachment.filename)
     )
   }, [])
 
@@ -190,7 +193,7 @@ const Composer = ({
             className="flex flex-row gap-2 overflow-x-scroll items-end">
             {attachments.map((attachment) => (
               <PreviewAttachment
-                key={attachment.url || attachment.name}
+                key={attachment.url || attachment.filename}
                 attachment={attachment}
                 onRemove={() => handleAttachmentRemove(attachment)}
               />
@@ -200,9 +203,10 @@ const Composer = ({
               <PreviewAttachment
                 key={filename}
                 attachment={{
+                  type: 'file',
                   url: '',
-                  name: filename,
-                  contentType: ''
+                  filename: filename,
+                  mediaType: ''
                 }}
                 isUploading={true}
               />
