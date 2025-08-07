@@ -228,7 +228,7 @@ const Message = ({ message, isLoading }: Props) => {
                   const { output } = part
 
                   if (toolName === 'webSearch') {
-                    // @ts-expect-error
+                    // @ts-expect-error output is unknown type
                     const avatars = output.map(
                       (source: { id: string; url: string; favicon: string; title: string }) => {
                         return {
@@ -309,7 +309,7 @@ const Message = ({ message, isLoading }: Props) => {
                 if (state === 'output-available') {
                   const { output } = part
 
-                  // @ts-expect-error
+                  // @ts-expect-error output is unknown type
                   if ('error' in output) {
                     return (
                       <div key={`${toolCallId}-result`} className="text-red-500 p-2 border rounded">
@@ -318,7 +318,7 @@ const Message = ({ message, isLoading }: Props) => {
                     )
                   }
 
-                  // @ts-expect-error
+                  // @ts-expect-error output is unknown type
                   const avatars = output.map(
                     (source: { id: string; url: string; favicon: string; title: string }) => {
                       return {
