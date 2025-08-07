@@ -1,8 +1,7 @@
 import { cookies } from 'next/headers'
 
-import { ChatVisibility } from '@/constants/chat'
-import { LanguageModelCode } from '@/lib/ai/providers'
 import { generateUUID } from '@/lib/utils'
+import { LanguageModelCode } from '@/lib/ai/providers'
 
 import ChatPage from './ChatPage'
 
