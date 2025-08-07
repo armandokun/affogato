@@ -1,4 +1,4 @@
-import type { Attachment } from 'ai'
+import type { FileUIPart } from 'ai'
 import { LoaderIcon, X } from 'lucide-react'
 
 const PreviewAttachment = ({
@@ -6,14 +6,14 @@ const PreviewAttachment = ({
   isUploading = false,
   onRemove
 }: {
-  attachment: Attachment
+  attachment: FileUIPart
   isUploading?: boolean
   onRemove?: () => void
 }) => {
-  const { name, url, contentType } = attachment
+  const { filename, url, mediaType } = attachment
 
-  const isPDF = contentType === 'application/pdf'
-  const isImage = contentType?.startsWith('image')
+  const isPDF = mediaType === 'application/pdf'
+  const isImage = mediaType?.startsWith('image')
 
   return (
     <div data-testid="input-attachment-preview" className="flex flex-col gap-2 mb-4">
@@ -35,7 +35,7 @@ const PreviewAttachment = ({
           <img
             key={url}
             src={url}
-            alt={name ?? 'An image attachment'}
+            alt={filename ?? 'An image attachment'}
             className="rounded-md w-full h-full object-cover border border-zinc-700"
           />
         ) : isPDF ? (
@@ -44,9 +44,9 @@ const PreviewAttachment = ({
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-col items-start justify-between w-full h-full p-3 border border-zinc-700 rounded-lg"
-            title={name}>
+            title={filename}>
             <span className="text-sm font-medium text-zinc-100 line-clamp-2 break-all mb-1 text-left">
-              {name ?? 'PDF'}
+              {filename ?? 'PDF'}
             </span>
             <span className="mt-auto px-2 py-1 bg-zinc-800 text-zinc-200 rounded text-xs font-semibold">
               PDF

@@ -1,11 +1,11 @@
-import { CoreAssistantMessage, CoreToolMessage } from 'ai'
+import { AssistantModelMessage, ToolModelMessage } from 'ai'
 import { clsx, type ClassValue } from 'clsx'
 import * as Color from 'color-bits'
 import { twMerge } from 'tailwind-merge'
 
 import { ChatSDKError, ErrorCode } from './errors'
 
-type ResponseMessageWithoutId = CoreToolMessage | CoreAssistantMessage
+type ResponseMessageWithoutId = ToolModelMessage | AssistantModelMessage
 type ResponseMessage = ResponseMessageWithoutId & { id: string }
 
 export function cn(...inputs: ClassValue[]) {

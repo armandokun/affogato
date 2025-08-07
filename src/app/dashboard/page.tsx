@@ -1,8 +1,7 @@
 import { cookies } from 'next/headers'
 
-import { ChatVisibility } from '@/constants/chat'
-import { LanguageModelCode } from '@/lib/ai/providers'
 import { generateUUID } from '@/lib/utils'
+import { LanguageModelCode } from '@/lib/ai/providers'
 
 import ChatPage from './ChatPage'
 
@@ -24,7 +23,6 @@ const DashboardPage = async () => {
       chatTitle="New chat"
       createdAt={new Date().toISOString()}
       initialMessages={[]}
-      visibilityType={ChatVisibility.PERMANENT}
       initialModel={selectedModel || LanguageModelCode.OPENAI_CHAT_MODEL_FAST}
     />
   )
