@@ -35,8 +35,8 @@ export enum LanguageModelCode {
 
 export const myProvider = customProvider({
   languageModels: {
-    [LanguageModelCode.OPENAI_CHAT_MODEL_FAST]: openai('gpt-4o-mini'),
-    [LanguageModelCode.OPENAI_CHAT_MODEL_LARGE]: openai('gpt-4o'),
+    [LanguageModelCode.OPENAI_CHAT_MODEL_FAST]: openai('gpt-5-mini'),
+    [LanguageModelCode.OPENAI_CHAT_MODEL_LARGE]: openai('gpt-5'),
     [LanguageModelCode.ANTHROPIC_CHAT_MODEL_FAST]: anthropic('claude-3-5-haiku-latest'),
     [LanguageModelCode.ANTHROPIC_CHAT_MODEL_LATEST]: anthropic('claude-4-sonnet-20250514'),
     [LanguageModelCode.OPENAI_TITLE_MODEL]: openai('gpt-4-turbo'),
@@ -46,7 +46,7 @@ export const myProvider = customProvider({
       middleware: extractReasoningMiddleware({ tagName: 'think' })
     }),
     [LanguageModelCode.OPENAI_CHAT_MODEL_THINKING]: wrapLanguageModel({
-      model: openai('o3-2025-04-16'),
+      model: openai('gpt-5'),
       middleware: extractReasoningMiddleware({ tagName: 'think' })
     }),
     [LanguageModelCode.ANTHROPIC_CHAT_MODEL_THINKING]: wrapLanguageModel({
@@ -59,14 +59,14 @@ export const myProvider = customProvider({
 export const modelDropdownOptions = [
   {
     value: LanguageModelCode.OPENAI_CHAT_MODEL_FAST,
-    label: '4o-mini',
-    description: 'Perfect for most tasks and talks like ChatGPT.',
+    label: 'GPT-5 Mini',
+    description: 'One of the latest and fastest OpenAI models. Best for quick tasks.',
     logo: '/llm-icons/chatgpt.png'
   },
   {
     value: LanguageModelCode.OPENAI_CHAT_MODEL_LARGE,
-    label: '4o',
-    description: 'Handles complex topics, excels at visual understanding.',
+    label: 'GPT-5',
+    description: 'The flagship model from OpenAI. Best for tasks that need some afterthought.',
     logo: '/llm-icons/chatgpt.png'
   },
   {
@@ -99,7 +99,7 @@ export const thinkingModelDropdownOptions = [
   },
   {
     value: LanguageModelCode.OPENAI_CHAT_MODEL_THINKING,
-    label: 'o3',
+    label: 'GPT-5 (Thinking)',
     description:
       'For STEM reasoning that excels in science, math, and coding tasks. Thinks internally before responding.',
     logo: '/llm-icons/chatgpt.png',

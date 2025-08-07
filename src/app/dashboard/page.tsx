@@ -23,7 +23,7 @@ const DashboardPage = async () => {
       chatTitle="New chat"
       createdAt={new Date().toISOString()}
       initialMessages={[]}
-      initialModel={selectedModel || LanguageModelCode.OPENAI_CHAT_MODEL_FAST}
+      initialModel={selectedModel}
     />
   )
 }
