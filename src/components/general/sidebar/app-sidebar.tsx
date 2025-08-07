@@ -1,11 +1,11 @@
 'use client'
 
 import { ComponentProps } from 'react'
-import { SquarePen, Plug } from 'lucide-react'
+import { SquarePen, Plug, Calendar } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 
-import { DASHBOARD, INTEGRATIONS } from '@/constants/routes'
+import { DASHBOARD, INTEGRATIONS, MEETINGS } from '@/constants/routes'
 import useSidebar from '@/hooks/use-sidebar'
 
 import {
@@ -68,6 +68,16 @@ export function AppSidebar({ ...props }: ComponentProps<typeof Sidebar>) {
                 <div className="flex items-center gap-2">
                   <Plug className="size-4" />
                   <span className="text-sm font-medium">Integrations</span>
+                </div>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild>
+              <Link href={MEETINGS} onClick={handleLinkClick}>
+                <div className="flex items-center gap-2">
+                  <Calendar className="size-4" />
+                  <span className="text-sm font-medium">Meetings</span>
                 </div>
               </Link>
             </SidebarMenuButton>
