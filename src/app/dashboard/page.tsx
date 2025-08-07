@@ -24,7 +24,6 @@ const DashboardPage = async () => {
       chatTitle="New chat"
       createdAt={new Date().toISOString()}
       initialMessages={[]}
-      visibilityType={ChatVisibility.PERMANENT}
       initialModel={selectedModel || LanguageModelCode.OPENAI_CHAT_MODEL_FAST}
     />
   )

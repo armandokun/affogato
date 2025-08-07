@@ -44,7 +44,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         chatId={id}
         chatTitle={chat.title}
         createdAt={chat.created_at}
-        visibilityType={chat.visibility}
         initialModel={chatModelFromCookie}
         initialMessages={convertToUIMessages(initialMessages)}
       />
