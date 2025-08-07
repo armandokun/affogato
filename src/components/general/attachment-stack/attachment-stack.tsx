@@ -6,7 +6,7 @@ import { Sheet, SheetContent, SheetTitle, SheetClose } from '@/components/ui/she
 type Attachment = {
   url: string
   name?: string
-  contentType?: string
+  mediaType?: string
 }
 
 type Props = {
@@ -17,8 +17,8 @@ const maxStacked = 4
 const ATTACHMENT_SIZE = 100
 
 const AttachmentPreview = ({ attachment }: { attachment: Attachment }) => {
-  const isPDF = attachment.contentType === 'application/pdf'
-  const isImage = attachment.contentType?.startsWith('image')
+  const isPDF = attachment.mediaType === 'application/pdf'
+  const isImage = attachment.mediaType?.startsWith('image')
 
   if (isImage) {
     return (
@@ -48,6 +48,7 @@ const AttachmentPreview = ({ attachment }: { attachment: Attachment }) => {
       </a>
     )
   }
+
   return <span className="text-zinc-400 text-xs">Unknown</span>
 }
 
