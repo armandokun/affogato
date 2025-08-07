@@ -17,7 +17,6 @@ const maxStacked = 4
 const ATTACHMENT_SIZE = 100
 
 const AttachmentPreview = ({ attachment }: { attachment: Attachment }) => {
-  console.log({ attachment })
   const isPDF = attachment.mediaType === 'application/pdf'
   const isImage = attachment.mediaType?.startsWith('image')
 
