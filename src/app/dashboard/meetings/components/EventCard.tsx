@@ -16,6 +16,8 @@ type CalendarEvent = {
   location?: string
   attendees?: Array<{ email: string; displayName: string }>
   transcriptionEnabled?: boolean
+  summary?: string
+  transcript?: string
 }
 
 type EventCardProps = {
@@ -23,6 +25,7 @@ type EventCardProps = {
   type: 'upcoming' | 'previous'
   onToggleTranscription: (eventId: string, enabled: boolean) => void
   onClick: (event: CalendarEvent) => void
+  onViewDetails: (event: CalendarEvent) => void
   getDatePrefix: (date: Date) => string
 }
 
@@ -31,6 +34,7 @@ const EventCard = ({
   type,
   onToggleTranscription,
   onClick,
+  onViewDetails,
   getDatePrefix
 }: EventCardProps) => {
   const isUpcoming = type === 'upcoming'
@@ -39,7 +43,7 @@ const EventCard = ({
 
   return (
     <div className="transition-shadow hover:shadow-md">
-      <Card className="p-4">
+      <Card className="p-4 transition-colors hover:bg-muted/50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1">
             <div
@@ -68,11 +72,6 @@ const EventCard = ({
                   onClick={() => onClick(event)}>
                   {event.title}
                 </h4>
-                {!isUpcoming && event.transcriptionEnabled && (
-                  <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
-                    🎙️ Transcribed
-                  </span>
-                )}
               </div>
 
               {/* Time - Clickable */}
@@ -87,7 +86,7 @@ const EventCard = ({
               {/* Meeting info - Not clickable */}
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 {event.hangoutLink && (
-                  <span 
+                  <span
                     className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors"
                     onClick={(e) => {
                       e.stopPropagation()
@@ -122,10 +121,13 @@ const EventCard = ({
               size="sm"
               onClick={(e) => {
                 e.stopPropagation()
-                // TODO: Navigate to meeting notes/transcript
+                if (event.transcriptionEnabled) {
+                  onViewDetails(event)
+                }
               }}
+              disabled={!event.transcriptionEnabled}
               className="ml-2">
-              {event.transcriptionEnabled ? '📝 View Notes' : '👁️ View'}
+              {event.transcriptionEnabled ? 'View Notes' : 'Not Recorded'}
             </Button>
           )}
         </div>
