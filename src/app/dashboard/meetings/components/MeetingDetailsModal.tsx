@@ -1,12 +1,13 @@
 'use client'
 
 import { format } from 'date-fns'
-import { Bot, MessageSquare, MessageSquareText, X, CheckCircle } from 'lucide-react'
+import { Bot, MessageSquare, MessageSquareText, X } from 'lucide-react'
 
 import Button from '@/components/ui/button'
 import Card from '@/components/ui/card'
-import { Checkbox } from '@/components/ui/checkbox'
 import { Chip } from '@/components/ui/chip'
+
+import MeetingActionItems from './MeetingActionItems'
 
 type ActionItem = {
   id: string
@@ -78,7 +79,6 @@ const MeetingDetailsModal = ({ event, isOpen, onClose }: MeetingDetailsModalProp
         />
       )
     }
-
     return (
       <div
         className={`${sizeClasses[size]} bg-secondary/40 rounded-full flex items-center justify-center font-semibold`}>
@@ -86,31 +86,6 @@ const MeetingDetailsModal = ({ event, isOpen, onClose }: MeetingDetailsModalProp
       </div>
     )
   }
-
-  // Group action items: current user's items first, then others
-  const groupedActionItems = event.actionItems
-    ? (() => {
-        // TODO: Get current user from session/context
-        const currentUserName = 'Sarah Chen' // Mock current user
-
-        // Mock avatar mapping - in real app this would come from user data
-        const avatarMap: { [key: string]: string } = {
-          'Sarah Chen': '/testimonial-profile-images/armandas.jpg',
-          'Mike Johnson': '/testimonial-profile-images/ignas.jpg',
-          'John Smith': '/testimonial-profile-images/lukas.jpg'
-        }
-
-        const enhancedItems = event.actionItems.map((item) => ({
-          ...item,
-          avatarUrl: item.assignee ? avatarMap[item.assignee] : undefined
-        }))
-
-        const myItems = enhancedItems.filter((item) => item.assignee === currentUserName)
-        const otherItems = enhancedItems.filter((item) => item.assignee !== currentUserName)
-
-        return { myItems, otherItems }
-      })()
-    : { myItems: [], otherItems: [] }
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -195,116 +170,7 @@ const MeetingDetailsModal = ({ event, isOpen, onClose }: MeetingDetailsModalProp
 
             {/* Action Items */}
             {event.actionItems && event.actionItems.length > 0 && (
-              <Card className="p-4">
-                <h3 className="font-medium mb-3 flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-primary" />
-                  Action Items ({event.actionItems.length})
-                </h3>
-                <div className="space-y-4">
-                  {/* My Action Items */}
-                  {groupedActionItems.myItems.length > 0 && (
-                    <div>
-                      <div className="flex items-center gap-2 mb-3">
-                        <div className="w-2 h-2 bg-primary rounded-full" />
-                        <h4 className="text-sm font-medium text-primary">
-                          Assigned to me ({groupedActionItems.myItems.length})
-                        </h4>
-                      </div>
-                      <div className="space-y-3 pl-4 border-l-2 border-primary/20">
-                        {groupedActionItems.myItems.map((item) => (
-                          <div key={item.id} className="flex items-start gap-3 group">
-                            <Checkbox
-                              checked={item.completed}
-                              onCheckedChange={() => handleToggleActionItem(item.id)}
-                              className="mt-0.5"
-                            />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span
-                                  className={`text-sm ${
-                                    item.completed
-                                      ? 'line-through text-muted-foreground'
-                                      : 'text-foreground'
-                                  }`}>
-                                  {item.text}
-                                </span>
-                                {item.assignee && (
-                                  <Chip
-                                    variant="outline"
-                                    size="sm"
-                                    className="text-primary border-primary/20 bg-primary/5"
-                                    prefix={
-                                      <ProfilePicture
-                                        name={item.assignee}
-                                        avatarUrl={item.avatarUrl}
-                                        size="xs"
-                                      />
-                                    }>
-                                    {item.assignee}
-                                  </Chip>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Other Action Items */}
-                  {groupedActionItems.otherItems.length > 0 && (
-                    <div>
-                      {groupedActionItems.myItems.length > 0 && (
-                        <div className="flex items-center gap-2 mb-3 mt-4">
-                          <div className="w-2 h-2 bg-muted-foreground/50 rounded-full" />
-                          <h4 className="text-sm font-medium text-muted-foreground">
-                            Other team members ({groupedActionItems.otherItems.length})
-                          </h4>
-                        </div>
-                      )}
-                      <div
-                        className={`space-y-3 ${groupedActionItems.myItems.length > 0 ? 'pl-4 border-l-2 border-muted/30' : ''}`}>
-                        {groupedActionItems.otherItems.map((item) => (
-                          <div key={item.id} className="flex items-start gap-3 group">
-                            <Checkbox
-                              checked={item.completed}
-                              onCheckedChange={() => handleToggleActionItem(item.id)}
-                              className="mt-0.5"
-                            />
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span
-                                  className={`text-sm ${
-                                    item.completed
-                                      ? 'line-through text-muted-foreground'
-                                      : 'text-foreground'
-                                  }`}>
-                                  {item.text}
-                                </span>
-                                {item.assignee && (
-                                  <Chip
-                                    variant="outline"
-                                    size="sm"
-                                    className="text-muted-foreground border-muted bg-muted/20"
-                                    prefix={
-                                      <ProfilePicture
-                                        name={item.assignee}
-                                        avatarUrl={item.avatarUrl}
-                                        size="xs"
-                                      />
-                                    }>
-                                    {item.assignee}
-                                  </Chip>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </Card>
+              <MeetingActionItems actionItems={event.actionItems} />
             )}
 
             {/* Transcript */}

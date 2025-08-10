@@ -3,17 +3,16 @@
 import { useState, useEffect } from 'react'
 import { format, isToday, isTomorrow, isThisWeek } from 'date-fns'
 import Image from 'next/image'
+import { redirect } from 'next/navigation'
 
 import Card from '@/components/ui/card'
 import Button from '@/components/ui/button'
-import { Switch } from '@/components/ui/switch'
 import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
+import { useSession } from '@/containers/SessionProvider'
 
 import DisclosureDialog from './DisclosureDialog'
 import EventCard from './EventCard'
 import MeetingDetailsModal from './MeetingDetailsModal'
-import { useSession } from '@/containers/SessionProvider'
-import { redirect } from 'next/navigation'
 
 type ActionItem = {
   id: string
