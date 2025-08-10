@@ -9,6 +9,7 @@ export interface CalendarEvent {
   start: Date
   end: Date
   hangoutLink?: string
+  htmlLink?: string
   location?: string
   description?: string
   attendees?: Array<{ email: string; displayName?: string }>
@@ -49,6 +50,8 @@ export class GoogleCalendarClient {
 
       const items = response.data.items || []
 
+      console.log({ items })
+
       return items
         .filter((event: calendar_v3.Schema$Event) => {
           // Only include events with Google Meet links or meeting locations
@@ -64,12 +67,13 @@ export class GoogleCalendarClient {
           title: event.summary || 'Untitled Meeting',
           start: new Date(event.start?.dateTime || event.start?.date || ''),
           end: new Date(event.end?.dateTime || event.end?.date || ''),
-          hangoutLink: event.hangoutLink,
-          location: event.location,
-          description: event.description,
+          hangoutLink: event.hangoutLink || undefined,
+          htmlLink: event.htmlLink || undefined,
+          location: event.location || undefined,
+          description: event.description || undefined,
           attendees: event.attendees?.map((attendee: calendar_v3.Schema$EventAttendee) => ({
             email: attendee.email!,
-            displayName: attendee.displayName
+            displayName: attendee.displayName || undefined
           }))
         }))
     } catch (error) {
@@ -94,12 +98,13 @@ export class GoogleCalendarClient {
         title: event.summary || 'Untitled Meeting',
         start: new Date(event.start?.dateTime || event.start?.date || ''),
         end: new Date(event.end?.dateTime || event.end?.date || ''),
-        hangoutLink: event.hangoutLink,
-        location: event.location,
-        description: event.description,
+        hangoutLink: event.hangoutLink || undefined,
+        htmlLink: event.htmlLink || undefined,
+        location: event.location || undefined,
+        description: event.description || undefined,
         attendees: event.attendees?.map((attendee: calendar_v3.Schema$EventAttendee) => ({
           email: attendee.email!,
-          displayName: attendee.displayName
+          displayName: attendee.displayName || undefined
         }))
       }
     } catch (error) {

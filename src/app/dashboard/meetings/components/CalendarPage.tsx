@@ -10,6 +10,7 @@ import { Switch } from '@/components/ui/switch'
 import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
 
 import DisclosureDialog from './DisclosureDialog'
+import EventCard from './EventCard'
 import { useSession } from '@/containers/SessionProvider'
 import { redirect } from 'next/navigation'
 
@@ -19,6 +20,7 @@ type CalendarEvent = {
   start: Date
   end: Date
   hangoutLink?: string
+  htmlLink?: string
   location?: string
   attendees?: Array<{ email: string; displayName: string }>
   transcriptionEnabled?: boolean
@@ -124,12 +126,25 @@ const CalendarPage = () => {
   const previousEvents = events.filter((event) => event.start < now)
   const upcomingEvents = events.filter((event) => event.start >= now)
 
-  const openInGoogleCalendar = (event: CalendarEvent) => {
-    // Create a direct link to the specific event in Google Calendar
-    const calendarUrl = `https://calendar.google.com/calendar/u/0/r/eventedit/${event.id}`
-    window.open(calendarUrl, '_blank')
+  const handleToggleTranscription = (eventId: string, enabled: boolean) => {
+    setEvents((prev) =>
+      prev.map((e) => (e.id === eventId ? { ...e, transcriptionEnabled: enabled } : e))
+    )
   }
 
+  const openInGoogleCalendar = (meeting: any) => {
+    try {
+      // Use htmlLink from Google Calendar API to open the specific event
+      if (meeting.htmlLink) {
+        window.open(meeting.htmlLink, '_blank')
+        return
+      }
+
+      console.warn('No htmlLink available for meeting:', meeting.id)
+    } catch (error) {
+      console.error('Error opening Google Calendar:', error)
+    }
+  }
   if (loading) {
     return (
       <Card className="p-6">
@@ -275,12 +290,9 @@ const CalendarPage = () => {
             <div className="space-y-3">
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <h3 className="text-lg font-semibold">Upcoming Meetings</h3>
-                  <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">
-                    {upcomingEvents.length}
-                  </span>
+                  <h3 className="text-lg font-semibold">Upcoming meetings</h3>
                 </div>
-                <span className="text-sm text-muted-foreground">Record</span>
+                <span className="text-sm font-semibold text-muted-foreground">Record</span>
               </div>
               {upcomingEvents.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
@@ -296,75 +308,14 @@ const CalendarPage = () => {
                 </div>
               ) : (
                 upcomingEvents.map((event) => (
-                  <div
+                  <EventCard
                     key={event.id}
-                    className={`cursor-pointer transition-shadow hover:shadow-md`}
-                    onClick={() => openInGoogleCalendar(event)}>
-                    <Card
-                      className={`p-4 border-l-4 ${
-                        event.hangoutLink ? 'border-l-blue-500' : 'border-l-gray-300'
-                      }`}>
-                      <div className="flex items-start justify-between">
-                        <div className="flex items-start gap-3 flex-1">
-                          {/* Calendar Icon and Date */}
-                          <div className="flex flex-col items-center min-w-[60px]">
-                            <div className="w-10 h-10 bg-red-500 rounded-lg flex flex-col items-center justify-center text-white shadow-sm">
-                              <div className="text-[8px] font-medium leading-none">
-                                {format(event.start, 'MMM').toUpperCase()}
-                              </div>
-                              <div className="text-sm font-bold leading-none mt-0.5">
-                                {format(event.start, 'd')}
-                              </div>
-                            </div>
-                            <span className="text-xs text-muted-foreground mt-1 text-center">
-                              {getDatePrefix(event.start)}
-                            </span>
-                          </div>
-
-                          {/* Event Details */}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-semibold text-sm truncate">{event.title}</h4>
-                            </div>
-
-                            <p className="text-sm text-muted-foreground mb-1">
-                              {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
-                            </p>
-
-                            <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                              {event.hangoutLink && (
-                                <span className="flex items-center gap-1">📹 Google Meet</span>
-                              )}
-                              {event.location && !event.hangoutLink && (
-                                <span className="flex items-center gap-1 truncate">
-                                  📍 {event.location}
-                                </span>
-                              )}
-                              {event.attendees && event.attendees.length > 1 && (
-                                <span className="flex items-center gap-1">
-                                  👥 {event.attendees.length} attendees
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* Toggle Switch */}
-                        <div onClick={(e) => e.stopPropagation()} className="ml-2">
-                          <Switch
-                            checked={event.transcriptionEnabled}
-                            onCheckedChange={(checked) => {
-                              setEvents((prev) =>
-                                prev.map((e) =>
-                                  e.id === event.id ? { ...e, transcriptionEnabled: checked } : e
-                                )
-                              )
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </Card>
-                  </div>
+                    event={event}
+                    type="upcoming"
+                    onToggleTranscription={handleToggleTranscription}
+                    onClick={openInGoogleCalendar}
+                    getDatePrefix={getDatePrefix}
+                  />
                 ))
               )}
             </div>
@@ -373,9 +324,6 @@ const CalendarPage = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-2 mb-4">
                 <h3 className="text-lg font-semibold">Previous Meetings</h3>
-                <span className="bg-gray-100 text-gray-700 text-xs px-2 py-1 rounded-full">
-                  {previousEvents.length}
-                </span>
               </div>
               {previousEvents.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
@@ -391,80 +339,14 @@ const CalendarPage = () => {
                 previousEvents
                   .sort((a, b) => b.start.getTime() - a.start.getTime()) // Sort by most recent first
                   .map((event) => (
-                    <div
+                    <EventCard
                       key={event.id}
-                      className={`cursor-pointer transition-shadow hover:shadow-md`}
-                      onClick={() => openInGoogleCalendar(event)}>
-                      <Card
-                        className={`p-4 border-l-4 ${
-                          event.transcriptionEnabled
-                            ? 'border-l-green-500 bg-green-50/30'
-                            : 'border-l-gray-400 opacity-75'
-                        }`}>
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start gap-3 flex-1">
-                            {/* Calendar Icon and Date */}
-                            <div className="flex flex-col items-center min-w-[60px]">
-                              <div className="w-10 h-10 bg-gray-500 rounded-lg flex flex-col items-center justify-center text-white shadow-sm">
-                                <div className="text-[8px] font-medium leading-none">
-                                  {format(event.start, 'MMM').toUpperCase()}
-                                </div>
-                                <div className="text-sm font-bold leading-none mt-0.5">
-                                  {format(event.start, 'd')}
-                                </div>
-                              </div>
-                              <span className="text-xs text-muted-foreground mt-1 text-center">
-                                {getDatePrefix(event.start)}
-                              </span>
-                            </div>
-
-                            {/* Event Details */}
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-1">
-                                <h4 className="font-semibold text-sm truncate">{event.title}</h4>
-                                {event.transcriptionEnabled && (
-                                  <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
-                                    🎙️ Transcribed
-                                  </span>
-                                )}
-                              </div>
-
-                              <p className="text-sm text-muted-foreground mb-1">
-                                {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
-                              </p>
-
-                              <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                                {event.hangoutLink && (
-                                  <span className="flex items-center gap-1">📹 Google Meet</span>
-                                )}
-                                {event.location && !event.hangoutLink && (
-                                  <span className="flex items-center gap-1 truncate">
-                                    📍 {event.location}
-                                  </span>
-                                )}
-                                {event.attendees && event.attendees.length > 1 && (
-                                  <span className="flex items-center gap-1">
-                                    👥 {event.attendees.length} attendees
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* View Notes Button for previous meetings */}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              // TODO: Navigate to meeting notes/transcript
-                            }}
-                            className="ml-2">
-                            {event.transcriptionEnabled ? '📝 View Notes' : '👁️ View'}
-                          </Button>
-                        </div>
-                      </Card>
-                    </div>
+                      event={event}
+                      type="previous"
+                      onToggleTranscription={handleToggleTranscription}
+                      onClick={openInGoogleCalendar}
+                      getDatePrefix={getDatePrefix}
+                    />
                   ))
               )}
             </div>
