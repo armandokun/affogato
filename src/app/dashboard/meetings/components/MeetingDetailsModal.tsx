@@ -2,7 +2,7 @@
 
 import Image from 'next/image'
 import { format } from 'date-fns'
-import { Bot, MessageSquare, MessageSquareText, X } from 'lucide-react'
+import { Bot, MessageSquare, MessageSquareText, SquarePen, X } from 'lucide-react'
 
 import Button from '@/components/ui/button'
 import Card from '@/components/ui/card'
@@ -208,45 +208,10 @@ const MeetingDetailsModal = ({ event, isOpen, onClose }: MeetingDetailsModalProp
                 </div>
               </Card>
             )}
-
-            {/* Chat with Meeting Button */}
-            {(event.summary || event.transcript) && (
-              <Card className="p-4 bg-primary/5 border-primary/20">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h3 className="font-medium mb-1 flex items-center gap-2">
-                      <MessageSquare className="h-4 w-4 text-primary" />
-                      Chat with this meeting
-                    </h3>
-                    <p className="text-sm text-muted-foreground">
-                      Ask questions about the discussion, get clarifications, or dive deeper into
-                      specific topics.
-                    </p>
-                  </div>
-                  <Button
-                    className="ml-4 flex-shrink-0"
-                    onClick={() => {
-                      // TODO: Navigate to chat with meeting context
-                      console.log('Start chat with meeting:', event.id)
-                    }}>
-                    <MessageSquare className="h-4 w-4 mr-2" />
-                    Start Chat
-                  </Button>
-                </div>
-              </Card>
-            )}
           </div>
         </div>
 
         <div className="flex justify-end gap-2 p-6 border-t bg-muted/20">
-          {event.hangoutLink && (
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => window.open(event.hangoutLink, '_blank')}>
-              Open in Google Meet
-            </Button>
-          )}
           {event.htmlLink && (
             <Button
               variant="outline"
@@ -255,6 +220,10 @@ const MeetingDetailsModal = ({ event, isOpen, onClose }: MeetingDetailsModalProp
               View in Calendar
             </Button>
           )}
+          <Button size="sm" onClick={() => console.log('start chatting')}>
+            <SquarePen className="size-4" />
+            Start Chat
+          </Button>
         </div>
       </div>
     </div>
