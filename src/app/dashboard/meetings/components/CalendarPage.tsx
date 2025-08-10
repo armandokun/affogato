@@ -6,6 +6,7 @@ import Image from 'next/image'
 
 import Card from '@/components/ui/card'
 import Button from '@/components/ui/button'
+import { Switch } from '@/components/ui/switch'
 import { SidebarTrigger } from '@/components/general/sidebar/sidebar'
 
 import DisclosureDialog from './DisclosureDialog'
@@ -106,16 +107,6 @@ const CalendarPage = () => {
     setSyncing(false)
   }
 
-  const toggleTranscription = (eventId: string) => {
-    setEvents((prev) =>
-      prev.map((event) =>
-        event.id === eventId
-          ? { ...event, transcriptionEnabled: !event.transcriptionEnabled }
-          : event
-      )
-    )
-  }
-
   const getDatePrefix = (date: Date) => {
     if (isToday(date)) {
       return 'Today'
@@ -130,8 +121,14 @@ const CalendarPage = () => {
 
   // Separate events into previous and upcoming
   const now = new Date()
-  const previousEvents = events.filter(event => event.start < now)
-  const upcomingEvents = events.filter(event => event.start >= now)
+  const previousEvents = events.filter((event) => event.start < now)
+  const upcomingEvents = events.filter((event) => event.start >= now)
+
+  const openInGoogleCalendar = (event: CalendarEvent) => {
+    // Create a direct link to the specific event in Google Calendar
+    const calendarUrl = `https://calendar.google.com/calendar/u/0/r/eventedit/${event.id}`
+    window.open(calendarUrl, '_blank')
+  }
 
   if (loading) {
     return (
@@ -241,8 +238,8 @@ const CalendarPage = () => {
         <div className="flex justify-between items-center">
           <div>
             <p className="text-sm text-muted-foreground">
-              {upcomingEvents.length} upcoming • {previousEvents.length} previous • {events.filter((e) => e.transcriptionEnabled).length}{' '}
-              with AI transcription
+              {upcomingEvents.length} upcoming • {previousEvents.length} previous •{' '}
+              {events.filter((e) => e.transcriptionEnabled).length} with AI transcription
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={handleSync} disabled={syncing}>
@@ -276,20 +273,19 @@ const CalendarPage = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Upcoming Meetings Column */}
             <div className="space-y-3">
-              <div className="flex items-center gap-2 mb-4">
-                <h3 className="text-lg font-semibold">Upcoming Meetings</h3>
-                <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">
-                  {upcomingEvents.length}
-                </span>
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <h3 className="text-lg font-semibold">Upcoming Meetings</h3>
+                  <span className="bg-blue-100 text-blue-700 text-xs px-2 py-1 rounded-full">
+                    {upcomingEvents.length}
+                  </span>
+                </div>
+                <span className="text-sm text-muted-foreground">Record</span>
               </div>
               {upcomingEvents.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <div className="mx-auto w-10 h-10 bg-muted rounded-full flex items-center justify-center mb-3">
-                    <svg
-                      className="w-5 h-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                       <line x1="16" y1="2" x2="16" y2="6" />
                       <line x1="8" y1="2" x2="8" y2="6" />
@@ -303,14 +299,10 @@ const CalendarPage = () => {
                   <div
                     key={event.id}
                     className={`cursor-pointer transition-shadow hover:shadow-md`}
-                    onClick={() => setSelectedEvent(event)}>
+                    onClick={() => openInGoogleCalendar(event)}>
                     <Card
                       className={`p-4 border-l-4 ${
-                        event.transcriptionEnabled
-                          ? 'border-l-green-500 bg-green-50/30'
-                          : event.hangoutLink
-                            ? 'border-l-blue-500'
-                            : 'border-l-gray-300'
+                        event.hangoutLink ? 'border-l-blue-500' : 'border-l-gray-300'
                       }`}>
                       <div className="flex items-start justify-between">
                         <div className="flex items-start gap-3 flex-1">
@@ -333,11 +325,6 @@ const CalendarPage = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
                               <h4 className="font-semibold text-sm truncate">{event.title}</h4>
-                              {event.transcriptionEnabled && (
-                                <span className="bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full">
-                                  🎙️ AI Enabled
-                                </span>
-                              )}
                             </div>
 
                             <p className="text-sm text-muted-foreground mb-1">
@@ -362,17 +349,19 @@ const CalendarPage = () => {
                           </div>
                         </div>
 
-                        {/* Toggle Button */}
-                        <Button
-                          variant={event.transcriptionEnabled ? 'default' : 'outline'}
-                          size="sm"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            toggleTranscription(event.id)
-                          }}
-                          className="ml-2">
-                          {event.transcriptionEnabled ? '✓ Enabled' : 'Enable AI'}
-                        </Button>
+                        {/* Toggle Switch */}
+                        <div onClick={(e) => e.stopPropagation()} className="ml-2">
+                          <Switch
+                            checked={event.transcriptionEnabled}
+                            onCheckedChange={(checked) => {
+                              setEvents((prev) =>
+                                prev.map((e) =>
+                                  e.id === event.id ? { ...e, transcriptionEnabled: checked } : e
+                                )
+                              )
+                            }}
+                          />
+                        </div>
                       </div>
                     </Card>
                   </div>
@@ -391,11 +380,7 @@ const CalendarPage = () => {
               {previousEvents.length === 0 ? (
                 <div className="text-center py-8 text-muted-foreground">
                   <div className="mx-auto w-10 h-10 bg-muted rounded-full flex items-center justify-center mb-3">
-                    <svg
-                      className="w-5 h-5"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor">
+                    <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                       <circle cx="12" cy="12" r="10" />
                       <polyline points="12,6 12,12 16,14" />
                     </svg>
@@ -409,7 +394,7 @@ const CalendarPage = () => {
                     <div
                       key={event.id}
                       className={`cursor-pointer transition-shadow hover:shadow-md`}
-                      onClick={() => setSelectedEvent(event)}>
+                      onClick={() => openInGoogleCalendar(event)}>
                       <Card
                         className={`p-4 border-l-4 ${
                           event.transcriptionEnabled
@@ -484,41 +469,6 @@ const CalendarPage = () => {
               )}
             </div>
           </div>
-        )}
-
-        {/* Event Details Modal */}
-        {selectedEvent && (
-          <Card className="p-4 border-l-4 border-l-blue-500 bg-blue-50/50">
-            <div className="flex justify-between items-start">
-              <div className="space-y-2 flex-1">
-                <h4 className="font-semibold text-lg">{selectedEvent.title}</h4>
-                <p className="text-sm text-muted-foreground">
-                  {getDatePrefix(selectedEvent.start)} • {format(selectedEvent.start, 'h:mm a')} -{' '}
-                  {format(selectedEvent.end, 'h:mm a')}
-                </p>
-                {selectedEvent.location && <p className="text-sm">📍 {selectedEvent.location}</p>}
-                {selectedEvent.attendees && selectedEvent.attendees.length > 0 && (
-                  <div className="text-sm">
-                    <p className="font-medium mb-1">👥 Attendees:</p>
-                    <p className="text-muted-foreground">
-                      {selectedEvent.attendees.map((a) => a.displayName || a.email).join(', ')}
-                    </p>
-                  </div>
-                )}
-              </div>
-              <div className="flex items-center gap-2 ml-4">
-                <Button
-                  variant={selectedEvent.transcriptionEnabled ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => toggleTranscription(selectedEvent.id)}>
-                  {selectedEvent.transcriptionEnabled ? '🎙️ AI Enabled' : 'Enable AI'}
-                </Button>
-                <Button variant="ghost" size="sm" onClick={() => setSelectedEvent(null)}>
-                  ✕
-                </Button>
-              </div>
-            </div>
-          </Card>
         )}
       </div>
     </div>
