@@ -2,7 +2,8 @@ import { useState } from 'react'
 import { ListTodo } from 'lucide-react'
 
 import Card from '@/components/ui/card'
-import ActionListItem from '@/components/general/action-list/action-list-item'
+
+import ActionListItem from './action-list-item'
 
 type ActionItem = {
   id: string

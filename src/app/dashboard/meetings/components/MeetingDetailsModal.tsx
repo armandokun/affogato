@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import { format } from 'date-fns'
 import { Bot, MessageSquare, MessageSquareText, X } from 'lucide-react'
 
@@ -120,6 +121,12 @@ const MeetingDetailsModal = ({ event, isOpen, onClose }: MeetingDetailsModalProp
                   {event.hangoutLink && (
                     <div className="flex items-center gap-2">
                       <span className="text-muted-foreground">Platform:</span>
+                      <Image
+                        src="/integration-icons/google-meet.png"
+                        alt="Google Meet"
+                        width={16}
+                        height={16}
+                      />
                       <span>Google Meet</span>
                     </div>
                   )}
@@ -170,7 +177,7 @@ const MeetingDetailsModal = ({ event, isOpen, onClose }: MeetingDetailsModalProp
 
             {/* Action Items */}
             {event.actionItems && event.actionItems.length > 0 && (
-              <MeetingActionItems actionItems={event.actionItems} />
+              <MeetingActionItems items={event.actionItems} />
             )}
 
             {/* Transcript */}
