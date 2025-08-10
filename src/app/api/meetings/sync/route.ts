@@ -17,7 +17,6 @@ export async function POST() {
       const futureDate = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000) // 30 days from now
 
       const events = await client.getEvents(pastDate, futureDate)
-      console.log(`Fetched ${events.length} calendar events for user ${user.id}`)
 
       return NextResponse.json({ events })
     } catch (calendarError) {
@@ -89,7 +88,6 @@ export async function POST() {
         }
       ]
 
-      console.log(`Fallback: Using ${mockEvents.length} mock calendar events for user ${user.id}`)
       return NextResponse.json({ events: mockEvents })
     }
   } catch (error) {

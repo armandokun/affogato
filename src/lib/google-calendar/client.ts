@@ -50,8 +50,6 @@ export class GoogleCalendarClient {
 
       const items = response.data.items || []
 
-      console.log({ items })
-
       return items
         .filter((event: calendar_v3.Schema$Event) => {
           // Only include events with Google Meet links or meeting locations

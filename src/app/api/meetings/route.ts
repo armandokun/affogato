@@ -65,8 +65,6 @@ export async function POST(request: Request) {
       updated_at: new Date().toISOString()
     }
 
-    console.log('Mock meeting saved:', mockMeeting)
-
     return NextResponse.json({ meeting: mockMeeting })
   } catch (error) {
     console.error('Error saving meeting:', error)

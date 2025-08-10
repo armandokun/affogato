@@ -28,16 +28,6 @@ export async function GET(request: Request) {
       throw new Error('No access token received from Google')
     }
 
-    // Log the full token response for debugging
-    console.log('Google OAuth token response:', {
-      hasAccessToken: !!tokens.access_token,
-      hasRefreshToken: !!tokens.refresh_token,
-      hasExpiresIn: !!tokens.expires_in,
-      hasScope: !!tokens.scope,
-      expiresIn: tokens.expires_in,
-      scope: tokens.scope
-    })
-
     if (!tokens.refresh_token) {
       console.warn(
         'No refresh token received from Google. This may indicate the user has already authorized this app previously.'

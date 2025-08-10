@@ -40,9 +40,8 @@ const EventCard = ({
   return (
     <div className="transition-shadow hover:shadow-md">
       <Card className="p-4">
-        <div className="flex items-start justify-between">
-          <div className="flex items-start gap-3 flex-1">
-            {/* Calendar Icon and Date - Clickable */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-1">
             <div
               className="flex flex-col items-center min-w-[60px] cursor-pointer"
               onClick={() => onClick(event)}>
@@ -88,7 +87,14 @@ const EventCard = ({
               {/* Meeting info - Not clickable */}
               <div className="flex items-center gap-4 text-xs text-muted-foreground">
                 {event.hangoutLink && (
-                  <span className="flex items-center gap-1">📹 Google Meet</span>
+                  <span 
+                    className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      window.open(event.hangoutLink, '_blank')
+                    }}>
+                    📹 Google Meet
+                  </span>
                 )}
                 {event.location && !event.hangoutLink && (
                   <span className="flex items-center gap-1 truncate">📍 {event.location}</span>
@@ -102,9 +108,8 @@ const EventCard = ({
             </div>
           </div>
 
-          {/* Right side action */}
           {isUpcoming ? (
-            <div onClick={(e) => e.stopPropagation()} className="ml-2">
+            <div onClick={(e) => e.stopPropagation()} className="ml-2 flex items-center">
               <Switch
                 checked={event.transcriptionEnabled}
                 onCheckedChange={(checked) => onToggleTranscription(event.id, checked)}
