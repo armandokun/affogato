@@ -31,6 +31,11 @@ export async function POST() {
             email: 'colleague@example.com',
             displayName: 'Mike Johnson',
             avatarUrl: '/testimonial-profile-images/ignas.jpg'
+          },
+          {
+            email: 'john@example.com',
+            displayName: 'John Smith',
+            avatarUrl: '/testimonial-profile-images/rokas.png'
           }
         ],
         transcriptionEnabled: true,
