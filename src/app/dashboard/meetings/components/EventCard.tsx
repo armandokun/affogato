@@ -8,11 +8,12 @@ import { Switch } from '@/components/ui/switch'
 
 type CalendarEvent = {
   id: string
+  calendarEventId: string
   title: string
   start: Date
   end: Date
   hangoutLink?: string
-  htmlLink?: string
+  calendarEventUrl: string
   location?: string
   attendees?: Array<{ email: string; displayName: string }>
   transcriptionEnabled?: boolean
@@ -24,7 +25,7 @@ type EventCardProps = {
   event: CalendarEvent
   type: 'upcoming' | 'previous'
   onToggleTranscription: (eventId: string, enabled: boolean) => void
-  onClick: (event: CalendarEvent) => void
+  onClick: (eventId: string, link?: string) => void
   onViewDetails: (event: CalendarEvent) => void
   getDatePrefix: (date: Date) => string
 }
@@ -48,7 +49,7 @@ const EventCard = ({
           <div className="flex items-center gap-3 flex-1">
             <div
               className="flex flex-col items-center min-w-[60px] cursor-pointer"
-              onClick={() => onClick(event)}>
+              onClick={() => onClick(event.id, event.calendarEventUrl)}>
               <div
                 className={`w-10 h-10 ${calendarIconBg} rounded-lg flex flex-col items-center justify-center text-white shadow-sm`}>
                 <div className="text-[8px] font-medium leading-none">
@@ -69,7 +70,7 @@ const EventCard = ({
               <div className="flex items-center gap-2 mb-1">
                 <h4
                   className="font-semibold text-sm truncate cursor-pointer hover:text-primary transition-colors"
-                  onClick={() => onClick(event)}>
+                  onClick={() => onClick(event.id, event.calendarEventUrl)}>
                   {event.title}
                 </h4>
               </div>
@@ -78,7 +79,7 @@ const EventCard = ({
               <div className="mb-1">
                 <span
                   className="text-sm text-muted-foreground cursor-pointer hover:text-primary transition-colors"
-                  onClick={() => onClick(event)}>
+                  onClick={() => onClick(event.id, event.calendarEventUrl)}>
                   {format(event.start, 'h:mm a')} - {format(event.end, 'h:mm a')}
                 </span>
               </div>
@@ -110,8 +111,8 @@ const EventCard = ({
           {isUpcoming ? (
             <div onClick={(e) => e.stopPropagation()} className="ml-2 flex items-center">
               <Switch
-                checked={event.transcriptionEnabled}
-                onCheckedChange={(checked) => onToggleTranscription(event.id, checked)}
+                checked={!!event.transcriptionEnabled}
+                onCheckedChange={(checked) => onToggleTranscription(event.calendarEventId, checked)}
                 className="cursor-pointer"
               />
             </div>

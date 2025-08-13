@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from '@/lib/auth'
+import { createClient } from '@/lib/supabase/server'
 
 export async function GET() {
   try {
@@ -9,31 +10,34 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Mock data for now - replace with database call later
-    const mockMeetings = [
-      {
-        id: '1',
-        calendar_event_id: 'mock-event-1',
-        meeting_title: 'Team Standup',
-        meeting_start_time: new Date(Date.now() + 24 * 60 * 60 * 1000), // Tomorrow
-        meeting_end_time: new Date(Date.now() + 24 * 60 * 60 * 1000 + 30 * 60 * 1000), // +30 mins
-        meeting_url: 'https://meet.google.com/abc-defg-hij',
-        transcription_enabled: true,
-        status: 'scheduled'
-      },
-      {
-        id: '2',
-        calendar_event_id: 'mock-event-2',
-        meeting_title: 'Product Review',
-        meeting_start_time: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // Day after tomorrow
-        meeting_end_time: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000 + 60 * 60 * 1000), // +1 hour
-        meeting_url: 'https://meet.google.com/xyz-uvwx-yz',
-        transcription_enabled: false,
-        status: 'scheduled'
-      }
-    ]
+    const supabase = await createClient()
+    const { data, error } = await supabase
+      .from('meetings')
+      .select('*')
+      .eq('user_id', user.id)
+      .order('meeting_start_time', { ascending: true })
 
-    return NextResponse.json({ meetings: mockMeetings })
+    if (error) {
+      console.error('Error fetching meetings:', error)
+
+      return NextResponse.json({ error: 'Failed to fetch meetings' }, { status: 500 })
+    }
+
+    const meetings = (data || []).map((m) => ({
+      id: m.id,
+      calendar_event_id: m.calendar_event_id,
+      meeting_title: m.meeting_title,
+      meeting_start_time: m.meeting_start_time,
+      meeting_end_time: m.meeting_end_time,
+      meeting_url: m.meeting_url,
+      calendar_event_url: m.calendar_event_url,
+      transcription_enabled: m.recording_requested,
+      status: 'scheduled',
+      created_at: m.created_at,
+      updated_at: m.updated_at
+    }))
+
+    return NextResponse.json({ meetings })
   } catch (error) {
     console.error('Error fetching meetings:', error)
     return NextResponse.json({ error: 'Failed to fetch meetings' }, { status: 500 })
@@ -49,25 +53,78 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
+    const supabase = await createClient()
 
-    // Mock response for now - replace with database call later
-    const mockMeeting = {
-      id: Date.now().toString(),
-      user_id: user.id,
-      calendar_event_id: body.calendarEventId,
-      meeting_title: body.meetingTitle,
-      meeting_start_time: body.meetingStartTime,
-      meeting_end_time: body.meetingEndTime,
-      meeting_url: body.meetingUrl,
-      transcription_enabled: body.transcriptionEnabled ?? true,
-      status: 'scheduled',
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString()
+    const { calendarEventId, transcriptionEnabled } = body
+
+    if (
+      calendarEventId &&
+      typeof transcriptionEnabled === 'boolean' &&
+      Object.keys(body).length === 2
+    ) {
+      const { data, error } = await supabase
+        .from('meetings')
+        .update({
+          recording_requested: transcriptionEnabled,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id)
+        .eq('calendar_event_id', calendarEventId)
+        .select()
+
+      if (error) {
+        console.error('Error updating meeting recording_requested:', error)
+        return NextResponse.json({ error: 'Failed to update meeting' }, { status: 500 })
+      }
+
+      return NextResponse.json({ meeting: data && data[0] })
     }
 
-    return NextResponse.json({ meeting: mockMeeting })
+    const { data, error } = await supabase
+      .from('meetings')
+      .upsert(
+        {
+          user_id: user.id,
+          calendar_event_id: body.calendarEventId,
+          meeting_title: body.meetingTitle,
+          meeting_start_time: body.meetingStartTime,
+          meeting_end_time: body.meetingEndTime,
+          meeting_url: body.meetingUrl,
+          calendar_event_url: body.calendarEventUrl,
+          recording_requested: body.transcriptionEnabled ?? true,
+          updated_at: new Date().toISOString()
+        },
+        { onConflict: 'user_id,calendar_event_id' }
+      )
+      .select()
+
+    if (error) {
+      console.error('Error saving meeting:', error)
+
+      return NextResponse.json({ error: 'Failed to save meeting' }, { status: 500 })
+    }
+
+    const meeting =
+      data && data[0]
+        ? {
+            id: data[0].id,
+            calendar_event_id: data[0].calendar_event_id,
+            meeting_title: data[0].meeting_title,
+            meeting_start_time: data[0].meeting_start_time,
+            meeting_end_time: data[0].meeting_end_time,
+            meeting_url: data[0].meeting_url,
+            calendar_event_url: data[0].calendar_event_url,
+            transcription_enabled: data[0].recording_requested,
+            status: 'scheduled',
+            created_at: data[0].created_at,
+            updated_at: data[0].updated_at
+          }
+        : null
+
+    return NextResponse.json({ meeting })
   } catch (error) {
     console.error('Error saving meeting:', error)
+
     return NextResponse.json({ error: 'Failed to save meeting' }, { status: 500 })
   }
 }

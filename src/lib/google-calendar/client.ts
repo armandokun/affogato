@@ -1,5 +1,3 @@
-// Google Calendar API client for fetching calendar events
-
 import { google, calendar_v3 } from 'googleapis'
 import { ensureValidGoogleToken } from '@/lib/db/queries'
 
@@ -52,7 +50,6 @@ export class GoogleCalendarClient {
 
       return items
         .filter((event: calendar_v3.Schema$Event) => {
-          // Only include events with Google Meet links or meeting locations
           return (
             event.hangoutLink ||
             event.location?.includes('meet.google.com') ||
@@ -60,20 +57,32 @@ export class GoogleCalendarClient {
             event.location?.includes('teams.microsoft.com')
           )
         })
-        .map((event: calendar_v3.Schema$Event) => ({
-          id: event.id!,
-          title: event.summary || 'Untitled Meeting',
-          start: new Date(event.start?.dateTime || event.start?.date || ''),
-          end: new Date(event.end?.dateTime || event.end?.date || ''),
-          hangoutLink: event.hangoutLink || undefined,
-          htmlLink: event.htmlLink || undefined,
-          location: event.location || undefined,
-          description: event.description || undefined,
-          attendees: event.attendees?.map((attendee: calendar_v3.Schema$EventAttendee) => ({
-            email: attendee.email!,
-            displayName: attendee.displayName || undefined
-          }))
-        }))
+        .map((event: calendar_v3.Schema$Event) => {
+          let eventId = event.id || ''
+
+          if (event.htmlLink) {
+            const match = event.htmlLink.match(/[?&]eid=([^&#]+)/)
+
+            if (match && match[1]) {
+              eventId = decodeURIComponent(match[1])
+            }
+          }
+
+          return {
+            id: eventId,
+            title: event.summary || 'Untitled Meeting',
+            start: new Date(event.start?.dateTime || event.start?.date || ''),
+            end: new Date(event.end?.dateTime || event.end?.date || ''),
+            hangoutLink: event.hangoutLink || undefined,
+            htmlLink: event.htmlLink || undefined,
+            location: event.location || undefined,
+            description: event.description || undefined,
+            attendees: event.attendees?.map((attendee: calendar_v3.Schema$EventAttendee) => ({
+              email: attendee.email!,
+              displayName: attendee.displayName || undefined
+            }))
+          }
+        })
     } catch (error) {
       console.error('Failed to fetch calendar events:', error)
       throw new Error('Failed to fetch calendar events')
@@ -91,8 +100,10 @@ export class GoogleCalendarClient {
 
       const event = response.data
 
+      const eventIdFromLink = event.htmlLink?.match(/[?&]eid=([^&#]+)/)?.[1]
+
       return {
-        id: event.id!,
+        id: eventIdFromLink || event.id!,
         title: event.summary || 'Untitled Meeting',
         start: new Date(event.start?.dateTime || event.start?.date || ''),
         end: new Date(event.end?.dateTime || event.end?.date || ''),

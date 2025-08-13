@@ -23,15 +23,16 @@ type ActionItem = {
 
 type CalendarEvent = {
   id: string
+  calendarEventId: string
   title: string
   start: Date
   end: Date
-  hangoutLink?: string
-  htmlLink?: string
-  location?: string
-  attendees?: Array<{ email: string; displayName: string; avatarUrl?: string }>
+  calendarEventUrl: string
   transcriptionEnabled?: boolean
+  attendees?: Array<{ email: string; displayName: string; avatarUrl?: string }>
+  location?: string
   summary?: string
+  hangoutLink?: string
   transcript?: string
   actionItems?: ActionItem[]
 }
@@ -53,8 +54,10 @@ const CalendarPage = () => {
 
   const checkConnectionStatus = async () => {
     setLoading(true)
+
     try {
       const response = await fetch('/api/auth/google-calendar/status')
+
       if (response.ok) {
         const data = await response.json()
         setIsConnected(data.connected)
@@ -83,18 +86,28 @@ const CalendarPage = () => {
 
   const loadEvents = async () => {
     try {
-      const response = await fetch('/api/meetings/sync', { method: 'POST' })
+      // First, sync meetings from Google Calendar
+      await fetch('/api/meetings/sync', { method: 'POST' })
+      // Then, fetch meetings from your database
+      const response = await fetch('/api/meetings')
+
       if (response.ok) {
         const data = await response.json()
-        const formattedEvents = data.events.map((event: any) => ({
-          ...event,
-          start: new Date(event.start),
-          end: new Date(event.end),
-          transcriptionEnabled: event.transcriptionEnabled ?? false,
+
+        const formattedEvents = data.meetings.map((event: any) => ({
+          id: event.id,
+          calendarEventId: event.calendar_event_id,
+          title: event.meeting_title,
+          start: new Date(event.meeting_start_time),
+          end: new Date(event.meeting_end_time),
+          hangoutLink: event.meeting_url,
+          calendarEventUrl: event.calendar_event_url,
+          transcriptionEnabled: event.transcription_enabled ?? false,
           summary: event.summary,
           transcript: event.transcript,
           actionItems: event.actionItems
         }))
+
         setEvents(formattedEvents)
       }
     } catch (error) {
@@ -145,15 +158,29 @@ const CalendarPage = () => {
     }
   }
 
-  // Separate events into previous and upcoming
   const now = new Date()
   const previousEvents = events.filter((event) => event.start < now)
   const upcomingEvents = events.filter((event) => event.start >= now)
 
-  const handleToggleTranscription = (eventId: string, enabled: boolean) => {
+  const handleToggleTranscription = async (calendarEventId: string, enabled: boolean) => {
     setEvents((prev) =>
-      prev.map((e) => (e.id === eventId ? { ...e, transcriptionEnabled: enabled } : e))
+      prev.map((e) =>
+        e.calendarEventId === calendarEventId ? { ...e, transcriptionEnabled: enabled } : e
+      )
     )
+
+    try {
+      await fetch('/api/meetings', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          calendarEventId,
+          transcriptionEnabled: enabled
+        })
+      })
+    } catch (err) {
+      console.error('Failed to update meeting recording status', err)
+    }
   }
 
   const handleOpenMeetingDetails = (event: CalendarEvent) => {
@@ -161,19 +188,20 @@ const CalendarPage = () => {
     setShowMeetingModal(true)
   }
 
-  const openInGoogleCalendar = (meeting: any) => {
+  const openInGoogleCalendar = (calendarEventId: string, link?: string) => {
     try {
-      // Use htmlLink from Google Calendar API to open the specific event
-      if (meeting.htmlLink) {
-        window.open(meeting.htmlLink, '_blank')
+      if (link) {
+        window.open(link, '_blank')
+
         return
       }
 
-      console.warn('No htmlLink available for meeting:', meeting.id)
+      console.warn('No htmlLink available for meeting:', calendarEventId)
     } catch (error) {
       console.error('Error opening Google Calendar:', error)
     }
   }
+
   if (loading) {
     return (
       <Card className="p-6">
